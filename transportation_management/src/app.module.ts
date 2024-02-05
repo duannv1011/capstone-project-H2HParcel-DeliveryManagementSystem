@@ -6,6 +6,12 @@ import { RoleModule } from './role/role.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
+import { CustomerModule } from './customer/customer.module';
+import { WhitehourseService } from './whitehourse/whitehourse.service';
+import { WhitehourseModule } from './whitehourse/whitehourse.module';
+import { OrderController } from './order/order.controller';
+import { OrderService } from './order/order.service';
+import { OrderModule } from './order/order.module';
 @Module({
     imports: [
         AccountModule,
@@ -21,8 +27,11 @@ import { DatabaseModule } from './database/database.module';
             }),
         }),
         DatabaseModule,
+        CustomerModule,
+        WhitehourseModule,
+        OrderModule,
     ],
-    controllers: [AppController],
-    providers: [AppService],
+    controllers: [AppController, OrderController],
+    providers: [AppService, WhitehourseService, OrderService],
 })
 export class AppModule {}

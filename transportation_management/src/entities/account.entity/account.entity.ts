@@ -1,16 +1,23 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
-@Entity('account')
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    JoinColumn,
+} from 'typeorm';
+import { RoleEntity } from '../role.entity/role.entity';
+@Entity('Account')
 export class AccountEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    public acc_id: number;
 
     @Column()
-    firstName: string;
+    public username: string;
 
     @Column()
-    lastName: string;
+    public password: string;
 
-    @Column({ default: true })
-    isActive: boolean;
+    @ManyToOne(() => RoleEntity, { eager: true })
+    @JoinColumn({ name: 'role_id' })
+    role: RoleEntity;
 }

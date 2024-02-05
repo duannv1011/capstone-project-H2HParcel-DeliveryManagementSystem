@@ -6,7 +6,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
         .setTitle('delevery service')
-        .setDescription('The cats API description')
+        .setDescription('The description of the method')
         .setVersion('1.0')
         .addTag('dls')
         .build();

@@ -1,18 +1,20 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { CreateAccountDto } from './dto/create-account-dto/create-account-dto';
+import { AccountEntity } from 'src/entities/account.entity/account.entity';
 
 @Controller('account')
 export class AccountController {
-  constructor(private readonly accountService: AccountService) {}
-
-  @Get()
-  async getAllAccounts() {
-    return this.accountService.getAllAccounts();
-  }
-
-  @Post('create')
-  async createRolePost(@Body() data: CreateAccountDto) {
-    return await this.accountService.createRolePost(data);
-  }
+    constructor(private readonly accountService: AccountService) {}
+    @Get('')
+    getAllAccounts() {
+        return this.accountService.getAllAccount();
+    }
+    @Get(':id')
+    getAccountbyId(@Param('id') id: string) {
+        return this.accountService.getAccountById(Number(id));
+    }
+    @Post(':id')
+    async createAccount(@Param('id') id: string, @Body() data: AccountEntity) {
+        return this.accountService.UpdateAccount(Number(id), data);
+    }
 }
