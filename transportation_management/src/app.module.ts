@@ -12,6 +12,8 @@ import { WhitehourseModule } from './whitehourse/whitehourse.module';
 import { OrderController } from './order/order.controller';
 import { OrderService } from './order/order.service';
 import { OrderModule } from './order/order.module';
+import { WarehourseModule } from './warehourse/warehourse.module';
+import { WarehorseService } from './warehorse/warehorse.service';
 @Module({
     imports: [
         AccountModule,
@@ -30,8 +32,9 @@ import { OrderModule } from './order/order.module';
         CustomerModule,
         WhitehourseModule,
         OrderModule,
+        WarehourseModule,
     ],
     controllers: [AppController, OrderController],
-    providers: [AppService, WhitehourseService, OrderService],
+    providers: [AppService, WhitehourseService, OrderService, WarehorseService],
 })
 export class AppModule {}
