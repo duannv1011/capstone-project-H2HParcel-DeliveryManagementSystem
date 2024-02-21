@@ -1,10 +1,4 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { RoleEntity } from '../role.entity/role.entity';
 @Entity('Account')
 export class AccountEntity {
@@ -17,7 +11,13 @@ export class AccountEntity {
     @Column()
     public password: string;
 
+    @Column()
+    public role_id: number;
+
     @ManyToOne(() => RoleEntity, { eager: true })
     @JoinColumn({ name: 'role_id' })
     role: RoleEntity;
+
+    @Column({ default: true })
+    public isActive: boolean;
 }

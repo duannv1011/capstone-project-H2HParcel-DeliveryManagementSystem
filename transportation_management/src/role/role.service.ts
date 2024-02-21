@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { NotFoundException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoleEntity } from 'src/entities/role.entity/role.entity';
 import { Repository } from 'typeorm';
-import { CreateRole } from './dto/create-role/create-role';
+import { CreateRoleDto } from './dto/create-role-dto/create-role-dto';
 import { UpdateRoleDto } from './dto/update-role-dto/update-role-dto';
 @Injectable()
 export class RoleService {
@@ -12,41 +12,114 @@ export class RoleService {
     ) {}
 
     async getAllRoles() {
-        const roles = await this.rolesRepository.findAndCount();
-        return roles ? roles : 'List of roles is empty';
+        const [roles, count] = await this.rolesRepository.findAndCount({
+            order: {
+                role_id: 'ASC',
+            },
+        });
+
+        if (roles && roles.length > 0) {
+            return { roles, count };
+        } else {
+            return 'List of roles is empty';
+        }
     }
     async getRoleById(id: number) {
         const role = await this.rolesRepository.findOne({
             where: { role_id: id },
         });
 
-        return role ? role : 'Role not found';
+        if (role) {
+            return role;
+        } else {
+            throw new NotFoundException('Role not found');
+        }
     }
 
-    async createRole(data: CreateRole) {
+    async createRole(data: CreateRoleDto) {
         try {
-            const newRole = await this.rolesRepository.create(data);
+            const existingRole = await this.rolesRepository.findOne({
+                where: { role_name: data.role_name },
+            });
+
+            if (existingRole) {
+                return {
+                    success: false,
+                    error: 'Role with the same name already exists',
+                };
+            }
+            const newRole = new RoleEntity();
+            newRole.role_name = data.role_name;
             await this.rolesRepository.save(newRole);
             return newRole;
         } catch (error) {
             console.error('Role creation failed:', error.message);
-            return { success: false, error: 'Role creation failed' };
+            return {
+                success: false,
+                error: error.message,
+            };
         }
     }
     async replaceRole(id: number, data: UpdateRoleDto) {
-        await this.rolesRepository.update(id, data);
-        const updatedRolse = await this.rolesRepository.findOne({
-            where: { role_id: id },
-        });
-        if (updatedRolse) {
-            return updatedRolse;
+        try {
+            const existingRole = await this.rolesRepository.findOne({
+                where: { role_id: id },
+            });
+            if (existingRole) {
+                if (id === data.role_id || data.role_id === undefined) {
+                    const existingRole = await this.rolesRepository.findOne({
+                        where: { role_name: data.role_name },
+                    });
+                    if (existingRole) {
+                        return {
+                            success: false,
+                            error: 'Role with the same name already exists',
+                        };
+                    }
+                    await this.rolesRepository.update(id, data);
+                    const updatedRolse = await this.rolesRepository.findOne({
+                        where: { role_id: id },
+                    });
+                    if (updatedRolse) {
+                        return updatedRolse;
+                    }
+                } else {
+                    return {
+                        success: false,
+                        error: 'old roleId and new roleId is not match',
+                    };
+                }
+            } else {
+                throw new NotFoundException('Role not found to update');
+            }
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message || 'Role update failed',
+            };
         }
-        throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
     }
     async deleteRole(id: number) {
-        const deleteResponse = await this.rolesRepository.delete(id);
-        if (!deleteResponse.affected) {
-            throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+        try {
+            // const existingRole = await this.rolesRepository.findOne({
+            //     where: { role_id: id },
+            // });
+            // if (!existingRole) {
+            //     console.log('return');
+            //     return {
+            //         success: false,
+            //         error: 'Role not found to update',
+            //     };
+            // }
+            const deleteResponse = await this.rolesRepository.delete(id);
+            if (!deleteResponse.affected) {
+                throw new HttpException(`Role with ID ${id} not found`, HttpStatus.NOT_FOUND);
+            }
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message || 'Role delete failed',
+            };
         }
     }
 }

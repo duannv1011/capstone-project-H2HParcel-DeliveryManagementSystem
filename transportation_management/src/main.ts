@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -8,8 +9,10 @@ async function bootstrap() {
         .setTitle('delevery service')
         .setDescription('The description of the method')
         .setVersion('1.0')
-        .addTag('dls')
+        .addTag('Delevery System Api')
         .build();
+    const { httpAdapter } = app.get(HttpAdapterHost);
+    app.useGlobalFilters(new ExceptionsLoggerFilter(httpAdapter));
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
 

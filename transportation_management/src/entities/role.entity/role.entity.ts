@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-@Entity('Role') // Specify your actual table name here
+@Entity('Role')
 export class RoleEntity {
     @PrimaryGeneratedColumn()
     public role_id: number;
 
-    @Column({ type: 'varchar' }) // Adjust the length as needed
+    @Column({ type: 'varchar' })
     public role_name: string;
 }
