@@ -6,13 +6,16 @@ import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './database/database.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
-import { RoleService } from './role/role.service';
-import { RoleController } from './role/role.controller';
-import { RoleModule } from './role/role.module';
+import { RoleService } from './module/web/role/modules/role.service';
+import { RoleController } from './module/web/role/modules/role.controller';
+import { RoleModule } from './module/web/role/modules/role.module';
 import { DataSource } from 'typeorm';
-import { AccountModule } from './account/account.module';
-import { AccountController } from './account/account.controller';
-import { AccountService } from './account/account.service';
+import { AccountModule } from './module/account/modules/account.module';
+import { AccountController } from './module/account/modules/account.controller';
+import { AccountService } from './module/account/modules/account.service';
+import { AuthenticationService } from './module/core/authentication/modules/authentication.service';
+import { AuthenticationController } from './module/core/authentication/modules/authentication.controller';
+import { AuthenticationModule } from './module/core/authentication/modules/authentication.module';
 @Module({
     imports: [
         RoleModule,
@@ -28,8 +31,9 @@ import { AccountService } from './account/account.service';
             }),
         }),
         DatabaseModule,
+        AuthenticationModule,
     ],
-    controllers: [AppController, RoleController, AccountController],
+    controllers: [AppController, RoleController, AccountController, AuthenticationController],
     providers: [
         AppService,
         RoleService,
@@ -38,6 +42,7 @@ import { AccountService } from './account/account.service';
             provide: APP_FILTER,
             useClass: ExceptionsLoggerFilter,
         },
+        AuthenticationService,
     ],
 })
 export class AppModule {
