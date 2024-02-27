@@ -1,14 +1,27 @@
 import { Module } from '@nestjs/common';
+import { AccountEntity } from '../entity/account';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthenticationController } from './authentication.controller';
 import { AuthenticationService } from './authentication.service';
-import { PassportModule } from '@nestjs/passport';
-import { AccountService } from 'src/module/account/modules/account.service';
-import { AccountEntity } from 'src/entities/account.entity/account.entity';
+import { AuthenticationController } from './authentication.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
+import { CustomerService } from '../../customer/modules/customer.service';
+import { CustomerEntity } from '../../customer/entity/customer';
+import { StaffEntity } from '../entity/staff';
+import { RoleEntity } from '../entity/role';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([AccountEntity]), PassportModule],
-    providers: [AuthenticationService, AccountService],
+    imports: [
+        TypeOrmModule.forFeature([AccountEntity, CustomerEntity, StaffEntity, RoleEntity]),
+        ConfigModule,
+        JwtModule.register({
+            global: true,
+            secret: 'SECRET',
+            signOptions: { expiresIn: '1d' },
+        }),
+    ],
+    providers: [AuthenticationService, CustomerService],
     controllers: [AuthenticationController],
+    exports: [TypeOrmModule],
 })
 export class AuthenticationModule {}

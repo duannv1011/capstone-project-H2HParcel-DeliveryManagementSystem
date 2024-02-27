@@ -1,22 +1,14 @@
-import { IsString, IsNotEmpty, Matches, IsNumberString, IsBoolean } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty } from 'class-validator';
 
-export class RegisterDto {
+export class loginDto {
     @IsString()
     @IsNotEmpty({ message: 'Null value error' })
+    @ApiProperty({ example: 'duannv', description: 'username' })
     username: string;
 
     @IsString()
     @IsNotEmpty({ message: 'Null value error' })
-    @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()-_+=])[0-9a-zA-Z!@#$%^&*()-_+=]{8,}$/, {
-        message: 'Invalid password format',
-    })
+    @ApiProperty({ example: 'Abcd@123', description: 'password' })
     password: string;
-
-    @IsNumberString()
-    @IsNotEmpty({ message: 'Null value error' })
-    role_id: number;
-
-    @IsBoolean()
-    @IsNotEmpty({ message: 'Null value error' })
-    isActive: boolean;
 }

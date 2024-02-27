@@ -10,16 +10,20 @@ import { RoleService } from './module/web/role/modules/role.service';
 import { RoleController } from './module/web/role/modules/role.controller';
 import { RoleModule } from './module/web/role/modules/role.module';
 import { DataSource } from 'typeorm';
-import { AccountModule } from './module/account/modules/account.module';
-import { AccountController } from './module/account/modules/account.controller';
-import { AccountService } from './module/account/modules/account.service';
+import { AccountModule } from './module/core/account/modules/account.module';
+import { AccountController } from './module/core/account/modules/account.controller';
+import { AccountService } from './module/core/account/modules/account.service';
 import { AuthenticationService } from './module/core/authentication/modules/authentication.service';
 import { AuthenticationController } from './module/core/authentication/modules/authentication.controller';
 import { AuthenticationModule } from './module/core/authentication/modules/authentication.module';
+import { CustomerController } from './module/core/customer/modules/customer.controller';
+import { CustomerService } from './module/core/customer/modules/customer.service';
+import { CustomerModule } from './module/core/customer/modules/customer.module';
 @Module({
     imports: [
         RoleModule,
         AccountModule,
+        AuthenticationModule,
         ConfigModule.forRoot({
             validationSchema: Joi.object({
                 POSTGRES_HOST: Joi.string().required(),
@@ -31,18 +35,19 @@ import { AuthenticationModule } from './module/core/authentication/modules/authe
             }),
         }),
         DatabaseModule,
-        AuthenticationModule,
+        CustomerModule,
     ],
-    controllers: [AppController, RoleController, AccountController, AuthenticationController],
+    controllers: [AppController, RoleController, AccountController, AuthenticationController, CustomerController],
     providers: [
         AppService,
         RoleService,
         AccountService,
+        AuthenticationService,
         {
             provide: APP_FILTER,
             useClass: ExceptionsLoggerFilter,
         },
-        AuthenticationService,
+        CustomerService,
     ],
 })
 export class AppModule {

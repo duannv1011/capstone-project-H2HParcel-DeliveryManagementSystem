@@ -1,9 +1,9 @@
 import { NotFoundException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoleEntity } from 'src/entities/role.entity/role.entity';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from '../dto/create-role-dto/create-role-dto';
 import { UpdateRoleDto } from '../dto/update-role-dto/update-role-dto';
+import { RoleEntity } from '../entity/role';
 @Injectable()
 export class RoleService {
     constructor(
