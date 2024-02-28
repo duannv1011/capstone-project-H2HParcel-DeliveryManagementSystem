@@ -78,6 +78,7 @@ export class AuthenticationService {
     }
     private async hashpassword(password: string): Promise<string> {
         const saltTime = await bcrypt.genSalt(10);
+        console.log('slatTime' + saltTime);
         return await bcrypt.hash(password, saltTime);
     }
     private async checkPassword(input: string, password: string) {
