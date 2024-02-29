@@ -28,6 +28,7 @@ CREATE TABLE "Customer" (
   "fullname" varchar,
   "email" varchar,
   "phone" varchar,
+  "address" integer,
   "default_address" integer,
   "status" integer,
   "acc_id" integer
@@ -153,7 +154,7 @@ CREATE TABLE "Shift" (
 CREATE TABLE "ShiftSheet" (
   "sheet_id" SERIAL  PRIMARY KEY,
   "shift_id" integer,-- forykey for Shift
-  "transporter" integer -- employee work on
+  "staff_id" integer -- employee work on
 );
 
 CREATE TABLE "PayRule" (
@@ -166,26 +167,20 @@ ALTER TABLE "Account" ADD FOREIGN KEY ("role_id") REFERENCES "Role"  ("role_id")
 
 ALTER TABLE "Staff" ADD FOREIGN KEY ("acc_id") REFERENCES "Account" ("acc_id");
 
+ALTER TABLE "Staff" ADD FOREIGN KEY ("warehouse_id") REFERENCES "Warehouse" ("warehouse_id");
+
 ALTER TABLE "Customer"  ADD FOREIGN KEY ("acc_id") REFERENCES "Account" ("acc_id");
 
 ALTER TABLE "AddressBook" ADD FOREIGN KEY ("cus_id") REFERENCES "Customer"  ("cus_id");
 
 ALTER TABLE "AddressBook" ADD FOREIGN KEY ("address_id") REFERENCES "Address" ("address_id");
-
-ALTER TABLE "Address" ADD FOREIGN KEY ("city_id") REFERENCES "City" ("city_id");
-
-ALTER TABLE "Address" ADD FOREIGN KEY ("district_id") REFERENCES "District" ("district_id");
-
-ALTER TABLE "Address" ADD FOREIGN KEY ("ward_id") REFERENCES "Ward" ("ward_id");
-
+--
 ALTER TABLE "District" ADD FOREIGN KEY ("city_id") REFERENCES "City" ("city_id");
 
 ALTER TABLE "Ward" ADD FOREIGN KEY ("district_id") REFERENCES "District" ("district_id");
 
 ALTER TABLE "Order" ADD FOREIGN KEY ("cus_id") REFERENCES "Customer" ("cus_id");
-
-ALTER TABLE "Request" ADD FOREIGN KEY ("request_id") REFERENCES "Order" ("order_id");
-
+ 
 ALTER TABLE "Order" ADD FOREIGN KEY ("pickup_transporter") REFERENCES "Staff" ("staff_id");
 
 ALTER TABLE "Order" ADD FOREIGN KEY ("deliver_transporter") REFERENCES "Staff" ("staff_id");
@@ -195,10 +190,12 @@ ALTER TABLE "Order" ADD FOREIGN KEY ("pickup_address") REFERENCES "Address" ("ad
 ALTER TABLE "Order" ADD FOREIGN KEY ("deliver_address") REFERENCES "Address" ("address_id");
 
 ALTER TABLE "Order" ADD FOREIGN KEY ("order_stt") REFERENCES "OrderStatus" ("stt_id");
-
+-------
 ALTER TABLE "ActivityLog" ADD FOREIGN KEY ("order_id") REFERENCES "Order" ("order_id");
 
 ALTER TABLE "ActivityLog" ADD FOREIGN KEY ("order_stt") REFERENCES "OrderStatus" ("stt_id");
+
+ALTER TABLE "Request" ADD FOREIGN KEY ("order_id") REFERENCES "Order" ("order_id");
 
 ALTER TABLE "Request" ADD FOREIGN KEY ("request_type") REFERENCES "RequestType" ("rt_id");
 
@@ -206,11 +203,9 @@ ALTER TABLE "Code" ADD FOREIGN KEY ("order_id") REFERENCES "Order" ("order_id");
 
 ALTER TABLE "Warehouse" ADD FOREIGN KEY ("address_id") REFERENCES "Address" ("address_id");
 
-ALTER TABLE "Staff" ADD FOREIGN KEY ("warehouse_id") REFERENCES "Warehouse" ("warehouse_id");
-
 ALTER TABLE "ShiftSheet" ADD FOREIGN KEY ("shift_id") REFERENCES "Shift" ("shift_id");
 
-ALTER TABLE "ShiftSheet" ADD FOREIGN KEY ("transporter") REFERENCES "Staff" ("staff_id");
+ALTER TABLE "ShiftSheet" ADD FOREIGN KEY ("staff_id") REFERENCES "Staff" ("staff_id");
 
 --inser into table Role
 INSERT INTO transportation_management."Role" ("role_name") VALUES
