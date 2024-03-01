@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
+import { IsNotEmpty, IsObject, IsString, Matches, MinLength } from 'class-validator';
+import { AddresDto } from './adress_dto';
+import { CustomerDto } from './customer_dto';
 
 export class RegisterDto {
     @IsString()
@@ -15,4 +17,14 @@ export class RegisterDto {
         message: 'Invalid password format exp:Abcd@123',
     })
     password: string;
+
+    @IsObject()
+    @IsNotEmpty({ message: 'Null value error for address' })
+    @ApiProperty({ example: AddresDto, description: 'address' })
+    address: AddresDto;
+
+    @IsObject()
+    @IsNotEmpty({ message: 'Null value error for cumtomer' })
+    @ApiProperty({ example: AddresDto, description: 'customer' })
+    customer: CustomerDto;
 }

@@ -6,13 +6,14 @@ import { AuthenticationController } from './authentication.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { CustomerService } from '../../customer/modules/customer.service';
-import { CustomerEntity } from '../../customer/entity/customer';
 import { StaffEntity } from '../entity/staff';
 import { RoleEntity } from '../entity/role';
+import { AddressEntity } from '../entity/address';
+import { CustomerEntity } from '../entity/customer';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AccountEntity, CustomerEntity, StaffEntity, RoleEntity]),
+        TypeOrmModule.forFeature([AccountEntity, CustomerEntity, StaffEntity, RoleEntity, AddressEntity]),
         ConfigModule,
         JwtModule.register({
             global: true,

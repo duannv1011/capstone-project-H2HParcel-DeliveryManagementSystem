@@ -11,7 +11,7 @@ export class AuthenticationController {
     constructor(private readonly authenticationService: AuthenticationService) {}
     @Post('register')
     @UsePipes(ValidationPipe)
-    register(@Body() registrationData: RegisterDto) {
+    register(@Body() registrationData: RegisterDto): Promise<any> {
         return this.authenticationService.register(registrationData);
     }
     @Post('login')
