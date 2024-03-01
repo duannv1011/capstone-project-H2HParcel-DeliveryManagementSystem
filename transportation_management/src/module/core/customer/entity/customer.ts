@@ -24,6 +24,9 @@ export class CustomerEntity {
     @Column({ nullable: true })
     default_address: number;
 
+    @Column({ nullable: true })
+    address_id: number;
+
     @ManyToOne(() => AccountEntity, { eager: true })
     @JoinColumn({ name: 'acc_id' })
     account: AccountEntity;

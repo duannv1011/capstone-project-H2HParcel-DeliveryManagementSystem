@@ -16,14 +16,17 @@ export class CustomerEntity {
     @Column()
     phone: string;
 
-    @Column()
+    @Column({ nullable: true })
+    acc_id: number;
+
+    @Column({ nullable: true })
     default_address: number;
 
-    @Column()
+    @Column({ default: 1 })
     status: number;
 
     @Column({ nullable: true })
-    acc_id: number;
+    address_id: number;
 
     @ManyToOne(() => AccountEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'acc_id' })

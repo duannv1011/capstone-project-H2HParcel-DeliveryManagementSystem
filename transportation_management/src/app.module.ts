@@ -19,6 +19,7 @@ import { AuthenticationModule } from './module/core/authentication/modules/authe
 import { CustomerController } from './module/core/customer/modules/customer.controller';
 import { CustomerService } from './module/core/customer/modules/customer.service';
 import { CustomerModule } from './module/core/customer/modules/customer.module';
+
 @Module({
     imports: [
         RoleModule,

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AccountEntity } from '../entity/account';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { Repository, EntityManager, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../dto/register_dto';
 import { loginDto } from '../dto/authentication_dto';
@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { CustomerService } from '../../customer/modules/customer.service';
 import { StaffEntity } from '../entity/staff';
 import { CustomerEntity } from '../entity/customer';
+import { AddressEntity } from '../entity/address';
 
 @Injectable()
 export class AuthenticationService {
@@ -20,12 +21,16 @@ export class AuthenticationService {
         private readonly customerRepository: Repository<CustomerEntity>,
         @InjectRepository(StaffEntity)
         private readonly staffRepository: Repository<StaffEntity>,
+        @InjectRepository(AddressEntity)
+        private readonly addressRepository: Repository<AddressEntity>,
         private customerService: CustomerService,
-        private dataSource: DataSource,
         private jwtService: JwtService,
         private configService: ConfigService,
+        private dataSource: DataSource,
+        @InjectEntityManager()
+        private readonly entityManager: EntityManager,
     ) {}
-    async register(registerData: RegisterDto): Promise<AccountEntity> {
+    async register(registerData: RegisterDto): Promise<any> {
         const checkexisting = await this.accountRepository.findOne({
             where: { username: registerData.username },
         });
@@ -34,11 +39,49 @@ export class AuthenticationService {
         }
         const hashedPassword = await this.hashpassword(registerData.password);
         registerData.password = hashedPassword;
-        return await this.accountRepository.save({
-            ...registerData,
-            refresh_token: 'refresh_token_string',
-            password: hashedPassword,
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            // create account
+            const accountInsertResult = await queryRunner.manager.save(AccountEntity, {
+                ...registerData,
+                refresh_token: 'refresh_token_string',
+                password: hashedPassword,
+            });
+            if (!accountInsertResult) {
+                return new HttpException('account save error', HttpStatus.BAD_REQUEST);
+            }
+            const accountId = accountInsertResult.acc_id; // Assuming 'id' is the auto-incremented column name
+            // create address
+            const addressDtoData = registerData.address;
+            const addressdata = await queryRunner.manager.save(AddressEntity, {
+                ...addressDtoData,
+            });
+            if (!addressdata) {
+                throw new HttpException('address save error', HttpStatus.BAD_REQUEST);
+            }
+            // create customer
+            const customerDtodata = registerData.customer;
+            customerDtodata.address_id = addressdata.address_id;
+            customerDtodata.default_address = customerDtodata.default_address || addressdata.address_id;
+            customerDtodata.acc_id = accountId;
+            customerDtodata.status = 1;
+
+            const customerdata = await queryRunner.manager.save(CustomerEntity, customerDtodata);
+
+            if (!customerdata) {
+                throw new HttpException('customer save error', HttpStatus.BAD_REQUEST);
+            }
+
+            await queryRunner.commitTransaction();
+            return accountInsertResult;
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            await queryRunner.release();
+        }
     }
     async login(logindata: loginDto): Promise<any> {
         const account = await this.accountRepository.findOne({
