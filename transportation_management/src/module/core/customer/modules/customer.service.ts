@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CustomerEntity } from '../entity/customer';
 import { Repository } from 'typeorm';
+import { CustomerEntity } from '../../../../enities/customer.entity';
 
 @Injectable()
 export class CustomerService {

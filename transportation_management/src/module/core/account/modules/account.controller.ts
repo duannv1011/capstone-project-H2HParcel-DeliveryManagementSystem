@@ -7,7 +7,7 @@ import { Paging } from 'src/module/response/Paging';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
 import { ChangePasswordAccountdto } from '../dto/changepass_account_dto';
 import { UpdateResult } from 'typeorm';
-import { AccountEntity } from '../entity/entity/account';
+import { AccountEntity } from '../../../../enities/account.entity';
 @ApiTags('account-api')
 @Controller('account')
 export class AccountController {

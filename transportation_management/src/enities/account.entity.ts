@@ -1,7 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
-import { RoleEntity } from './role';
+import { RoleEntity } from './role.entity';
+import { AbstractEntity } from './abstract-entity';
 @Entity('Account')
-export class AccountEntity {
+export class AccountEntity extends AbstractEntity {
     @PrimaryGeneratedColumn()
     public acc_id: number;
 
@@ -23,10 +24,4 @@ export class AccountEntity {
 
     @Column({ default: true })
     public isActive: boolean;
-
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    date_create_at: Date;
-
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    date_update_at: Date;
 }

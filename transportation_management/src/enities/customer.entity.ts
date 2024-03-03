@@ -1,11 +1,11 @@
-// staff.entity.ts
+// customer.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
-import { AccountEntity } from './account';
+import { AccountEntity } from './account.entity';
 
-@Entity('Staff')
-export class StaffEntity {
+@Entity('Customer')
+export class CustomerEntity {
     @PrimaryGeneratedColumn()
-    staff_id: number;
+    cus_id: number;
 
     @Column()
     fullname: string;
@@ -16,11 +16,17 @@ export class StaffEntity {
     @Column()
     phone: string;
 
-    @Column()
-    warehouse_id: number;
-
     @Column({ nullable: true })
     acc_id: number;
+
+    @Column({ nullable: true })
+    default_address: number;
+
+    @Column({ default: 1 })
+    status: number;
+
+    @Column({ nullable: true })
+    address_id: number;
 
     @ManyToOne(() => AccountEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'acc_id' })

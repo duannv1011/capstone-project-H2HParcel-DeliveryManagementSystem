@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CustomerEntity } from '../entity/customer';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomerService } from './customer.service';
 import { CustomerController } from './customer.controller';
+import { CustomerEntity } from '../../../../enities/customer.entity';
 
 @Module({
     imports: [
