@@ -7,26 +7,10 @@ import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
-<<<<<<< HEAD
-    const app = await NestFactory.create(AppModule, {
-        bodyParser: true,
-    });
-    const configService = app.get<ConfigService>(ConfigService);
-    app.use(bodyParser.json({ limit: configService.get('BODY_LIMIT') }));
-    app.use(bodyParser.urlencoded({ limit: configService.get('BODY_LIMIT'), extended: true }));
-    app.enableCors({
-        // origin: ['http://localhost:888'], // client
-        // true for all origins
-        origin: '*',
-    });
 
-    const swaggerConfig = new DocumentBuilder()
-        .setTitle('delevery service')
-=======
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
         .setTitle('delevery service hehehe')
->>>>>>> 9c52719 (test cicd)
         .setDescription('The description of the method')
         .setVersion('1.0')
         //.addBasicAuth()
