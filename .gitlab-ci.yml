@@ -1,0 +1,14 @@
+stages:
+  - deploy
+deploy:
+  image: alpine:latest
+  stage: deploy
+  script:
+    - apk update && apk add openssh-client
+    - apk --update add sshpass
+    - sshpass -p $PASSWORD ssh -oStrictHostKeyChecking=no root@206.189.46.190 "bash api.sh"
+  environment:
+    name: production
+    url: http://206.189.46.190
+  only:
+    - develop
