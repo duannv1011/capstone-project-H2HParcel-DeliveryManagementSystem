@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
+<<<<<<< HEAD
     const app = await NestFactory.create(AppModule, {
         bodyParser: true,
     });
@@ -21,6 +22,11 @@ async function bootstrap() {
 
     const swaggerConfig = new DocumentBuilder()
         .setTitle('delevery service')
+=======
+    const app = await NestFactory.create(AppModule);
+    const config = new DocumentBuilder()
+        .setTitle('delevery service hehehe')
+>>>>>>> 9c52719 (test cicd)
         .setDescription('The description of the method')
         .setVersion('1.0')
         //.addBasicAuth()
