@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AccountEntity } from '../entity/account';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -8,9 +7,10 @@ import { loginDto } from '../dto/authentication_dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CustomerService } from '../../customer/modules/customer.service';
-import { StaffEntity } from '../entity/staff';
-import { CustomerEntity } from '../entity/customer';
-import { AddressEntity } from '../entity/address';
+import { StaffEntity } from '../../../../enities/staff.entity';
+import { CustomerEntity } from '../../../../enities/customer.entity';
+import { AddressEntity } from '../../../../enities/address.entity';
+import { AccountEntity } from '../../../../enities/account.entity';
 
 @Injectable()
 export class AuthenticationService {

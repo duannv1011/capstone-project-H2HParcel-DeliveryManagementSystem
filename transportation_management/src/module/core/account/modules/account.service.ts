@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository, UpdateResult } from 'typeorm';
-import { AccountEntity } from '../entity/entity/account';
+import { AccountEntity } from '../../../../enities/account.entity';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordAccountdto } from '../dto/changepass_account_dto';

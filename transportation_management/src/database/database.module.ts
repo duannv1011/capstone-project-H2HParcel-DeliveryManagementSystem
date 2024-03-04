@@ -13,9 +13,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 username: configService.get('POSTGRES_USER'),
                 password: configService.get('POSTGRES_PASSWORD'),
                 database: configService.get('POSTGRES_DB'),
-                synchronize: true,
-                autoLoadEntities: true,
+                // Update database structure (warning: will restructure database)
+                synchronize: configService.get('POSTGRES_SYNCHRONIZE'),
+                autoLoadEntities: configService.get('POSTGRES_AUTOLOAD'),
                 schema: configService.get('POSTGRES_SCHEMA'),
+                logging: configService.get('POSTGRES_LOGGING'),
+                // Drops the schema each time connection is being established (dangerous: will reset database)
+                dropSchema: configService.get('POSTGRES_DROPSCHEMA'),
+                // Number of reconnect attempts
+                retryAttempts: 3,
+                // Time to try reconnecting (seconds)
+                retryDelay: 1,
+                entities: ['dist/entities/*.entity.js'],
             }),
         }),
     ],

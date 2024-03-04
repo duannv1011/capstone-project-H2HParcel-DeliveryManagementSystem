@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { ExceptionsLoggerFilter } from 'src/utils/exceptions-logger-filter/exceptions-logger-filter';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from '../dto/create-role-dto/create-role-dto';
 import { UpdateRoleDto } from '../dto/update-role-dto/update-role-dto';
-import { ApiTags } from '@nestjs/swagger';
-import { ExceptionsLoggerFilter } from 'src/utils/exceptions-logger-filter/exceptions-logger-filter';
 @ApiTags('role-api')
 @Controller('role')
 export class RoleController {
