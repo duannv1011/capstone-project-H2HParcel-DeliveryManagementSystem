@@ -6,7 +6,7 @@ import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/excepti
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
-        .setTitle('delevery servicehihi')
+        .setTitle('delevery servicehaha')
         .setDescription('The description of the method')
         .setVersion('1.0')
         //.addBasicAuth()
