@@ -30,7 +30,7 @@ export class AuthenticationService {
         @InjectEntityManager()
         private readonly entityManager: EntityManager,
     ) {}
-    async register(registerData: RegisterDto): Promise<any> {
+    async register(registerData: RegisterDto): Promise<AccountEntity> {
         const checkexisting = await this.accountRepository.findOne({
             where: { username: registerData.username },
         });
@@ -50,7 +50,7 @@ export class AuthenticationService {
                 password: hashedPassword,
             });
             if (!accountInsertResult) {
-                return new HttpException('account save error', HttpStatus.BAD_REQUEST);
+                throw new HttpException('account save error', HttpStatus.BAD_REQUEST);
             }
             const accountId = accountInsertResult.acc_id; // Assuming 'id' is the auto-incremented column name
             // create address
@@ -121,7 +121,7 @@ export class AuthenticationService {
     }
     private async hashpassword(password: string): Promise<string> {
         const saltTime = await bcrypt.genSalt(10);
-        console.log('slatTime' + saltTime);
+        //console.log('slatTime' + saltTime);
         return await bcrypt.hash(password, saltTime);
     }
     private async checkPassword(input: string, password: string) {
