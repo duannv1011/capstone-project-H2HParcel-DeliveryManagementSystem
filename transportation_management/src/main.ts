@@ -2,15 +2,11 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
-import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
-
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
-        .setTitle('delevery service hehehe')
+        .setTitle('delevery servicehihi')
         .setDescription('The description of the method')
         .setVersion('1.0')
         //.addBasicAuth()
@@ -28,15 +24,8 @@ async function bootstrap() {
         .build();
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new ExceptionsLoggerFilter(httpAdapter));
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
-    const swaggerPrefix = 'api';
-    SwaggerModule.setup(swaggerPrefix, app, document);
-
-    await app.listen(configService.get('SERVER_PORT'), () => {
-        Logger.log(`Listening api at http://${configService.get('SERVER_DOMAIN')}:${configService.get('SERVER_PORT')}`);
-        Logger.log(
-            `View swagger at http://${configService.get('SERVER_DOMAIN')}:${configService.get('SERVER_PORT')}/${swaggerPrefix}`,
-        );
-    });
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+    await app.listen(3000);
 }
 bootstrap();
