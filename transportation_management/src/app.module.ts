@@ -17,6 +17,9 @@ import { CustomerService } from './module/core/customer/modules/customer.service
 import { CustomerModule } from './module/core/customer/modules/customer.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { StaffModule } from './module/client/staff/staff.module';
+import { StaffService } from './module/client/staff/staff.service';
+import { StaffController } from './module/client/staff/staff.controller';
 
 @Module({
     imports: [
@@ -26,8 +29,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         AuthenticationModule,
         CustomerModule,
         ConfigModule.forRoot({ envFilePath: '.env' }),
+        StaffModule,
     ],
-    controllers: [AppController, RoleController, AccountController, AuthenticationController, CustomerController],
+    controllers: [
+        AppController,
+        RoleController,
+        AccountController,
+        AuthenticationController,
+        CustomerController,
+        StaffController,
+    ],
     providers: [
         AppService,
         RoleService,
@@ -39,6 +50,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         },
         CustomerService,
         ConfigService,
+        StaffService,
     ],
 })
 export class AppModule {}
