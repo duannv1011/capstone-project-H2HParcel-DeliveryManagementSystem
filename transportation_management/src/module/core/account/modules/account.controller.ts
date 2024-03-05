@@ -32,7 +32,7 @@ export class AccountController {
     }
     @Get('findone:id')
     //@UseGuards(AuthenticationGuard)
-    @ApiBearerAuth('JWT-auth')
+    //@ApiBearerAuth('JWT-auth')
     findOneAccountbyId(@Param('id') id: string): Promise<AccountEntity> {
         return this.accountService.getAccountById(Number(id));
     }
@@ -44,7 +44,7 @@ export class AccountController {
     }
     @Put('changepassword:id')
     @UsePipes(ValidationPipe)
-     @UseGuards(AutheicationGuard)
+    //@UseGuards(AutheicationGuard)
     async UpdatePasswordAccount(
         @Param('id') id: string,
         @Body() data: ChangePasswordAccountdto,
