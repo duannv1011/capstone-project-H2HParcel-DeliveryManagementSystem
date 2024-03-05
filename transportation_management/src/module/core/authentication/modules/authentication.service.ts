@@ -95,7 +95,7 @@ export class AuthenticationService {
             throw new HttpException('wrong user or passsword1 ', HttpStatus.UNAUTHORIZED);
         }
         // genarate token and refresh token
-        const payload = { id: account.acc_id, username: account.username };
+        const payload = { id: account.acc_id, username: account.username, role_id: account.role_id };
         //get
         const data_result = await this.getAdditionalData(account);
         const token = await this.genarateToken(payload);
@@ -104,14 +104,14 @@ export class AuthenticationService {
     async refreshToken(refresh_token: string): Promise<any> {
         try {
             const verify = await this.jwtService.verifyAsync(refresh_token, {
-                secret: this.configService.get<string>('SECRET'),
+                secret: this.configService.get<string>('SECRET_KEY'),
             });
             const checkexisttoken = await this.accountRepository.findOneBy({
                 username: verify.username,
                 refresh_token,
             });
             if (checkexisttoken) {
-                return this.genarateToken({ id: verify.id, username: verify.username });
+                return this.genarateToken({ id: verify.id, username: verify.username, role_id: verify.role_id });
             } else {
                 throw new HttpException('refresh token not found', HttpStatus.BAD_REQUEST);
             }
@@ -119,19 +119,22 @@ export class AuthenticationService {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
     }
+
     private async hashpassword(password: string): Promise<string> {
         const saltTime = await bcrypt.genSalt(10);
-        console.log('slatTime' + saltTime);
         return await bcrypt.hash(password, saltTime);
     }
     private async checkPassword(input: string, password: string) {
         return bcrypt.compare(input, password);
     }
-    private async genarateToken(payload: { id: number; username: string }) {
-        const access_token = await this.jwtService.signAsync(payload);
-        const refresh_token = await this.jwtService.signAsync(payload, {
-            secret: this.configService.get<string>('SECRET'),
+    private async genarateToken(payload: { id: number; username: string; role_id: number }) {
+        const access_token = await this.jwtService.signAsync(payload, {
+            secret: this.configService.get<string>('SECRET_KEY'),
             expiresIn: this.configService.get<string>('EXPRIRESIN_TOKEN'),
+        });
+        const refresh_token = await this.jwtService.signAsync(payload, {
+            secret: this.configService.get<string>('SECRET_KEY'),
+            expiresIn: this.configService.get<string>('EXPRIRESIN_REFRESH_TOKEN'),
         });
         await this.accountRepository.update({ username: payload.username }, { refresh_token: refresh_token });
         return { access_token, refresh_token };

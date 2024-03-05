@@ -25,7 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         AccountModule,
         AuthenticationModule,
         CustomerModule,
-        ConfigModule.forRoot({ envFilePath: '.env' }),
+        ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     ],
     controllers: [AppController, RoleController, AccountController, AuthenticationController, CustomerController],
     providers: [
