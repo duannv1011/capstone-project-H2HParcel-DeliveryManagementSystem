@@ -19,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 schema: configService.get('POSTGRES_SCHEMA'),
                 logging: configService.get('POSTGRES_LOGGING'),
                 // Drops the schema each time connection is being established (dangerous: will reset database)
-                dropSchema: configService.get('POSTGRES_DROPSCHEMA'),
+                //dropSchema: configService.get('POSTGRES_DROPSCHEMA'),
                 // Number of reconnect attempts
                 retryAttempts: 3,
                 // Time to try reconnecting (seconds)

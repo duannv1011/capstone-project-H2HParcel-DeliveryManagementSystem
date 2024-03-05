@@ -73,15 +73,15 @@ CREATE TABLE "Ward" (
 CREATE TABLE "Warehouse" (
   "warehouse_id" SERIAL  PRIMARY KEY,
   "address_id"  integer,
-  "warehouse_name" varchar,
-  "cordinate" varchar
+  "warehouse_name" varchar
 );
 
 
 CREATE TABLE "WarehouseRule" (
   "rule_id" SERIAL  PRIMARY KEY,
-  "warehouse_id" integer,
-  "ward_id" varchar
+  "warehouse_id_1" integer,
+  "warehouse_id_2" integer,
+  "distance" varchar
 );
 -- ALTER TABLE "WarehouseRule" 
 -- RENAME COLUMN "rule_content" TO "ward_id";
@@ -208,7 +208,7 @@ ALTER TABLE "ShiftSheet" ADD FOREIGN KEY ("shift_id") REFERENCES "Shift" ("shift
 ALTER TABLE "ShiftSheet" ADD FOREIGN KEY ("staff_id") REFERENCES "Staff" ("staff_id");
 
 --inser into table Role
-INSERT INTO transportation_management."Role" ("role_name") VALUES
+INSERT INTO "Role" ("role_name") VALUES
   ('customer'),--mobile
   ('shipper'),--mobile
   ('staff'),--web,mobile
@@ -246,12 +246,12 @@ INSERT INTO "Address" ("city_id", "district_id", "ward_id", "house") VALUES
   (1, 5, 5, '202 Street E');
 
 --insert into table "Warehouse" 
-INSERT INTO "Warehouse" ("address_id", "warehouse_name", "cordinate") VALUES
-  (1, 'SUPER ADMIN', 'ADMIN'),
-  (2, 'Warehouse B DD', '21.01743038248748, 105.82524334509446'),
-  (3, 'Warehouse C HD', '20.963166107277242, 105.76691789603132'),
-  (4, 'Warehouse D CG', '21.041331635983507, 105.79348745071275'),
-  (5, 'Warehouse E TX', '20.996313876710015, 105.8135311685863');
+INSERT INTO "Warehouse" ("address_id", "warehouse_name") VALUES
+  (1, 'SUPER ADMIN'),
+  (2, 'Warehouse B DD'),
+  (3, 'Warehouse C HD'),
+  (4, 'Warehouse D CG'),
+  (5, 'Warehouse E TX');
 
 --insert into table "WarehouseRule" 
 INSERT INTO "WarehouseRule" ("warehouse_id", "ward_id") VALUES
@@ -262,7 +262,7 @@ INSERT INTO "WarehouseRule" ("warehouse_id", "ward_id") VALUES
   (5, 5);
 
 --insert into table "Account"
-INSERT INTO transportation_management."Account" ("username", "password", "role_id") VALUES
+INSERT INTO "Account" ("username", "password", "role_id") VALUES
   ('admin', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 5), 
   ('duannv2', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2),
   ('duannv3', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 3), 
@@ -288,4 +288,4 @@ INSERT INTO "Staff" ("fullname", "email", "phone", "warehouse_id", "acc_id") VAL
   ('Duan Nguyen2', 'duannv2@example.com', '123456789', 2, 2),
   ('Duan Nguyen3', 'duannv3@example.com', '123456789', 3, 3),
   ('Duan Nguyen4', 'duannv4@example.com', '123456789', 4, 4),
-  ('Duan Nguyen10', 'duannv10@example.com', '123456789', 5, 12);
+  ('Duan Nguyen10', 'duannv10@example.com', '123456789', 5, 10);

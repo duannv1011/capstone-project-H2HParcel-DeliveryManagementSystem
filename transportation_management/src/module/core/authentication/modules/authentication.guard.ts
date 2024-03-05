@@ -14,14 +14,13 @@ export class AutheicationGuard implements CanActivate {
         // get  token input when excute
         //const token = this.extractTokenFromeHeader(request);
         // get swanger token herer
-        const swaggerToken = this.extractTokenFromSwagger(request);
-        console.log(swaggerToken);
+        const swaggerToken = this.extractTokenFromeHeader(request);
         if (!swaggerToken) {
             throw new UnauthorizedException();
         }
         try {
             const payload = await this.jwtService.verifyAsync(swaggerToken, {
-                secret: this.configService.get<string>('SECRET'),
+                secret: this.configService.get<string>('SECRET_KEY'),
             });
             request['userdata'] = payload;
         } catch (error) {
@@ -29,6 +28,7 @@ export class AutheicationGuard implements CanActivate {
         }
         return true;
     }
+
     private extractTokenFromeHeader(req: Request): string | undefined {
         const [type, token] = req.headers.authorization ? req.headers.authorization.split(' ') : [];
         return type === 'Bearer' ? token : undefined;
