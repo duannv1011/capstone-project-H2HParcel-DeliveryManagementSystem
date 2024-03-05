@@ -12,15 +12,15 @@ export class AutheicationGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         // get  token input when excute
-        //const token = this.extractTokenFromeHeader(request);
+        const token = this.extractTokenFromeHeader(request);
         // get swanger token herer
-        const swaggerToken = this.extractTokenFromSwagger(request);
-        console.log(swaggerToken);
-        if (!swaggerToken) {
+        //const swaggerToken = this.extractTokenFromSwagger(request);
+        console.log(token);
+        if (!token) {
             throw new UnauthorizedException();
         }
         try {
-            const payload = await this.jwtService.verifyAsync(swaggerToken, {
+            const payload = await this.jwtService.verifyAsync(token, {
                 secret: this.configService.get<string>('SECRET'),
             });
             request['userdata'] = payload;
