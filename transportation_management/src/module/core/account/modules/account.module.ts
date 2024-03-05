@@ -14,8 +14,8 @@ import { AccountEntity } from '../../../../enities/account.entity';
         AuthenticationModule,
         JwtModule.register({
             global: true,
-            secret: '123456',
-            signOptions: { expiresIn: '1d' },
+            secret: process.env.SECRET,
+            signOptions: { expiresIn: process.env.EXPRIRESIN_TOKEN },
         }),
     ],
     providers: [AccountService],
