@@ -214,7 +214,34 @@ INSERT INTO "Role" ("role_name") VALUES
   ('staff'),--web,mobile
   ('manager'),--web,mobile
   ('admin');--web
+--insert into table "Account"
+INSERT INTO "Account" ("username", "password", "role_id") VALUES
+  ('admin', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 5), 
+  ('duannv2', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2),
+  ('duannv3', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 3), 
+  ('duannv4', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 4),
+  ('duannv5', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
+  ('duannv6', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 1), 
+  ('duannv7', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
+  ('duannv8', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1), 
+  ('duannv9', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
+  ('duannv10', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2); 
 
+-- Insert into "Customer"
+INSERT INTO "Customer" ("fullname", "email", "phone", "default_address", "status", "acc_id") VALUES
+  ('Duan Nguyen', 'duannv5@example.com', '123456789', NULL, 1, 5),
+  ('Duan Nguyen', 'duannv6@example.com', '123456789', NULL, 1, 6),
+  ('Duan Nguyen', 'duannv7@example.com', '123456789', NULL, 1, 7),
+  ('Duan Nguyen', 'duannv8@example.com', '123456789', NULL, 1, 8),
+  ('Duan Nguyen', 'duannv9@example.com', '123456789', NULL, 1, 9);
+
+-- Insert into "Staff"
+INSERT INTO "Staff" ("fullname", "email", "phone", "warehouse_id", "acc_id") VALUES
+  ('Admin', 'admin@example.com', '123456789', 1, 1), 
+  ('Duan Nguyen2', 'duannv2@example.com', '123456789', 2, 2),
+  ('Duan Nguyen3', 'duannv3@example.com', '123456789', 3, 3),
+  ('Duan Nguyen4', 'duannv4@example.com', '123456789', 4, 4),
+  ('Duan Nguyen10', 'duannv10@example.com', '123456789', 5, 10);
 -- Insert data into "City" table
 INSERT INTO "City" ("city_name") VALUES
   ('HANOI'),
@@ -261,31 +288,4 @@ INSERT INTO "WarehouseRule" ("warehouse_id", "ward_id") VALUES
   (4, 4),
   (5, 5);
 
---insert into table "Account"
-INSERT INTO "Account" ("username", "password", "role_id") VALUES
-  ('admin', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 5), 
-  ('duannv2', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2),
-  ('duannv3', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 3), 
-  ('duannv4', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 4),
-  ('duannv5', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
-  ('duannv6', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 1), 
-  ('duannv7', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
-  ('duannv8', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1), 
-  ('duannv9', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
-  ('duannv10', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2); 
 
--- Insert into "Customer"
-INSERT INTO "Customer" ("fullname", "email", "phone", "default_address", "status", "acc_id") VALUES
-  ('Duan Nguyen', 'duannv5@example.com', '123456789', NULL, 1, 5),
-  ('Duan Nguyen', 'duannv6@example.com', '123456789', NULL, 1, 6),
-  ('Duan Nguyen', 'duannv7@example.com', '123456789', NULL, 1, 7),
-  ('Duan Nguyen', 'duannv8@example.com', '123456789', NULL, 1, 8),
-  ('Duan Nguyen', 'duannv9@example.com', '123456789', NULL, 1, 9);
-
--- Insert into "Staff"
-INSERT INTO "Staff" ("fullname", "email", "phone", "warehouse_id", "acc_id") VALUES
-  ('Admin', 'admin@example.com', '123456789', 1, 1), 
-  ('Duan Nguyen2', 'duannv2@example.com', '123456789', 2, 2),
-  ('Duan Nguyen3', 'duannv3@example.com', '123456789', 3, 3),
-  ('Duan Nguyen4', 'duannv4@example.com', '123456789', 4, 4),
-  ('Duan Nguyen10', 'duannv10@example.com', '123456789', 5, 10);
