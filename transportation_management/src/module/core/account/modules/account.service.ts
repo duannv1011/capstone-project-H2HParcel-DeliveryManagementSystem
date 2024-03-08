@@ -1,16 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository, UpdateResult } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { AccountEntity } from '../../../../enities/account.entity';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
 import * as bcrypt from 'bcrypt';
-import { ChangePasswordAccountdto } from '../dto/changepass_account_dto';
+import { StaffEntity } from 'src/enities/staff.entity';
+import { CustomerEntity } from 'src/enities/customer.entity';
 
 @Injectable()
 export class AccountService {
     constructor(
         @InjectRepository(AccountEntity)
         private readonly accountRepository: Repository<AccountEntity>,
+        @InjectRepository(StaffEntity)
+        private readonly staffRespository: Repository<StaffEntity>,
+        @InjectRepository(CustomerEntity)
+        private readonly customerRespository: Repository<CustomerEntity>,
         private dataSource: DataSource,
     ) {}
     async getAllAccount() {
@@ -73,14 +78,13 @@ export class AccountService {
             throw new HttpException(error, HttpStatus.CONFLICT);
         }
     }
-    async UpdatePasswordAccount(id: number, data: ChangePasswordAccountdto): Promise<UpdateResult> {
-        const account = await this.accountRepository.findOneBy({ acc_id: id });
-        const isOldPasswordValid = await bcrypt.compare(data.oldpassword, account.password);
-        if (!isOldPasswordValid) {
-            throw new HttpException('Old password is incorrect', HttpStatus.CONFLICT);
+    async UpdatePasswordAccount(email: string): Promise<any> {
+        try {
+            const staff = await this.staffRespository.findOne({ where: { email: email } });
+            const cus = await this.customerRespository.findOne({ where: { email: email } });
+            return staff || cus;
+        } catch (error) {
+            return error;
         }
-        const hashpasswords = await bcrypt.hash(data.password, 10);
-        account.password = hashpasswords.toString();
-        return await this.accountRepository.update(id, account);
     }
 }

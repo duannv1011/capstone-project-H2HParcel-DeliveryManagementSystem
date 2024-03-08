@@ -6,10 +6,12 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationModule } from '../../authentication/modules/authentication.module';
 import { AccountEntity } from '../../../../enities/account.entity';
+import { CustomerEntity } from 'src/enities/customer.entity';
+import { StaffEntity } from 'src/enities/staff.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AccountEntity]),
+        TypeOrmModule.forFeature([AccountEntity, StaffEntity, CustomerEntity]),
         ConfigModule,
         AuthenticationModule,
         JwtModule.register({
