@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
 @Injectable()
-export class AutheicationGuard implements CanActivate {
+export class AuthenticationGuard implements CanActivate {
     constructor(
         private jwtService: JwtService,
         private configService: ConfigService,
