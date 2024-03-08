@@ -17,6 +17,12 @@ import { CustomerService } from './module/core/customer/modules/customer.service
 import { CustomerModule } from './module/core/customer/modules/customer.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { mailerConfig } from './module/core/send_mail/mail_config/mailer.config';
+import { MailerModule } from '@nestjs-modules/mailer';
+
+import { SendMailController } from './module/core/send_mail/modules/send_mail/send_mail.controller';
+import { SendMailService } from './module/core/send_mail/modules/send_mail/send_mail.service';
+import { SendMailModule } from './module/core/send_mail/modules/send_mail/send_mail.module';
 
 @Module({
     imports: [
@@ -25,9 +31,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         AccountModule,
         AuthenticationModule,
         CustomerModule,
+        SendMailModule,
+        MailerModule.forRoot(mailerConfig),
         ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     ],
-    controllers: [AppController, RoleController, AccountController, AuthenticationController, CustomerController],
+    controllers: [
+        AppController,
+        RoleController,
+        AccountController,
+        AuthenticationController,
+        CustomerController,
+        SendMailController,
+    ],
     providers: [
         AppService,
         RoleService,
@@ -39,6 +54,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         },
         CustomerService,
         ConfigService,
+        SendMailService,
     ],
 })
 export class AppModule {}

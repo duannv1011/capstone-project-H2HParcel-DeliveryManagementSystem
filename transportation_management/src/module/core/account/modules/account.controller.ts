@@ -5,8 +5,6 @@ import { AutheicationGuard } from '../../authentication/modules/authentication.g
 import { Response } from 'src/module/response/Response';
 import { Paging } from 'src/module/response/Paging';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
-import { ChangePasswordAccountdto } from '../dto/changepass_account_dto';
-import { UpdateResult } from 'typeorm';
 import { AccountEntity } from '../../../../enities/account.entity';
 @ApiTags('account-api')
 @Controller('account')
@@ -42,13 +40,10 @@ export class AccountController {
     createAccount(@Body() createAccountdto: CreateAccountdto): Promise<AccountEntity> {
         return this.accountService.createAccount(createAccountdto);
     }
-    @Put('changepassword:id')
+    @Put('getAccountBy:email')
     @UsePipes(ValidationPipe)
     // @UseGuards(AutheicationGuard)
-    async UpdatePasswordAccount(
-        @Param('id') id: string,
-        @Body() data: ChangePasswordAccountdto,
-    ): Promise<UpdateResult> {
-        return this.accountService.UpdatePasswordAccount(Number(id), data);
+    async UpdatePasswordAccount(@Param('email') email: string): Promise<any> {
+        return this.accountService.UpdatePasswordAccount(email);
     }
 }

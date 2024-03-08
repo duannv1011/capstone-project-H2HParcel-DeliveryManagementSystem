@@ -31,11 +31,16 @@ export class AuthenticationService {
         private readonly entityManager: EntityManager,
     ) {}
     async register(registerData: RegisterDto): Promise<any> {
-        const checkexisting = await this.accountRepository.findOne({
+        const checkexistingUsername = await this.accountRepository.findOne({
             where: { username: registerData.username },
         });
-        if (checkexisting) {
+        const checkscus = await this.customerRepository.findOne({ where: { email: registerData.customer.email } });
+
+        if (checkexistingUsername) {
             throw new HttpException('user already exist', HttpStatus.CONFLICT);
+        }
+        if (checkscus) {
+            throw new HttpException('please chose another email', HttpStatus.CONFLICT);
         }
         const hashedPassword = await this.hashpassword(registerData.password);
         registerData.password = hashedPassword;
@@ -50,7 +55,7 @@ export class AuthenticationService {
                 password: hashedPassword,
             });
             if (!accountInsertResult) {
-                return new HttpException('account save error', HttpStatus.BAD_REQUEST);
+                throw new HttpException('account save error', HttpStatus.BAD_REQUEST);
             }
             const accountId = accountInsertResult.acc_id; // Assuming 'id' is the auto-incremented column name
             // create address
