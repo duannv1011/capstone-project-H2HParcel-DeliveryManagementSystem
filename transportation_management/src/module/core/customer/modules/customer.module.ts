@@ -12,8 +12,8 @@ import { CustomerEntity } from '../../../../enities/customer.entity';
         ConfigModule,
         JwtModule.register({
             global: true,
-            secret: 'SECRET',
-            signOptions: { expiresIn: '1d' },
+            secret: process.env.SECRET_KEY,
+            signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
     providers: [CustomerService],

@@ -100,7 +100,7 @@ export class AuthenticationService {
             throw new HttpException('wrong user or passsword1 ', HttpStatus.UNAUTHORIZED);
         }
         // genarate token and refresh token
-        const payload = { id: account.acc_id, username: account.username, role_id: account.role_id };
+        const payload = { id: account.acc_id, username: account.username, role: account.role.role_name };
         //get
         const data_result = await this.getAdditionalData(account);
         const token = await this.genarateToken(payload);
@@ -116,7 +116,7 @@ export class AuthenticationService {
                 refresh_token,
             });
             if (checkexisttoken) {
-                return this.genarateToken({ id: verify.id, username: verify.username, role_id: verify.role_id });
+                return this.genarateToken({ id: verify.id, username: verify.username, role: verify.role });
             } else {
                 throw new HttpException('refresh token not found', HttpStatus.BAD_REQUEST);
             }
@@ -132,7 +132,7 @@ export class AuthenticationService {
     private async checkPassword(input: string, password: string) {
         return bcrypt.compare(input, password);
     }
-    private async genarateToken(payload: { id: number; username: string; role_id: number }) {
+    private async genarateToken(payload: { id: number; username: string; role: string }) {
         const access_token = await this.jwtService.signAsync(payload, {
             secret: this.configService.get<string>('SECRET_KEY'),
             expiresIn: this.configService.get<string>('EXPRIRESIN_TOKEN'),
@@ -146,7 +146,7 @@ export class AuthenticationService {
     }
     private async getAdditionalData(account: AccountEntity): Promise<any> {
         switch (account.role.role_name) {
-            case 'customer':
+            case 'CUSTOMER':
                 const customer = await this.customerRepository.findOne({
                     where: { acc_id: account.acc_id },
                 });
@@ -154,10 +154,10 @@ export class AuthenticationService {
                     return { message: 'user isvalid', status: 404 };
                 }
                 return customer;
-            case 'staff':
-            case 'shipper':
-            case 'manager':
-            case 'admin':
+            case 'STAFF':
+            case 'SHIPPER':
+            case 'MANAGER':
+            case 'ADMIN':
                 const staff = await this.staffRepository.findOne({
                     where: { acc_id: account.acc_id },
                 });

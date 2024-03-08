@@ -23,6 +23,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { SendMailController } from './module/core/send_mail/modules/send_mail/send_mail.controller';
 import { SendMailService } from './module/core/send_mail/modules/send_mail/send_mail.service';
 import { SendMailModule } from './module/core/send_mail/modules/send_mail/send_mail.module';
+import { SharedModule } from './shared/shared.module';
+import { AccessControllService } from './shared/access_controll.service';
+import { AdminModule } from './module/web/admin/module/admin.module';
 
 @Module({
     imports: [
@@ -34,6 +37,8 @@ import { SendMailModule } from './module/core/send_mail/modules/send_mail/send_m
         SendMailModule,
         MailerModule.forRoot(mailerConfig),
         ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+        SharedModule,
+        AdminModule,
     ],
     controllers: [
         AppController,
@@ -55,6 +60,7 @@ import { SendMailModule } from './module/core/send_mail/modules/send_mail/send_m
         CustomerService,
         ConfigService,
         SendMailService,
+        AccessControllService,
     ],
 })
 export class AppModule {}
