@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AutheicationGuard } from '../../authentication/modules/authentication.guard';
+import { AuthenticationGuard } from '../../authentication/modules/authentication.guard';
 import { Response } from 'src/module/response/Response';
 import { Paging } from 'src/module/response/Paging';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
@@ -22,25 +22,25 @@ export class AccountController {
             return response;
         } catch (error) {}
     }
-    @UseGuards(AutheicationGuard)
+    @UseGuards(AuthenticationGuard)
     @Get('findAll')
     @ApiBearerAuth('JWT-auth')
     async findAllAccounts(): Promise<AccountEntity[]> {
         return this.accountService.findAllAccount();
     }
     @Get('findone:id')
-    @UseGuards(AutheicationGuard)
-    @ApiBearerAuth('JWT-auth')
+    //@UseGuards(AuthenticationGuard)
+    //@ApiBearerAuth('JWT-auth')
     findOneAccountbyId(@Param('id') id: string): Promise<AccountEntity> {
         return this.accountService.getAccountById(Number(id));
     }
     @Post('create')
     @UsePipes(ValidationPipe)
-    @UseGuards(AutheicationGuard)
+    @UseGuards(AuthenticationGuard)
     createAccount(@Body() createAccountdto: CreateAccountdto): Promise<AccountEntity> {
         return this.accountService.createAccount(createAccountdto);
     }
-    @Put('getAccountBy:email')
+     @Put('getAccountBy:email')
     @UsePipes(ValidationPipe)
     // @UseGuards(AutheicationGuard)
     async UpdatePasswordAccount(@Param('email') email: string): Promise<any> {
