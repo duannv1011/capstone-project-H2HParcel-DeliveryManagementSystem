@@ -5,11 +5,11 @@ import { AuthenticationController } from './authentication.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { CustomerService } from '../../customer/modules/customer.service';
-import { StaffEntity } from '../../../../enities/staff.entity';
-import { AddressEntity } from '../../../../enities/address.entity';
-import { CustomerEntity } from '../../../../enities/customer.entity';
-import { AccountEntity } from '../../../../enities/account.entity';
-import { RoleEntity } from '../../../../enities/role.entity';
+import { StaffEntity } from '../../../../entities/staff.entity';
+import { AddressEntity } from '../../../../entities/address.entity';
+import { CustomerEntity } from '../../../../entities/customer.entity';
+import { AccountEntity } from '../../../../entities/account.entity';
+import { RoleEntity } from '../../../../entities/role.entity';
 
 @Module({
     imports: [

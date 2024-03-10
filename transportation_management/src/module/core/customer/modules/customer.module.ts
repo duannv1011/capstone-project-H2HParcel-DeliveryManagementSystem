@@ -4,7 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomerService } from './customer.service';
 import { CustomerController } from './customer.controller';
-import { CustomerEntity } from '../../../../enities/customer.entity';
+import { CustomerEntity } from '../../../../entities/customer.entity';
+import { AccessControllService } from 'src/shared/access_controll.service';
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { CustomerEntity } from '../../../../enities/customer.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [CustomerService],
+    providers: [CustomerService, AccessControllService],
     controllers: [CustomerController],
     exports: [TypeOrmModule],
 })

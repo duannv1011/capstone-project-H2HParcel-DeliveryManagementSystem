@@ -7,10 +7,10 @@ import { loginDto } from '../dto/authentication_dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CustomerService } from '../../customer/modules/customer.service';
-import { StaffEntity } from '../../../../enities/staff.entity';
-import { CustomerEntity } from '../../../../enities/customer.entity';
-import { AddressEntity } from '../../../../enities/address.entity';
-import { AccountEntity } from '../../../../enities/account.entity';
+import { StaffEntity } from '../../../../entities/staff.entity';
+import { CustomerEntity } from '../../../../entities/customer.entity';
+import { AddressEntity } from '../../../../entities/address.entity';
+import { AccountEntity } from '../../../../entities/account.entity';
 
 @Injectable()
 export class AuthenticationService {

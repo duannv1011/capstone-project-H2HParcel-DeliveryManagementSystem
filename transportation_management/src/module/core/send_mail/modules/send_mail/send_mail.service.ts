@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { ResetPasswordDto } from '../../dto/reset_pass_send_mail_dto';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AccountEntity } from 'src/enities/account.entity';
+import { AccountEntity } from 'src/entities/account.entity';
 import { Repository } from 'typeorm';
-import { StaffEntity } from 'src/enities/staff.entity';
-import { CustomerEntity } from 'src/enities/customer.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
+import { CustomerEntity } from 'src/entities/customer.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
