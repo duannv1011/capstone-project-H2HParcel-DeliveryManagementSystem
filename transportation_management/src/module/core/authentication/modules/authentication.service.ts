@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { Repository, EntityManager, DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../dto/register_dto';
 import { loginDto } from '../dto/authentication_dto';
@@ -27,8 +27,6 @@ export class AuthenticationService {
         private jwtService: JwtService,
         private configService: ConfigService,
         private dataSource: DataSource,
-        @InjectEntityManager()
-        private readonly entityManager: EntityManager,
     ) {}
     async register(registerData: RegisterDto): Promise<any> {
         const checkexistingUsername = await this.accountRepository.findOne({
