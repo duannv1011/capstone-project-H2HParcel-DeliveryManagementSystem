@@ -28,9 +28,10 @@ import { AdminModule } from './module/web/admin/module/admin.module';
 import { WarehourseModule } from './module/web/warehourse/modules/warehourse.module';
 import { WarehourseController } from './module/web/warehourse/modules/warehourse.controller';
 import { WarehourseService } from './module/web/warehourse/modules/warehourse.service';
-import { StaffModule } from './module/client/staff/staff.module';
-import { StaffService } from './module/client/staff/staff.service';
-import { StaffController } from './module/client/staff/staff.controller';
+import { StaffModule } from './module/core/staff/staff.module';
+import { StaffController } from './module/core/staff/staff.controller';
+import { ProfileService } from './shared/profile.service';
+import { ManagerModule } from './module/core/manager/manager.module';
 
 @Module({
     imports: [
@@ -46,6 +47,7 @@ import { StaffController } from './module/client/staff/staff.controller';
         AdminModule,
         WarehourseModule,
         StaffModule,
+        ManagerModule,
     ],
     controllers: [
         AppController,
@@ -71,7 +73,7 @@ import { StaffController } from './module/client/staff/staff.controller';
         SendMailService,
         AccessControllService,
         WarehourseService,
-        StaffService,
+        ProfileService,
     ],
 })
 export class AppModule {}
