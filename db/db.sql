@@ -3,6 +3,12 @@ CREATE SCHEMA IF NOT EXISTS transportation_management
 
 SET search_path TO transportation_management;
 
+CREATE TABLE "Role" (
+  "role_id" SERIAL  PRIMARY KEY,
+  "role_name" varchar
+);
+
+
 CREATE TABLE "Account" (
   "acc_id" SERIAL  PRIMARY KEY,
   "username" varchar,
@@ -32,11 +38,6 @@ CREATE TABLE "Customer" (
   "default_address" integer,
   "status" integer,
   "acc_id" integer
-);
-
-CREATE TABLE "Role" (
-  "role_id" SERIAL  PRIMARY KEY,
-  "role_name" varchar
 );
 
 CREATE TABLE "Address" (
@@ -175,6 +176,10 @@ ALTER TABLE "AddressBook" ADD FOREIGN KEY ("cus_id") REFERENCES "Customer"  ("cu
 
 ALTER TABLE "AddressBook" ADD FOREIGN KEY ("address_id") REFERENCES "Address" ("address_id");
 --
+--ALTER TABLE "Address"  ADD FOREIGN KEY ("city_id") REFERENCES "City" ("city_id");
+--ALTER TABLE "Address"  ADD FOREIGN KEY ("district_id") REFERENCES "District" ("district_id");
+ALTER TABLE "Address"  ADD FOREIGN KEY ("ward_id") REFERENCES "Ward" ("ward_id");
+--
 ALTER TABLE "District" ADD FOREIGN KEY ("city_id") REFERENCES "City" ("city_id");
 
 ALTER TABLE "Ward" ADD FOREIGN KEY ("district_id") REFERENCES "District" ("district_id");
@@ -272,6 +277,21 @@ INSERT INTO "Address" ("city_id", "district_id", "ward_id", "house") VALUES
   (1, 4, 4, '101 Street D'),
   (1, 5, 5, '202 Street E');
 
+--insert into table "Warehouse" 
+INSERT INTO "Warehouse" ("address_id", "warehouse_name") VALUES
+  (1, 'SUPER ADMIN'),
+  (2, 'Warehouse B DD'),
+  (3, 'Warehouse C HD'),
+  (4, 'Warehouse D CG'),
+  (5, 'Warehouse E TX');
+
+--insert into table "WarehouseRule" 
+INSERT INTO "WarehouseRule" ("warehouse_id", "ward_id") VALUES
+  (1, 1),
+  (2, 2),
+  (3, 3),
+  (4, 4),
+  (5, 5);
 --insert into table "Warehouse" 
 INSERT INTO "Warehouse" ("address_id", "warehouse_name") VALUES
   (1, 'SUPER ADMIN'),

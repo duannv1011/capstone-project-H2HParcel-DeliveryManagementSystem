@@ -5,7 +5,7 @@ import { AuthenticationGuard } from '../../authentication/modules/authentication
 import { Response } from 'src/module/response/Response';
 import { Paging } from 'src/module/response/Paging';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
-import { AccountEntity } from '../../../../enities/account.entity';
+import { AccountEntity } from '../../../../entities/account.entity';
 @ApiTags('account-api')
 @Controller('account')
 export class AccountController {

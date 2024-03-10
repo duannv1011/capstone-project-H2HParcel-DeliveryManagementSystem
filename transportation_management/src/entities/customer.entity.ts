@@ -1,6 +1,7 @@
 // customer.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
 import { AccountEntity } from './account.entity';
+import { AddressEntity } from './address.entity';
 
 @Entity('Customer')
 export class CustomerEntity {
@@ -31,4 +32,8 @@ export class CustomerEntity {
     @ManyToOne(() => AccountEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'acc_id' })
     account: AccountEntity;
+
+    @ManyToOne(() => AddressEntity, { eager: true, nullable: true })
+    @JoinColumn({ name: 'address_id' })
+    address: AddressEntity;
 }

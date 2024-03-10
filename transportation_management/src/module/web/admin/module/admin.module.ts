@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
-import { AccountEntity } from 'src/enities/account.entity';
-import { StaffEntity } from 'src/enities/staff.entity';
-import { CustomerEntity } from 'src/enities/customer.entity';
+import { AccountEntity } from 'src/entities/account.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
+import { CustomerEntity } from 'src/entities/customer.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AccessControllService } from 'src/shared/access_controll.service';

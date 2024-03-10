@@ -25,6 +25,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 // Time to try reconnecting (seconds)
                 retryDelay: 1,
                 entities: ['dist/entities/*.entity.js'],
+                charset: 'utf8mb4',
+                collation: 'utf8mb4',
             }),
         }),
     ],

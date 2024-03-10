@@ -5,9 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationModule } from '../../authentication/modules/authentication.module';
-import { AccountEntity } from '../../../../enities/account.entity';
-import { CustomerEntity } from 'src/enities/customer.entity';
-import { StaffEntity } from 'src/enities/staff.entity';
+import { AccountEntity } from '../../../../entities/account.entity';
+import { CustomerEntity } from 'src/entities/customer.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
 
 @Module({
     imports: [

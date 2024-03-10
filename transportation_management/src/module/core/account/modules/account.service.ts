@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { AccountEntity } from '../../../../enities/account.entity';
+import { AccountEntity } from '../../../../entities/account.entity';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
 import * as bcrypt from 'bcrypt';
-import { StaffEntity } from 'src/enities/staff.entity';
-import { CustomerEntity } from 'src/enities/customer.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
+import { CustomerEntity } from 'src/entities/customer.entity';
 
 @Injectable()
 export class AccountService {
