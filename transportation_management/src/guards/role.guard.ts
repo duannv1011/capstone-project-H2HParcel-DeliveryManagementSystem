@@ -16,7 +16,7 @@ export class RoleGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
         private accessControlService: AccessControllService,
-    ) {}
+    ) { }
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLE_KEY, [
@@ -37,5 +37,8 @@ export class RoleGuard implements CanActivate {
         }
 
         return false;
+    }
+    private isAuthorizedHard({ currentRole, requiredRoles }): Promise<boolean> {
+        return requiredRoles.includes(currentRole);
     }
 }
