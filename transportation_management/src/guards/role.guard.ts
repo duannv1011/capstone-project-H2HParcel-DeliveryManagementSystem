@@ -10,13 +10,16 @@ export class TokenDto {
     username: string;
     role: Role;
 }
-
+interface IsAuthorizedParams {
+    currentRole: Role;
+    requiredRoles: Role[];
+}
 @Injectable()
 export class RoleGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
         private accessControlService: AccessControllService,
-    ) { }
+    ) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLE_KEY, [
@@ -25,19 +28,23 @@ export class RoleGuard implements CanActivate {
         ]);
         const request = context.switchToHttp().getRequest();
         const token = request['token'] as TokenDto;
-        for (const role of requiredRoles) {
-            const result = this.accessControlService.isAuthorized({
-                requiredRole: role,
-                currentRole: token.role,
-            });
-            if (result) {
-                return true;
-            }
-        }
+        // for (const role of requiredRoles) {
+        // const result = this.accessControlService.isAuthorized({
+        //     requiredRole: role,
+        //     currentRole: token.role,
+        // });
+        //     if (result) {
+        //         return true;
+        //     }
+        // }
+        const checkRole = this.isAuthorizedHard({
+            requiredRoles: requiredRoles,
+            currentRole: token.role,
+        });
 
-        return false;
+        return checkRole;
     }
-    private isAuthorizedHard({ currentRole, requiredRoles }): Promise<boolean> {
+    private isAuthorizedHard({ currentRole, requiredRoles }: IsAuthorizedParams): boolean {
         return requiredRoles.includes(currentRole);
     }
 }
