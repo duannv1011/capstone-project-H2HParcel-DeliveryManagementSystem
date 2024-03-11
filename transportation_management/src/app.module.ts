@@ -19,13 +19,15 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { mailerConfig } from './module/core/send_mail/mail_config/mailer.config';
 import { MailerModule } from '@nestjs-modules/mailer';
-
 import { SendMailController } from './module/core/send_mail/modules/send_mail/send_mail.controller';
 import { SendMailService } from './module/core/send_mail/modules/send_mail/send_mail.service';
 import { SendMailModule } from './module/core/send_mail/modules/send_mail/send_mail.module';
 import { SharedModule } from './shared/shared.module';
 import { AccessControllService } from './shared/access_controll.service';
 import { AdminModule } from './module/web/admin/module/admin.module';
+import { WarehourseModule } from './module/web/warehourse/modules/warehourse.module';
+import { WarehourseController } from './module/web/warehourse/modules/warehourse.controller';
+import { WarehourseService } from './module/web/warehourse/modules/warehourse.service';
 
 @Module({
     imports: [
@@ -39,6 +41,7 @@ import { AdminModule } from './module/web/admin/module/admin.module';
         ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
         SharedModule,
         AdminModule,
+        WarehourseModule,
     ],
     controllers: [
         AppController,
@@ -47,6 +50,7 @@ import { AdminModule } from './module/web/admin/module/admin.module';
         AuthenticationController,
         CustomerController,
         SendMailController,
+        WarehourseController,
     ],
     providers: [
         AppService,
@@ -61,6 +65,7 @@ import { AdminModule } from './module/web/admin/module/admin.module';
         ConfigService,
         SendMailService,
         AccessControllService,
+        WarehourseService,
     ],
 })
 export class AppModule {}
