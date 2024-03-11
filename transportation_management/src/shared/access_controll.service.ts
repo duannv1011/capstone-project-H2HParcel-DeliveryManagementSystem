@@ -11,8 +11,14 @@ export class AccessControllService {
     private hierarchies: Array<Map<string, number>> = [];
     private priority: number = 1;
 
+    // constructor() {
+    //     this.buildRoles([Role.CUSTOMER, Role.SHIPPER, Role.STAFF, Role.MANAGER, Role.ADMIN]);
+    // }
     constructor() {
-        this.buildRoles([Role.CUSTOMER, Role.SHIPPER, Role.STAFF, Role.MANAGER, Role.ADMIN]);
+        this.buildRoles([Role.CUSTOMER]);
+        this.buildRoles([Role.SHIPPER]);
+        this.buildRoles([Role.STAFF, Role.MANAGER]);
+        this.buildRoles([Role.ADMIN]);
     }
 
     private buildRoles(roles: Role[]) {

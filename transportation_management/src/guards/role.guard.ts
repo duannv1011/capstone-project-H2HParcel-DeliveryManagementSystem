@@ -30,12 +30,14 @@ export class RoleGuard implements CanActivate {
                 requiredRole: role,
                 currentRole: token.role,
             });
-
             if (result) {
                 return true;
             }
         }
 
         return false;
+    }
+    private isAuthorizedHard({ currentRole, requiredRoles }): Promise<boolean> {
+        return requiredRoles.includes(currentRole);
     }
 }
