@@ -30,7 +30,6 @@ export class RoleGuard implements CanActivate {
                 requiredRole: role,
                 currentRole: token.role,
             });
-
             if (result) {
                 return true;
             }
