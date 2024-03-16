@@ -36,7 +36,7 @@ export class RoleGuard implements CanActivate {
         //     if (result) {
         //         return true;
         //     }
-        // }f
+        // }
         const checkRole = this.isAuthorizedHard({
             requiredRoles: requiredRoles,
             currentRole: token.role,
