@@ -3,6 +3,11 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdateWarehouseDto {
     @IsString()
+    @ApiProperty({ example: '1', description: 'The warehouse_id' })
+    @IsNotEmpty({ message: 'Null value error' })
+    warehouse_id: number;
+
+    @IsString()
     @ApiProperty({ example: 'warehouse_name', description: 'The warehouse_name' })
     @IsNotEmpty({ message: 'Null value error' })
     warehouse_name: string;

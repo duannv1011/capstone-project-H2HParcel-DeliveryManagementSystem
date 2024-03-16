@@ -12,8 +12,11 @@ export class WarehouseEntity extends AbstractEntity {
 
     @ManyToOne(() => AddressEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'address_id' })
-    adress: AddressEntity;
+    address: AddressEntity;
 
     @Column()
     warehouse_name: string;
+
+    @Column({ default: true, nullable: true })
+    isActive: boolean;
 }
