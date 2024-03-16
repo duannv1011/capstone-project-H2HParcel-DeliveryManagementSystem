@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AddressEntity } from './address.entity';
+import { AbstractEntity } from './abstract-entity';
 
 @Entity('Warehouse')
-export class WarehouseEntity {
+export class WarehouseEntity extends AbstractEntity {
     @PrimaryGeneratedColumn()
     warehouse_id: number;
 

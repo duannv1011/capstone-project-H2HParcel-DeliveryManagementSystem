@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { WarehourseService } from './warehourse.service';
+import { UpdateWarehouseDto } from '../dto/updateWarehoue_dto';
 
 @Controller('warehourse')
 @ApiTags('warehourse-crud-api')
@@ -19,7 +20,7 @@ export class WarehourseController {
         return this.warehouseService.createWarehouse(data);
     }
     @Put('updateWarehouse')
-    async updateWarehouse(@Body() data: any): Promise<any> {
+    async updateWarehouse(@Body() data: UpdateWarehouseDto): Promise<any> {
         return this.warehouseService.updateWarehouse(data);
     }
 }

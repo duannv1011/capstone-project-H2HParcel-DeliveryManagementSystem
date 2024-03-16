@@ -40,7 +40,7 @@ export class AccountController {
     createAccount(@Body() createAccountdto: CreateAccountdto): Promise<AccountEntity> {
         return this.accountService.createAccount(createAccountdto);
     }
-     @Put('getAccountBy:email')
+    @Put('getAccountBy:email')
     @UsePipes(ValidationPipe)
     // @UseGuards(AutheicationGuard)
     async UpdatePasswordAccount(@Param('email') email: string): Promise<any> {
