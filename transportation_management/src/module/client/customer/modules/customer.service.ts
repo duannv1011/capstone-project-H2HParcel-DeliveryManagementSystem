@@ -6,6 +6,7 @@ import { CustomerEntity } from '../../../../entities/customer.entity';
 import { DetailCustommerDto } from '../dto/get_detail_customer_dto';
 import { updateCusProfileDto } from '../dto/update_profile_customer_dto';
 import { AddressEntity } from 'src/entities/address.entity';
+import { totalpage } from 'src/shared/contants';
 interface JwtPayload {
     id: number;
     username: string;
@@ -22,6 +23,37 @@ export class CustomerService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
+    async getAllCustomer(pageNo: number, pageSize: number): Promise<any> {
+        const [list, count] = await this.customerRepository
+            .createQueryBuilder('customer')
+            .select([
+                'customer.cus_id',
+                'customer.fullname',
+                'customer.email',
+                'customer.phone',
+                'city.city_name',
+                'district.district_name',
+                'ward.ward_name',
+            ])
+            .leftJoin('customer.account', 'account')
+            .leftJoin('customer.address', 'address')
+            .leftJoin('address.city', 'city')
+            .leftJoin('address.district', 'district')
+            .leftJoin('address.ward', 'ward')
+            .where('account.isActive = :isActive', { isActive: true })
+            .orderBy('customer.cus_id', 'ASC')
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .getManyAndCount();
+        const totalPage = totalpage(count, pageSize);
+        return {
+            list,
+            count,
+            pageNo,
+            pageSize,
+            totalPage,
+        };
+    }
     async viewProfile(token: string): Promise<any> {
         const jwtPayload = decode(token) as JwtPayload;
         const customer = await this.customerRepository

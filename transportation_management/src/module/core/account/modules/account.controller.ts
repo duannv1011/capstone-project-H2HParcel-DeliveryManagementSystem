@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthenticationGuard } from '../../authentication/modules/authentication.guard';
@@ -6,6 +6,13 @@ import { Response } from 'src/module/response/Response';
 import { Paging } from 'src/module/response/Paging';
 import { CreateAccountdto } from '../dto/creaete_account_dto';
 import { AccountEntity } from '../../../../entities/account.entity';
+import { Roles } from 'src/decorators/role.decorator';
+import { Role } from 'src/enum/roles.enum';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
+import { Request } from 'express';
+import { ExtractJwt } from 'passport-jwt';
+import { changePasswordDto } from '../dto/changePass_dto';
 @ApiTags('account-api')
 @Controller('account')
 export class AccountController {
@@ -40,10 +47,13 @@ export class AccountController {
     createAccount(@Body() createAccountdto: CreateAccountdto): Promise<AccountEntity> {
         return this.accountService.createAccount(createAccountdto);
     }
-    @Put('getAccountBy:email')
+    @Put('updatePaasword')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
     @UsePipes(ValidationPipe)
-    // @UseGuards(AutheicationGuard)
-    async UpdatePasswordAccount(@Param('email') email: string): Promise<any> {
-        return this.accountService.UpdatePasswordAccount(email);
+    async updateCustomerPass(@Body() pass: changePasswordDto, @Req() request: Request) {
+        const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+        return this.accountService.updateCustomerPass(pass.password, token);
     }
 }
