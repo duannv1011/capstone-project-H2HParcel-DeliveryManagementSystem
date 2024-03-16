@@ -8,6 +8,7 @@ import { AuthenticationModule } from '../../authentication/modules/authenticatio
 import { AccountEntity } from '../../../../entities/account.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
+import { AccessControllService } from 'src/shared/access_controll.service';
 
 @Module({
     imports: [
@@ -20,7 +21,7 @@ import { StaffEntity } from 'src/entities/staff.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AccountService],
+    providers: [AccountService, AccessControllService],
     controllers: [AccountController],
     exports: [TypeOrmModule],
 })

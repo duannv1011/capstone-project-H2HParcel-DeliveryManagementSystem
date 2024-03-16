@@ -4,7 +4,7 @@ import { AuthenticationService } from './authentication.service';
 import { AuthenticationController } from './authentication.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { CustomerService } from '../../customer/modules/customer.service';
+import { CustomerService } from '../../../client/customer/modules/customer.service';
 import { StaffEntity } from '../../../../entities/staff.entity';
 import { AddressEntity } from '../../../../entities/address.entity';
 import { CustomerEntity } from '../../../../entities/customer.entity';
