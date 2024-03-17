@@ -28,10 +28,9 @@ import { AdminModule } from './module/web/admin/module/admin.module';
 import { WarehourseModule } from './module/web/warehourse/modules/warehourse.module';
 import { WarehourseController } from './module/web/warehourse/modules/warehourse.controller';
 import { WarehourseService } from './module/web/warehourse/modules/warehourse.service';
-import { StaffModule } from './module/core/staff/staff.module';
-import { StaffController } from './module/core/staff/staff.controller';
-import { ProfileService } from './shared/profile.service';
-import { ManagerModule } from './module/core/manager/manager.module';
+import { AddressBookModule } from './module/client/address_book/module/address_book.module';
+import { AddressBookService } from './module/client/address_book/module/address_book.service';
+import { AddressBookController } from './module/client/address_book/module/address_book.controller';
 
 @Module({
     imports: [
@@ -46,8 +45,7 @@ import { ManagerModule } from './module/core/manager/manager.module';
         SharedModule,
         AdminModule,
         WarehourseModule,
-        StaffModule,
-        ManagerModule,
+        AddressBookModule,
     ],
     controllers: [
         AppController,
@@ -57,7 +55,7 @@ import { ManagerModule } from './module/core/manager/manager.module';
         CustomerController,
         SendMailController,
         WarehourseController,
-        StaffController,
+        AddressBookController,
     ],
     providers: [
         AppService,
@@ -73,7 +71,7 @@ import { ManagerModule } from './module/core/manager/manager.module';
         SendMailService,
         AccessControllService,
         WarehourseService,
-        ProfileService,
+        AddressBookService,
     ],
 })
 export class AppModule {}
