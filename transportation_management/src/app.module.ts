@@ -28,6 +28,9 @@ import { AdminModule } from './module/web/admin/module/admin.module';
 import { WarehourseModule } from './module/web/warehourse/modules/warehourse.module';
 import { WarehourseController } from './module/web/warehourse/modules/warehourse.controller';
 import { WarehourseService } from './module/web/warehourse/modules/warehourse.service';
+import { AddressBookModule } from './module/client/address_book/module/address_book.module';
+import { AddressBookService } from './module/client/address_book/module/address_book.service';
+import { AddressBookController } from './module/client/address_book/module/address_book.controller';
 
 @Module({
     imports: [
@@ -42,6 +45,7 @@ import { WarehourseService } from './module/web/warehourse/modules/warehourse.se
         SharedModule,
         AdminModule,
         WarehourseModule,
+        AddressBookModule,
     ],
     controllers: [
         AppController,
@@ -51,6 +55,7 @@ import { WarehourseService } from './module/web/warehourse/modules/warehourse.se
         CustomerController,
         SendMailController,
         WarehourseController,
+        AddressBookController,
     ],
     providers: [
         AppService,
@@ -66,6 +71,7 @@ import { WarehourseService } from './module/web/warehourse/modules/warehourse.se
         SendMailService,
         AccessControllService,
         WarehourseService,
+        AddressBookService,
     ],
 })
 export class AppModule {}

@@ -51,7 +51,8 @@ CREATE TABLE "Address" (
 CREATE TABLE "AddressBook" (
   "book_id" SERIAL  PRIMARY KEY,
   "cus_id" integer,
-  "address_id" integer
+  "address_id" integer,
+  "is_deleted" boolean DEFAULT false
 );
 
 CREATE TABLE "City" (

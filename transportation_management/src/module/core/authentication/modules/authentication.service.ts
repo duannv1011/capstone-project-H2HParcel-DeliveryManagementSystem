@@ -100,9 +100,9 @@ export class AuthenticationService {
         // genarate token and refresh token
         const payload = { id: account.acc_id, username: account.username, role: account.role.role_name };
         //get
-        const data_result = await this.getAdditionalData(account);
+        //const data_result = await this.getAdditionalData(account);
         const token = await this.genarateToken(payload);
-        return { data_result: data_result, token: token };
+        return { token: token };
     }
     async refreshToken(refresh_token: string): Promise<any> {
         try {

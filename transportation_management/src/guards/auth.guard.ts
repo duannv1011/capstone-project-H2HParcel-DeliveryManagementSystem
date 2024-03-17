@@ -22,6 +22,7 @@ export class AuthGuard implements CanActivate {
                 secret: this.configService.get<string>('SECRET_KEY'),
             });
             request['token'] = payload;
+            request['userLogin'] = payload;
         } catch {
             throw new UnauthorizedException();
         }

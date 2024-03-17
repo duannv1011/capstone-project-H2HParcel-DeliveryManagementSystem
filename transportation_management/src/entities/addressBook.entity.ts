@@ -1,5 +1,5 @@
 // address-book.entity.ts
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { AddressEntity } from './address.entity';
 
@@ -7,6 +7,15 @@ import { AddressEntity } from './address.entity';
 export class AddressBookEntity {
     @PrimaryGeneratedColumn()
     book_id: number;
+
+    @Column()
+    cus_id: number;
+
+    @Column()
+    address_id: number;
+
+    @Column()
+    is_deleted: boolean;
 
     @ManyToOne(() => CustomerEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'cus_id' })
