@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { UserLoginData } from '../module/core/authentication/dto/user_login_data';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -60,5 +61,9 @@ export class AuthGuard implements CanActivate {
         } catch {
             throw new UnauthorizedException();
         }
+    }
+
+    private setAccountLoggedData(payload: any): UserLoginData {
+        return { accId: payload.id, username: payload.username, role: payload.role };
     }
 }

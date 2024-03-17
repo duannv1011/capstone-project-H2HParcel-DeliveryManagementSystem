@@ -1,6 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { RoleEntity } from './role.entity';
 import { AbstractEntity } from './abstract-entity';
+import { StaffEntity } from './staff.entity';
+import { CustomerEntity } from './customer.entity';
 @Entity('Account')
 export class AccountEntity extends AbstractEntity {
     @PrimaryGeneratedColumn()
@@ -24,4 +26,12 @@ export class AccountEntity extends AbstractEntity {
 
     @Column({ default: true })
     public isActive: boolean;
+
+    @OneToMany(() => StaffEntity, (staff) => staff.account)
+    @JoinColumn({ name: 'acc_id' })
+    staffs: StaffEntity[];
+
+    @OneToMany(() => CustomerEntity, (customer) => customer.account)
+    @JoinColumn({ name: 'acc_id' })
+    customers: CustomerEntity[];
 }
