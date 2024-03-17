@@ -31,6 +31,10 @@ import { WarehourseService } from './module/web/warehourse/modules/warehourse.se
 import { AddressBookModule } from './module/client/address_book/module/address_book.module';
 import { AddressBookService } from './module/client/address_book/module/address_book.service';
 import { AddressBookController } from './module/client/address_book/module/address_book.controller';
+import { ProfileService } from './shared/profile.service';
+import { StaffModule } from './module/core/staff/staff.module';
+import { ManagerModule } from './module/core/manager/manager.module';
+import { StaffController } from './module/core/staff/staff.controller';
 
 @Module({
     imports: [
@@ -46,6 +50,8 @@ import { AddressBookController } from './module/client/address_book/module/addre
         AdminModule,
         WarehourseModule,
         AddressBookModule,
+        StaffModule,
+        ManagerModule,
     ],
     controllers: [
         AppController,
@@ -56,6 +62,7 @@ import { AddressBookController } from './module/client/address_book/module/addre
         SendMailController,
         WarehourseController,
         AddressBookController,
+        StaffController,
     ],
     providers: [
         AppService,
@@ -72,6 +79,7 @@ import { AddressBookController } from './module/client/address_book/module/addre
         AccessControllService,
         WarehourseService,
         AddressBookService,
+        ProfileService,
     ],
 })
 export class AppModule {}
