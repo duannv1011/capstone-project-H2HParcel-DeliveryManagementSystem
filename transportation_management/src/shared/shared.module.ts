@@ -8,10 +8,15 @@ import { AccessControllService } from './service/access_controll.service';
 import { ProfileService } from './service/profile.service';
 import { RequestService } from './service/request.service';
 import { RoleEntity } from '../entities/role.entity';
+import { OrderViewService } from './service/order-view.service';
+import { OrderEntity } from '../entities/order.entity';
 
 @Module({
-    imports: [ConfigModule, TypeOrmModule.forFeature([AccountEntity, StaffEntity, RoleEntity, RequestEntity])],
-    providers: [AccessControllService, ProfileService, RequestService],
-    exports: [ProfileService, RequestService],
+    imports: [
+        ConfigModule,
+        TypeOrmModule.forFeature([AccountEntity, StaffEntity, RoleEntity, RequestEntity, OrderEntity]),
+    ],
+    providers: [AccessControllService, ProfileService, RequestService, OrderViewService],
+    exports: [ProfileService, RequestService, OrderViewService],
 })
 export class SharedModule {}
