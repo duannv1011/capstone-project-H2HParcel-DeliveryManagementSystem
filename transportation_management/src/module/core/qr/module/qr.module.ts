@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AccountService } from './account.service';
-import { AccountController } from './account.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { QrController } from './qr.controller';
+import { QrService } from './qr.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthenticationModule } from '../../authentication/modules/authentication.module';
-import { AccountEntity } from '../../../../entities/account.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AccountEntity } from 'src/entities/account.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
-import { AccessControllService } from 'src/shared/access_controll.service';
+import { AuthenticationModule } from '../../authentication/modules/authentication.module';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
 
 @Module({
@@ -22,8 +21,8 @@ import { QRCodeEntity } from 'src/entities/qrcode.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AccountService, AccessControllService],
-    controllers: [AccountController],
+    controllers: [QrController],
+    providers: [QrService],
     exports: [TypeOrmModule],
 })
-export class AccountModule {}
+export class QrModule {}

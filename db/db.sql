@@ -116,9 +116,10 @@ CREATE TABLE "Price" (
   "price" varchar
 );
 
-CREATE TABLE "Code" (
+CREATE TABLE "QRCode" (
   "code_value" varchar PRIMARY KEY,
   "order_id" integer,
+  "code_url" varchar,
   "price" varchar
 );
 

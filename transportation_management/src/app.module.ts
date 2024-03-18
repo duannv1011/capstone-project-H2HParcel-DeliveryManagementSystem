@@ -35,6 +35,9 @@ import { ProfileService } from './shared/profile.service';
 import { StaffModule } from './module/core/staff/staff.module';
 import { ManagerModule } from './module/core/manager/manager.module';
 import { StaffController } from './module/core/staff/staff.controller';
+import { QrModule } from './module/core/qr/module/qr.module';
+import { QrService } from './module/core/qr/module/qr.service';
+import { QrController } from './module/core/qr/module/qr.controller';
 
 @Module({
     imports: [
@@ -52,6 +55,7 @@ import { StaffController } from './module/core/staff/staff.controller';
         AddressBookModule,
         StaffModule,
         ManagerModule,
+        QrModule,
     ],
     controllers: [
         AppController,
@@ -63,6 +67,7 @@ import { StaffController } from './module/core/staff/staff.controller';
         WarehourseController,
         AddressBookController,
         StaffController,
+        QrController,
     ],
     providers: [
         AppService,
@@ -80,6 +85,7 @@ import { StaffController } from './module/core/staff/staff.controller';
         WarehourseService,
         AddressBookService,
         ProfileService,
+        QrService,
     ],
 })
 export class AppModule {}
