@@ -8,7 +8,7 @@ import { AuthenticationModule } from '../../authentication/modules/authenticatio
 import { AccountEntity } from '../../../../entities/account.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
-import { AccessControllService } from 'src/shared/access_controll.service';
+import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 @Module({
     imports: [
