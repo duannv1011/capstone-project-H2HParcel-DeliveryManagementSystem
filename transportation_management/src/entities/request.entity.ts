@@ -20,11 +20,11 @@ export class RequestEntity extends AbstractEntity {
     @Column()
     public note: string;
 
-    @ManyToOne((type) => RequestTypeEntity, (requestType) => requestType.requests, { eager: true })
+    @ManyToOne(() => RequestTypeEntity, (requestType) => requestType.requests, { eager: true })
     @JoinColumn({ name: 'request_type' })
     requestTypeRef: RequestTypeEntity;
 
-    @ManyToOne((type) => OrderEntity, (order) => order.requests, { eager: true })
+    @ManyToOne(() => OrderEntity, (order) => order.requests, { eager: true })
     @JoinColumn({ name: 'order_id' })
     order: OrderEntity;
 }
