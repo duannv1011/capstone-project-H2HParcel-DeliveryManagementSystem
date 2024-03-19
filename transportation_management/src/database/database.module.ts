@@ -14,8 +14,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 password: configService.get('POSTGRES_PASSWORD'),
                 database: configService.get('POSTGRES_DB'),
                 // Update database structure (warning: will restructure database)
-                synchronize: false,
-                autoLoadEntities: false,
+                synchronize: true,
+                autoLoadEntities: true,
                 schema: configService.get('POSTGRES_SCHEMA'),
                 logging: true,
                 // Drops the schema each time connection is being established (dangerous: will reset database)

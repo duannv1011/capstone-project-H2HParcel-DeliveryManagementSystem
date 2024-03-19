@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { RoleEntity } from './role.entity';
-import { AbstractEntity } from './abstract-entity';
 import { StaffEntity } from './staff.entity';
 import { CustomerEntity } from './customer.entity';
+import { AbstractEntity } from './abstract-entity';
 @Entity('Account')
 export class AccountEntity extends AbstractEntity {
     @PrimaryGeneratedColumn()

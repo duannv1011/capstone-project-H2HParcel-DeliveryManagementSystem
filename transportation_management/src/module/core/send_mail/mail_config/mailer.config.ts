@@ -6,11 +6,11 @@ import { join } from 'path';
 export const mailerConfig: MailerOptions = {
     transport: {
         host: 'smtp.gmail.com',
-        port: process.env.EMAIL_PORT,
+        port: 587,
         secure: false,
         auth: {
             user: 'nickmois59so21@gmail.com',
-            pass: 'zyweohhrgvdelbtu',
+            pass: 'srpjjbyjfyzwncvk',
         },
         tls: {
             rejectUnauthorized: false,
