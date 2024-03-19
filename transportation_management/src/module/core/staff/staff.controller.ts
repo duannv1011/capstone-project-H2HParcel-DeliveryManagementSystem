@@ -17,12 +17,13 @@ import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { RoleGuard } from '../../../guards/role.guard';
-import { UserLogin } from '../../../decorators/user_login.decorator';
-import { UserLoginData } from '../authentication/dto/user_login_data';
 import { RequestCreateDto } from '../../../shared/dto/request/request.create.dto';
 import { RequestUpdateDto } from '../../../shared/dto/request/request.update.dto';
 import { ProfileService } from '../../../shared/service/profile.service';
 import { RequestService } from '../../../shared/service/request.service';
+import { OrderViewService } from '../../../shared/service/order-view.service';
+import { UserLogin } from '../../../decorators/user_login.decorator';
+import { UserLoginData } from '../authentication/dto/user_login_data';
 
 @ApiTags('staff')
 @Controller('staff')
@@ -30,6 +31,7 @@ export class StaffController {
     constructor(
         private readonly profileService: ProfileService,
         private readonly requestService: RequestService,
+        private readonly orderViewService: OrderViewService,
     ) {}
 
     @ApiBearerAuth('JWT-auth')
@@ -80,11 +82,7 @@ export class StaffController {
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('request/detail')
-    async findOne(
-        @Query('requestId', ParseIntPipe) requestId: number,
-        @UserLogin() user: UserLoginData,
-    ): Promise<Response> {
-        console.log(user);
+    async findOne(@Query('requestId', ParseIntPipe) requestId: number): Promise<Response> {
         const request = await this.requestService.findRequestDetail(requestId);
 
         return new Response(200, 'true', request, null, 1);
@@ -138,5 +136,41 @@ export class StaffController {
         }
 
         return new Response(200, 'false', requestCancel, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View all pickup order of staff' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/pickup')
+    async findAllPickupOrderByStaff(@Query('staffId', ParseIntPipe) staffId: number): Promise<Response> {
+        const orders = await this.orderViewService.findAllPickupOrderByStaff(staffId);
+
+        return new Response(200, 'true', orders, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View all deliver order of staff' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/deliver')
+    async findAllDeliverOrderByStaff(@Query('staffId', ParseIntPipe) staffId: number): Promise<Response> {
+        const orders = await this.orderViewService.findAllDeliverOrderByStaff(staffId);
+
+        return new Response(200, 'true', orders, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View order detail' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/detail')
+    async findOneOrder(@Query('orderId', ParseIntPipe) orderId: number): Promise<Response> {
+        const orders = await this.orderViewService.findOneOrder(orderId);
+
+        return new Response(200, 'true', orders, null, 1);
     }
 }
