@@ -12,6 +12,9 @@ export const mailerConfig: MailerOptions = {
             user: 'nickmois59so21@gmail.com',
             pass: 'zyweohhrgvdelbtu',
         },
+        tls: {
+            rejectUnauthorized: false,
+        },
         defaults: {
             from: '"No Reply" <nickmois59so21@gmail.com>',
         },
