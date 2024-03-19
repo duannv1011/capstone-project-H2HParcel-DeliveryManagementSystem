@@ -24,6 +24,9 @@ import { RequestService } from '../../../shared/service/request.service';
 import { OrderViewService } from '../../../shared/service/order-view.service';
 import { UserLogin } from '../../../decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
+import { StaffService } from './staff.service';
+import { AssignCodeCreateDto } from './dto/assign-code.create.dto';
+import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
 
 @ApiTags('staff')
 @Controller('staff')
@@ -32,6 +35,7 @@ export class StaffController {
         private readonly profileService: ProfileService,
         private readonly requestService: RequestService,
         private readonly orderViewService: OrderViewService,
+        private readonly staffService: StaffService,
     ) {}
 
     @ApiBearerAuth('JWT-auth')
@@ -172,5 +176,39 @@ export class StaffController {
         const orders = await this.orderViewService.findOneOrder(orderId);
 
         return new Response(200, 'true', orders, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'Assign code to order' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @UsePipes(ValidationPipe)
+    @ApiUnauthorizedResponse()
+    @ApiBody({ type: AssignCodeCreateDto })
+    @Post('qr-code/assign')
+    async assignCodeToOrder(@Body() request: AssignCodeCreateDto): Promise<Response> {
+        const result = await this.staffService.assignCodeToOrder(request);
+        if (result) {
+            return new Response(201, 'success', result, null, 1);
+        }
+
+        return new Response(200, 'false', false, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'Assign code to order' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @UsePipes(ValidationPipe)
+    @ApiUnauthorizedResponse()
+    @ApiBody({ type: OrderStatusUpdateDto })
+    @Post('order/status/update')
+    async updateOrderStatus(@Body() request: OrderStatusUpdateDto): Promise<Response> {
+        const result = await this.staffService.updateOrderStatus(request);
+        if (result) {
+            return new Response(201, 'success', result, null, 1);
+        }
+
+        return new Response(200, 'false', false, null, 1);
     }
 }

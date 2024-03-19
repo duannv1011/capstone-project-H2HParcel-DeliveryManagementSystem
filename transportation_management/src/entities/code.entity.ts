@@ -7,10 +7,10 @@ export class CodeEntity extends AbstractEntity {
     @PrimaryColumn({ name: 'code_value' })
     codeValue: string;
 
-    @Column()
+    @Column({ nullable: true })
     price: string;
 
-    @ManyToOne(() => OrderEntity, (order) => order.codes, { eager: true })
+    @ManyToOne(() => OrderEntity, (order) => order.codes, { eager: true, nullable: true })
     @JoinColumn({ name: 'order_id' })
     order: OrderEntity;
 }
