@@ -8,18 +8,23 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { updateCusProfileDto } from '../dto/update_profile_customer_dto';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('customer-api')
 @Controller('customer')
 export class CustomerController {
-    constructor(private customerService: CustomerService) {}
+    constructor(
+        private customerService: CustomerService,
+        private configService: ConfigService,
+    ) {}
 
     @Get('getAllCustomer:pageNo')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     async getAllCustomer(@Param('pageNo') pageNo: string): Promise<any> {
-        return this.customerService.getAllCustomer(Number(pageNo), 2);
+        const pagesize = this.configService.get<string>('PAGE_SIZE');
+        return this.customerService.getAllCustomer(Number(pageNo), Number(pagesize));
     }
     @Get('viewProfile')
     @Roles(Role.CUSTOMER)

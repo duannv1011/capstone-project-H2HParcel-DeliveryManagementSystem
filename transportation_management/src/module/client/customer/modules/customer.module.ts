@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomerService } from './customer.service';
 import { CustomerController } from './customer.controller';
@@ -18,7 +18,7 @@ import { AddressEntity } from 'src/entities/address.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [CustomerService, AccessControllService],
+    providers: [CustomerService, AccessControllService, ConfigService],
     controllers: [CustomerController],
     exports: [TypeOrmModule],
 })

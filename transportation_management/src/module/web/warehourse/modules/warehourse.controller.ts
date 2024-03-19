@@ -8,17 +8,22 @@ import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enum/roles.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('warehourse')
 @ApiTags('warehourse-crud-api')
 export class WarehourseController {
-    constructor(private readonly warehouseService: WarehourseService) {}
+    constructor(
+        private readonly warehouseService: WarehourseService,
+        private configService: ConfigService,
+    ) {}
     @Get('getAllWarehouse:pageNo')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     async getAllWarehouse(@Param('pageNo') pageNo: string): Promise<any> {
-        return this.warehouseService.getAllWarehouse(Number(pageNo), 1);
+        const pagesize = this.configService.get<string>('PAGE_SIZE');
+        return this.warehouseService.getAllWarehouse(Number(pageNo), Number(pagesize));
     }
     @Get('getDetailWarehouse:warehouse_id')
     @Roles(Role.ADMIN)

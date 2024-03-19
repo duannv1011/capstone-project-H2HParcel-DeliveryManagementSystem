@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import * as qrcode from 'qrcode';
 import * as fs from 'fs';
 @Injectable()
@@ -9,9 +9,16 @@ export class QrService {
     constructor(
         @InjectRepository(QRCodeEntity)
         private qrRepository: Repository<QRCodeEntity>,
+        private dataSource: DataSource,
     ) {}
     async getAllQr() {
-        return await this.qrRepository.find();
+        const colorPalette = {
+            dark: '#000000',
+            light: '#ffffff',
+        };
+        const a = await qrcode.toDataURL('cmc.png', 'I am Cuamotcang!', colorPalette);
+        console.log(a);
+        //return await this.qrRepository.find();
     }
     async getDetailQr(code_value: string) {
         return await this.qrRepository.findOne({ where: { code_value: code_value } });
@@ -21,63 +28,31 @@ export class QrService {
     }
     async createQr(quantity: number) {
         //INSERT QR CODE
-        const insertedCodes = await this.insertQrs2(quantity);
-        console.log('insertedCodes:' + insertedCodes);
+        const insertedCodes = await this.insertQrs(quantity);
         //CREATE QR IMAGE
-        // const qrImagePaths = await this.createQrImages(insertedCodes);
-        // console.log('qrImagePaths' + qrImagePaths);
-        // return qrImagePaths;
+        await this.createQrImages(insertedCodes);
         return insertedCodes;
     }
-    async insertQrs2(quantity: number): Promise<any> {
-        const qrRecords = [];
-
+    async insertQrs(quantity: number): Promise<any> {
+        const insertedata = [];
         for (let i = 0; i < quantity; i++) {
-            const newQrRecord = new QRCodeEntity();
-            // Tạo giá trị cho cột code_value ở đây, có thể để null nếu bạn muốn
-            newQrRecord.code_value = null;
-
-            qrRecords.push(newQrRecord);
+            const qrCode = new QRCodeEntity();
+            insertedata.push(qrCode);
         }
-
-        // Chèn mảng các bản ghi vào cơ sở dữ liệu
-        const insertedRecords = await this.qrRepository.save(qrRecords);
-
-        return insertedRecords;
-    }
-    async insertQrs(quantity: number): Promise<QRCodeEntity[]> {
-        const qrRecords = [];
-        for (let i = 0; i < quantity; i++) {
-            const newQrRecord = new QRCodeEntity();
-            // Tạo giá trị cho cột code_value ở đây, có thể để null nếu bạn muốn
-            newQrRecord.code_value = null;
-            // Chèn bản ghi mới vào mảng
-            qrRecords.push(newQrRecord);
-        }
-        // Chèn mảng các bản ghi vào cơ sở dữ liệu
-        const insertedRecords = await this.qrRepository.insert(qrRecords);
-
-        return insertedRecords.raw.ge;
+        const inserted = await this.qrRepository.insert(insertedata);
+        return inserted.generatedMaps;
     }
 
-    async createQrImages(insertedCodes: QRCodeEntity[]): Promise<string[]> {
+    async createQrImages(codes: QRCodeEntity[]): Promise<any> {
         const qrImagePaths = [];
-        console.log('qrImagePaths' + qrImagePaths);
-        const updatePromises = insertedCodes.map(async (code) => {
+        const updatePromises = codes.map(async (code) => {
+            code.code_value = `h2horderqrcode${code.code_id.toString()}`;
             const qrCodeData = await qrcode.toDataURL(code.code_value);
-            console.log('qrCodeData' + qrCodeData);
-            const imageBuffer = Buffer.from(qrCodeData.split(',')[1], 'base64');
-            console.log('imageBuffer' + imageBuffer);
             const imagePath = `src/uploads/qr-code/${code.code_value}.png`;
-            console.log('imagePath' + imagePath);
-            await fs.promises.writeFile(imagePath, imageBuffer);
-
             qrImagePaths.push(imagePath);
-            return this.qrRepository.update({ code_value: code.code_value }, { qr_url: imagePath });
-        });
+});
 
         await Promise.all(updatePromises);
-
         return qrImagePaths;
     }
 }

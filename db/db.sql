@@ -1,7 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS transportation_management
-    AUTHORIZATION postgresql;
-
-SET search_path TO transportation_management;
 
 CREATE TABLE "Role" (
   "role_id" SERIAL  PRIMARY KEY,
@@ -15,9 +11,6 @@ CREATE TABLE "Account" (
   "password" varchar,
   "role_id" integer,
   "refresh_token" varchar,
-  "date_create_at" timestamp,
-  "date_update_at" timestamp,
-
 );
 
 CREATE TABLE "Staff" (
@@ -26,8 +19,10 @@ CREATE TABLE "Staff" (
   "email" varchar,
   "phone" varchar,
   "warehouse_id" integer,
-  "acc_id" integer
+  "acc_id" integer,
+  "address_id" integer
 );
+//add address_id
 
 CREATE TABLE "Customer" (
   "cus_id" SERIAL   PRIMARY KEY,
@@ -101,11 +96,11 @@ CREATE TABLE "Order" (
   "pickup_name" varchar,
   "pickup_phone" varchar,
   "pickup_address" integer,
-  "pickup_transporter" integer,
+  "pickup_shipper" integer,
   "deliver_name" varchar,
   "deliver_phone" varchar,
   "deliver_address" integer,
-  "deliver_transporter" integer,
+  "deliver_shipper" integer,
   "order_stt" integer,
   "estimated_price" integer
 );
@@ -117,9 +112,9 @@ CREATE TABLE "Price" (
 );
 
 CREATE TABLE "QRCode" (
-  "code_value" varchar PRIMARY KEY,
+  "code_id" SERIAL  PRIMARY KEY,
   "order_id" integer,
-  "code_url" varchar,
+  "code_value" varchar unique,
   "price" varchar
 );
 
@@ -137,12 +132,12 @@ CREATE TABLE "Request" (
   "request_stt" integer,
   "note" varchar
 );
-
+// data
 CREATE TABLE "RequestType" (
   "rt_id" SERIAL  PRIMARY KEY,
   "rt_name" varchar
 );
-
+// data
 CREATE TABLE "OrderStatus" (
   "stt_id" SERIAL  PRIMARY KEY,
   "stt_name" varchar
@@ -159,10 +154,11 @@ CREATE TABLE "ShiftSheet" (
   "shift_id" integer,-- forykey for Shift
   "staff_id" integer -- employee work on
 );
-
+// data
 CREATE TABLE "PayRule" (
   "rule_id" SERIAL  PRIMARY KEY,
-  "effort" integer
+  "effort" integer,
+  "pay_rule_name" varchar
 );
 
 

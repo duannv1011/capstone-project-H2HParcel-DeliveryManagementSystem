@@ -6,7 +6,6 @@ import { CustomerEntity } from '../../../../entities/customer.entity';
 import { DetailCustommerDto } from '../dto/get_detail_customer_dto';
 import { updateCusProfileDto } from '../dto/update_profile_customer_dto';
 import { AddressEntity } from 'src/entities/address.entity';
-import { totalpage } from 'src/shared/contants';
 interface JwtPayload {
     id: number;
     username: string;
@@ -45,13 +44,16 @@ export class CustomerService {
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
-        const totalPage = totalpage(count, pageSize);
+        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
+        if (!count || totalpage < pageNo) {
+            return { status: 404, msg: 'not found!' };
+        }
         return {
             list,
             count,
             pageNo,
             pageSize,
-            totalPage,
+            totalpage,
         };
     }
     async viewProfile(token: string): Promise<any> {

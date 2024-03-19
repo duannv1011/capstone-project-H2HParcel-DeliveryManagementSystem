@@ -1,8 +1,11 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('QRCode')
 export class QRCodeEntity {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
+    code_id: number;
+
+    @Column({ nullable: true })
     code_value: string;
 
     @Column({ nullable: true })

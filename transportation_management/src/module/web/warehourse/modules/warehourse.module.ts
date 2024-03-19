@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { AccessControllService } from 'src/shared/access_controll.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { AccessControllService } from 'src/shared/access_controll.service';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [WarehourseService,AccessControllService],
+    providers: [WarehourseService, AccessControllService, ConfigService],
     controllers: [WarehourseController],
     exports: [TypeOrmModule],
 })

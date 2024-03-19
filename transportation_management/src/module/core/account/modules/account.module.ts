@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { AccountController } from './account.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthenticationModule } from '../../authentication/modules/authentication.module';
 import { AccountEntity } from '../../../../entities/account.entity';
@@ -22,7 +22,7 @@ import { QRCodeEntity } from 'src/entities/qrcode.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AccountService, AccessControllService],
+    providers: [AccountService, AccessControllService, ConfigService],
     controllers: [AccountController],
     exports: [TypeOrmModule],
 })

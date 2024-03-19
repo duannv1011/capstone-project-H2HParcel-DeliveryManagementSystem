@@ -35,11 +35,16 @@ export class WarehourseService {
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
+        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
+        if (!count || totalpage < pageNo) {
+            return { status: 404, msg: 'not found!' };
+        }
         return {
             list,
             count,
             pageNo,
             pageSize,
+            totalpage,
         };
     }
     async getDetailWarehouse(warehouse_id: number): Promise<any> {
