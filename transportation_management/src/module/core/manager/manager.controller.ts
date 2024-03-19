@@ -10,13 +10,13 @@ import {
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
-import { ProfileService } from '../../../shared/profile.service';
 import { Response } from '../../response/Response';
-import { StaffProfileUpdateDto } from '../staff/dto/staff_profile_update.dto';
+import { StaffProfileUpdateDto } from '../../../shared/dto/profile/staff_profile.update.dto';
 import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { RoleGuard } from '../../../guards/role.guard';
+import { ProfileService } from '../../../shared/service/profile.service';
 
 @ApiTags('manager')
 @Controller('manager')

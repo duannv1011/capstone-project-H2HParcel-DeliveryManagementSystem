@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
 import { StaffController } from './staff.controller';
-import { StaffService } from './staff.service';
-import { AuthenticationModule } from '../authentication/modules/authentication.module';
 import { ConfigModule } from '@nestjs/config';
-import { ProfileService } from '../../../shared/profile.service';
-import { AccessControllService } from '../../../shared/access_controll.service';
+import { AccessControllService } from '../../../shared/service/access_controll.service';
+import { SharedModule } from '../../../shared/shared.module';
+import { AuthenticationModule } from '../authentication/modules/authentication.module';
 
 @Module({
-    imports: [ConfigModule, AuthenticationModule],
+    imports: [ConfigModule, AuthenticationModule, SharedModule],
     controllers: [StaffController],
-    providers: [StaffService, ProfileService, AccessControllService],
-    exports: [StaffService],
+    providers: [AccessControllService],
 })
 export class StaffModule {}

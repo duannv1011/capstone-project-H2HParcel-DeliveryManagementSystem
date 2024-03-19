@@ -3,17 +3,19 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { ROLE_KEY } from 'src/decorators/role.decorator';
 import { Role } from 'src/enum/roles.enum';
-import { AccessControllService } from 'src/shared/access_controll.service';
+import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 export class TokenDto {
     id: number;
     username: string;
     role: Role;
 }
+
 interface IsAuthorizedParams {
     currentRole: Role;
     requiredRoles: Role[];
 }
+
 @Injectable()
 export class RoleGuard implements CanActivate {
     constructor(
@@ -44,6 +46,7 @@ export class RoleGuard implements CanActivate {
 
         return checkRole;
     }
+
     private isAuthorizedHard({ currentRole, requiredRoles }: IsAuthorizedParams): boolean {
         return requiredRoles.includes(currentRole);
     }

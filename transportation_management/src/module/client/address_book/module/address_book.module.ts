@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
-import { AccessControllService } from 'src/shared/access_controll.service';
+import { AccessControllService } from 'src/shared/service/access_controll.service';
 import { AddressBookEntity } from 'src/entities/addressBook.entity';
 
 @Module({
