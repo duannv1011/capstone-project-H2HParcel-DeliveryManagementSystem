@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
@@ -18,11 +18,11 @@ export class CustomerController {
         private configService: ConfigService,
     ) {}
 
-    @Get('getAllCustomer:pageNo')
+    @Get('getAllCustomer')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    async getAllCustomer(@Param('pageNo') pageNo: string): Promise<any> {
+    async getAllCustomer(@Query('pageNo') pageNo: string): Promise<any> {
         const pagesize = this.configService.get<string>('PAGE_SIZE');
         return this.customerService.getAllCustomer(Number(pageNo), Number(pagesize));
     }

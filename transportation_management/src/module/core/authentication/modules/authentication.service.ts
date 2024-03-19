@@ -33,11 +33,12 @@ export class AuthenticationService {
             where: { username: registerData.username },
         });
         const checkscus = await this.customerRepository.findOne({ where: { email: registerData.customer.email } });
+        const checkstaff = await this.staffRepository.findOne({ where: { email: registerData.customer.email } });
 
         if (checkexistingUsername) {
             throw new HttpException('user already exist', HttpStatus.CONFLICT);
         }
-        if (checkscus) {
+        if (checkscus || checkstaff) {
             throw new HttpException('please chose another email', HttpStatus.CONFLICT);
         }
         const hashedPassword = await this.hashpassword(registerData.password);

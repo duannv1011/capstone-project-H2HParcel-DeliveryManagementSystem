@@ -6,6 +6,7 @@ import { CustomerEntity } from '../../../../entities/customer.entity';
 import { DetailCustommerDto } from '../dto/get_detail_customer_dto';
 import { updateCusProfileDto } from '../dto/update_profile_customer_dto';
 import { AddressEntity } from 'src/entities/address.entity';
+import { Response } from 'src/module/response/Response';
 interface JwtPayload {
     id: number;
     username: string;
@@ -46,7 +47,7 @@ export class CustomerService {
             .getManyAndCount();
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
-            return { status: 404, msg: 'not found!' };
+            return new Response(200, 'not found', list);
         }
         return {
             list,

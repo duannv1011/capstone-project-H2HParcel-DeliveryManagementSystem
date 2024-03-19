@@ -24,18 +24,11 @@ export class SendMailService {
 
     async sendPasswordResetEmail(email: ResetPasswordDto): Promise<any> {
         try {
-            const resetPass = this.genareatePassword();
-            const saltTime = await bcrypt.genSalt(10);
-            const hashpasswords = await bcrypt.hash(resetPass, saltTime);
+            const verifyCode = await this.genareatecode();
             const checkstaff = await this.staffRespository.findOne({ where: { email: email.email } });
             const checkscus = await this.customerRepository.findOne({ where: { email: email.email } });
             if (!checkstaff && !checkscus) {
                 return 'not found';
-            }
-            const id = checkstaff.acc_id || checkscus.acc_id;
-            const updateAccount = await this.accountRepository.update(id, { password: hashpasswords });
-            if (!updateAccount) {
-                return 'update failed';
             }
             await this.mailerService.sendMail({
                 to: email.email,
@@ -43,7 +36,7 @@ export class SendMailService {
                 subject: 'H2H App Password Reset',
                 template: 'src/teamplates/email/reset_pass',
                 html: `<p>We received a request to reset your password. Please click the following link to reset it:</p>
-                <H3>${resetPass}<H3>
+                <H3>${verifyCode}<H3>
                 <p>If you did not request a password reset, you can ignore this email.</p>`,
             });
             return 'successfull';
@@ -52,21 +45,23 @@ export class SendMailService {
             return 'eror';
         }
     }
-    private genareatePassword(): string {
-        const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
-        const upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    async updatePassword() {
+        // const resetPass = this.genareatePassword();
+        // const saltTime = await bcrypt.genSalt(10);
+        // const hashpasswords = await bcrypt.hash(resetPass, saltTime);
+        //const id = checkstaff.acc_id || checkscus.acc_id;
+        //const updateAccount = await this.accountRepository.update(id, { password: hashpasswords });
+        //if (!updateAccount) {
+        //return 'update failed';
+        //}
+    }
+    private genareatecode(): string {
         const numbers = '0123456789';
-        const specialCharacters = '!@#$%^&*()';
-        let password =
-            this.getRandomChar(lowerCaseLetters) +
-            this.getRandomChar(upperCaseLetters) +
-            this.getRandomChar(numbers) +
-            this.getRandomChar(specialCharacters);
-        const allCharacters = lowerCaseLetters + upperCaseLetters + numbers + specialCharacters;
-        for (let i = password.length; i < 8; i++) {
-            password += this.getRandomChar(allCharacters);
+        let leter = this.getRandomChar(numbers);
+        for (let i = 1; i < 6; i++) {
+            leter += this.getRandomChar(numbers);
         }
-        return password;
+        return leter;
     }
     private getRandomChar(char: string): string {
         const characters = char;

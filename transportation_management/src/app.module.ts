@@ -3,9 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
-import { RoleService } from './module/web/role/modules/role.service';
-import { RoleController } from './module/web/role/modules/role.controller';
-import { RoleModule } from './module/web/role/modules/role.module';
 import { AccountModule } from './module/core/account/modules/account.module';
 import { AccountController } from './module/core/account/modules/account.controller';
 import { AccountService } from './module/core/account/modules/account.service';
@@ -42,7 +39,6 @@ import { QrController } from './module/core/qr/module/qr.controller';
 @Module({
     imports: [
         DatabaseModule,
-        RoleModule,
         AccountModule,
         AuthenticationModule,
         CustomerModule,
@@ -59,7 +55,6 @@ import { QrController } from './module/core/qr/module/qr.controller';
     ],
     controllers: [
         AppController,
-        RoleController,
         AccountController,
         AuthenticationController,
         CustomerController,
@@ -71,7 +66,6 @@ import { QrController } from './module/core/qr/module/qr.controller';
     ],
     providers: [
         AppService,
-        RoleService,
         AccountService,
         AuthenticationService,
         {

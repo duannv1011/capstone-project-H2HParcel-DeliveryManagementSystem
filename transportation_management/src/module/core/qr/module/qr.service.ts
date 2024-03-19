@@ -46,7 +46,7 @@ export class QrService {
     async createQrImages(codes: QRCodeEntity[]): Promise<any> {
         const qrImagePaths = [];
         const updatePromises = codes.map(async (code) => {
-            code.code_value = `h2horderqrcode${code.code_id.toString()}`;
+            code.code_value = `H2HOrderNo${code.code_id.toString()}`;
             const qrCodeData = await qrcode.toDataURL(code.code_value);
             const imagePath = `src/uploads/qr-code/${code.code_value}.png`;
             qrImagePaths.push(imagePath);
