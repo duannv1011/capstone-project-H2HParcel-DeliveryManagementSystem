@@ -23,6 +23,7 @@ async function bootstrap() {
         .build();
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new ExceptionsLoggerFilter(httpAdapter));
+    app.enableCors();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
     await app.listen(3000);
