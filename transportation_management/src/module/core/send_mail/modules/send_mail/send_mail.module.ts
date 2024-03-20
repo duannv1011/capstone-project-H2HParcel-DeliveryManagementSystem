@@ -9,7 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from '../../mail_config/mailer.config';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
-import { AccessControllService } from 'src/shared/access_controll.service';
+import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 @Module({
     imports: [

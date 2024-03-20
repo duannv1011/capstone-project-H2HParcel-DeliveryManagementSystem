@@ -5,8 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
-import { AccessControllService } from 'src/shared/access_controll.service';
 import { ConfigService } from '@nestjs/config';
+import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 @Module({
     imports: [
