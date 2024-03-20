@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Response } from '../../response/Response';
 import { QrCodeService } from './qr-code.service';
 import { QrCodeCreateDto } from './dto/qr-code.create.dto';
 import { QrCodeListDto } from './dto/qr-code.list.dto';
+import { AuthGuard } from '../../../guards/auth.guard';
 
 @ApiTags('qr-code')
 @Controller('qr-code')
@@ -12,7 +13,7 @@ export class QrCodeController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Create QR code list' })
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
     @ApiUnauthorizedResponse()
     @ApiBody({ type: QrCodeCreateDto })
@@ -25,7 +26,7 @@ export class QrCodeController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View all QR code list' })
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @ApiUnauthorizedResponse()
     @Get('all')
     async findAllQrCode(): Promise<Response> {
@@ -36,7 +37,7 @@ export class QrCodeController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View QR code detail' })
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @ApiUnauthorizedResponse()
     @Get('detail')
     async findOneOrder(@Query('codeValue') codeValue: string): Promise<Response> {
@@ -51,7 +52,7 @@ export class QrCodeController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'QR code to file zip base64' })
-    // @UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
     @ApiUnauthorizedResponse()
     @ApiBody({ type: QrCodeListDto })

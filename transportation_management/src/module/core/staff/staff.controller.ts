@@ -181,8 +181,8 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Assign code to order' })
-    // @Roles(Role.STAFF)
-    // @UseGuards(AuthGuard, RoleGuard)
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
     @ApiUnauthorizedResponse()
     @ApiBody({ type: AssignCodeDto })

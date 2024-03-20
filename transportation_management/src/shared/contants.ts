@@ -6,3 +6,5 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const QRCODE_PATH: string = './qr-code/';
 
 export const DATE_FORMAT: string = 'DD-MM-YYYY';
+
+export const TIMEZONE: string = 'Asia/Ho_Chi_Minh';
