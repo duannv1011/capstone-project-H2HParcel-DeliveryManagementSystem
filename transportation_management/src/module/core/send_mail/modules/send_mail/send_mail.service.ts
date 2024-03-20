@@ -40,7 +40,7 @@ export class SendMailService {
                 from: this.configService.get<string>('DEFAULT_EMAIL_FROM'),
                 subject: 'H2H App Password Reset',
                 template: 'src/teamplates/email/reset_pass',
-                html: `<p>We received a request to reset your password. Please click the following link to reset it:</p>
+                html: `<p>We received a request to reset your password. Please qick to respon the verify code . This code will effect in 10 minute:</p>
                 <H3>${verifyCode}<H3>
                 <p>If you did not request a password reset, you can ignore this email.</p>`,
             });
