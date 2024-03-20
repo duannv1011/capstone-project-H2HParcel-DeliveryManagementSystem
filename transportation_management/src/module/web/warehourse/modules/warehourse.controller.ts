@@ -17,14 +17,6 @@ export class WarehourseController {
         private readonly warehouseService: WarehourseService,
         private configService: ConfigService,
     ) {}
-    @Get('getAllWarehouse:pageNo')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    async getAllWarehouse(@Param('pageNo') pageNo: string): Promise<any> {
-        const pagesize = this.configService.get<string>('PAGE_SIZE');
-        return this.warehouseService.getAllWarehouse(Number(pageNo), Number(pagesize));
-    }
     @Get('getDetailWarehouse:warehouse_id')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)

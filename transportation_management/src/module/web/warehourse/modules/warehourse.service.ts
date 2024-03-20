@@ -15,38 +15,6 @@ export class WarehourseService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
-    async getAllWarehouse(pageNo: number, pageSize: number): Promise<any> {
-        const [list, count] = await this.warehouseRepository
-            .createQueryBuilder('warehouse')
-            .select([
-                'warehouse.warehouse_id',
-                'warehouse.warehouse_name',
-                'address.house',
-                'city.city_name',
-                'district.district_name',
-                'ward.ward_name',
-            ])
-            .leftJoin('warehouse.address', 'address')
-            .leftJoin('address.city', 'city')
-            .leftJoin('address.district', 'district')
-            .leftJoin('address.ward', 'ward')
-            .where('warehouse.isActive = :isActive', { isActive: true })
-            .orderBy('warehouse.warehouse_id', 'ASC')
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize)
-            .getManyAndCount();
-        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
-        if (!count || totalpage < pageNo) {
-            return { status: 404, msg: 'not found!' };
-        }
-        return {
-            list,
-            count,
-            pageNo,
-            pageSize,
-            totalpage,
-        };
-    }
     async getDetailWarehouse(warehouse_id: number): Promise<any> {
         const wh = await this.warehouseRepository.findOneBy({ warehouse_id: warehouse_id });
         if (!wh) {

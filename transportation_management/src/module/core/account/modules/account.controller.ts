@@ -31,15 +31,6 @@ export class AccountController {
             return response;
         } catch (error) {}
     }
-    @Get('findAll:pageNo')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @UsePipes(ValidationPipe)
-    async findAllAccounts(@Param('pageNo') pageNo: string): Promise<any> {
-        const pagesize = this.configService.get<string>('PAGE_SIZE');
-        return this.accountService.findAllAccount(Number(pageNo), Number(pagesize));
-    }
     @Get('findone:id')
     //@UseGuards(AuthenticationGuard)
     //@ApiBearerAuth('JWT-auth')

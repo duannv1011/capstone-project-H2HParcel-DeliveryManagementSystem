@@ -6,7 +6,6 @@ import { CustomerEntity } from '../../../../entities/customer.entity';
 import { DetailCustommerDto } from '../dto/get_detail_customer_dto';
 import { updateCusProfileDto } from '../dto/update_profile_customer_dto';
 import { AddressEntity } from 'src/entities/address.entity';
-import { Response } from 'src/module/response/Response';
 interface JwtPayload {
     id: number;
     username: string;
@@ -23,40 +22,6 @@ export class CustomerService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
-    async getAllCustomer(pageNo: number, pageSize: number): Promise<any> {
-        const [list, count] = await this.customerRepository
-            .createQueryBuilder('customer')
-            .select([
-                'customer.cus_id',
-                'customer.fullname',
-                'customer.email',
-                'customer.phone',
-                'city.city_name',
-                'district.district_name',
-                'ward.ward_name',
-            ])
-            .leftJoin('customer.account', 'account')
-            .leftJoin('customer.address', 'address')
-            .leftJoin('address.city', 'city')
-            .leftJoin('address.district', 'district')
-            .leftJoin('address.ward', 'ward')
-            .where('account.isActive = :isActive', { isActive: true })
-            .orderBy('customer.cus_id', 'ASC')
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize)
-            .getManyAndCount();
-        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
-        if (!count || totalpage < pageNo) {
-            return new Response(200, 'not found', list);
-        }
-        return {
-            list,
-            count,
-            pageNo,
-            pageSize,
-            totalpage,
-        };
-    }
     async viewProfile(token: string): Promise<any> {
         const jwtPayload = decode(token) as JwtPayload;
         const customer = await this.customerRepository
