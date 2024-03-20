@@ -2,7 +2,7 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StaffProfileUpdateDto {
-    @ApiProperty({ example: '1' })
+    @ApiProperty({ example: 1 })
     @IsNumber()
     @IsNotEmpty()
     staff_id: number;
@@ -22,7 +22,7 @@ export class StaffProfileUpdateDto {
     @IsOptional()
     phone?: string;
 
-    @ApiProperty({ example: '1' })
+    @ApiProperty({ example: 1 })
     @IsNumber()
     @IsOptional()
     warehouse_id?: number;

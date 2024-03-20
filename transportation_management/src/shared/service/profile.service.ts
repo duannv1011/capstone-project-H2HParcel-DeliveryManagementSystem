@@ -1,10 +1,10 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StaffProfileUpdateDto } from '../module/core/staff/dto/staff_profile_update.dto';
-import { AccountEntity } from '../entities/account.entity';
-import { RoleEntity } from '../entities/role.entity';
-import { StaffEntity } from '../entities/staff.entity';
+import { AccountEntity } from '../../entities/account.entity';
+import { RoleEntity } from '../../entities/role.entity';
+import { StaffEntity } from '../../entities/staff.entity';
+import { StaffProfileUpdateDto } from '../dto/profile/staff_profile.update.dto';
 
 @Injectable()
 export class ProfileService {

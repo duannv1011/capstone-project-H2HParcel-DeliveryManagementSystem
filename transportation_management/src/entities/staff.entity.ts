@@ -1,5 +1,5 @@
 // staff.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountEntity } from './account.entity';
 
 @Entity('Staff')

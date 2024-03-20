@@ -20,14 +20,14 @@ export class AddressBookController {
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     async getAddressBookByCusId(@UserLogin() userLogin: UserLoginData): Promise<any> {
-        return this.addressBookService.getAddressBookByCusId(Number(userLogin.id));
+        return this.addressBookService.getAddressBookByCusId(Number(userLogin.accId));
     }
     @Post('CreateDefaultAddress')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     async createAddressBook(@UserLogin() userLogin: UserLoginData, @Body() data: createAddresBookDto): Promise<any> {
-        return this.addressBookService.createAddressBook(data, userLogin.id);
+        return this.addressBookService.createAddressBook(data, userLogin.accId);
     }
     @Put('setDefaultAddress')
     @Roles(Role.CUSTOMER)
@@ -37,14 +37,14 @@ export class AddressBookController {
         @Body() data: setDefaultAddressDto,
         @UserLogin() userLogin: UserLoginData,
     ): Promise<any> {
-        return this.addressBookService.setDefaultAddressBook(Number(data.book_id), userLogin.id);
+        return this.addressBookService.setDefaultAddressBook(Number(data.book_id), userLogin.accId);
     }
     @Put('updateAddressBook')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     async updateAddressbook(@Body() data: UpdateAddresBookDto, @UserLogin() userLogin: UserLoginData): Promise<any> {
-        return this.addressBookService.updateAddressbook(data, userLogin.id);
+        return this.addressBookService.updateAddressbook(data, userLogin.accId);
     }
     @Put('softDeleteAddressBook')
     @Roles(Role.CUSTOMER)
@@ -54,6 +54,6 @@ export class AddressBookController {
         @Body() data: setDefaultAddressDto,
         @UserLogin() userLogin: UserLoginData,
     ): Promise<any> {
-        return this.addressBookService.softDelete(Number(data.book_id), userLogin.id);
+        return this.addressBookService.softDelete(Number(data.book_id), userLogin.accId);
     }
 }

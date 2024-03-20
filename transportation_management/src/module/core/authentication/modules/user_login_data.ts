@@ -1,5 +1,5 @@
 export class UserLoginData {
-    id: number;
+    accId: number;
 
     username: string;
 

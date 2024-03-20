@@ -10,7 +10,7 @@ export const mailerConfig: MailerOptions = {
         secure: false,
         auth: {
             user: 'nickmois59so21@gmail.com',
-            pass: 'hptbjzvbbtokwqzh',
+            pass: 'srpjjbyjfyzwncvk',
         },
         tls: {
             rejectUnauthorized: false,

@@ -6,7 +6,7 @@ import { StaffEntity } from 'src/entities/staff.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { AccessControllService } from 'src/shared/access_controll.service';
+import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 @Module({
     imports: [

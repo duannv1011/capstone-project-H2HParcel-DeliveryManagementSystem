@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
                 secret: this.configService.get<string>('SECRET_KEY'),
             });
             request['token'] = payload;
-            request['userLogin'] = payload;
+            request['userLogin'] = this.setAccountLoggedData(payload);
         } catch {
             throw new UnauthorizedException();
         }
