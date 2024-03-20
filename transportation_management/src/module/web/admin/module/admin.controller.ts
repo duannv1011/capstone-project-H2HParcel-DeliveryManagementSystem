@@ -51,7 +51,7 @@ export class AdminController {
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    async getAllStaff(@Query('pageNo') pageNo: string, @Query('pageNo') role: string): Promise<any> {
-        //return this.adminService.getAllStaff(Number(pageNo), role.toUpperCase());
+    async getAllStaff(@Query('pageNo') pageNo: string): Promise<any> {
+        return this.adminService.getAllStaff(Number(pageNo));
     }
 }

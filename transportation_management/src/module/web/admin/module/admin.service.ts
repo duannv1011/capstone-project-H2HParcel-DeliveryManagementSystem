@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountEntity } from 'src/entities/account.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { Response } from 'src/module/response/Response';
 import { Repository, DataSource } from 'typeorm';
@@ -14,11 +16,14 @@ export class AdminService {
         private accountRepository: Repository<AccountEntity>,
         @InjectRepository(CustomerEntity)
         private customerRepository: Repository<CustomerEntity>,
+        @InjectRepository(StaffEntity)
+        private staffRepository: Repository<StaffEntity>,
         @InjectRepository(WarehouseEntity)
         private warehouseRepository: Repository<WarehouseEntity>,
         @InjectRepository(AddressEntity)
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
+        private configService: ConfigService,
     ) {}
     async findAllAccount(pageNo: number, pageSize: number): Promise<any> {
         const [list, count] = await this.accountRepository
@@ -106,7 +111,29 @@ export class AdminService {
             totalpage,
         };
     }
-    async getAllStaff(pageNo: number, role: string): Promise<any> {
-        return pageNo + '' + role;
+    async getAllStaff(pageNo: number): Promise<any> {
+        const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
+
+        const [list, count] = await this.staffRepository
+            .createQueryBuilder('s')
+            .select(['s.fullname', 's.email', 's.phone', 's.warehouse', 's.account', 's.status'])
+            .leftJoin('s.warehouse', 'warehouse')
+            .leftJoin('s.account', 'account')
+            .orderBy('s.staff_id', 'ASC')
+            .groupBy('s.warehouse.warehouse_id')
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .getManyAndCount();
+        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
+        if (!count || totalpage < pageNo) {
+            return { status: 404, msg: 'not found!' };
+        }
+        return {
+            list,
+            count,
+            pageNo,
+            pageSize,
+            totalpage,
+        };
     }
 }

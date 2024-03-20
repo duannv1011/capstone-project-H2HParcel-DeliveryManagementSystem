@@ -32,6 +32,7 @@ import { StaffModule } from './module/core/staff/staff.module';
 import { ManagerModule } from './module/core/manager/manager.module';
 import { StaffController } from './module/core/staff/staff.controller';
 import { ProfileService } from './shared/service/profile.service';
+import { StatusModule } from './module/core/status/module/status.module';
 
 @Module({
     imports: [
@@ -48,6 +49,7 @@ import { ProfileService } from './shared/service/profile.service';
         AddressBookModule,
         StaffModule,
         ManagerModule,
+        StatusModule,
     ],
     controllers: [
         AppController,
