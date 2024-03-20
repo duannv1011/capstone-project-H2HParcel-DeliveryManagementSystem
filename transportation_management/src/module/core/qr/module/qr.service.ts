@@ -49,6 +49,7 @@ export class QrService {
             code.code_value = `H2HOrderNo${code.code_id.toString()}`;
             const qrCodeData = await qrcode.toDataURL(code.code_value);
             const imagePath = `src/uploads/qr-code/${code.code_value}.png`;
+            //update qr_url        
             qrImagePaths.push(imagePath);
 });
 
