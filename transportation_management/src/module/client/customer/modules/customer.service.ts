@@ -125,4 +125,20 @@ export class CustomerService {
     private combineAddress(parts: (string | null | undefined)[]): string {
         return parts.filter(Boolean).join(',');
     }
+    async updateCustomerStatus(cus_id: number, status: number): Promise<any> {
+        const customer = await this.customerRepository.findOneBy({ cus_id });
+        if (!customer) {
+            return {
+                success: false,
+                error: 'not found',
+                status: HttpStatus.NOT_FOUND,
+            };
+        }
+        customer.status = status;
+        return {
+            success: true,
+            error: 'success',
+            status: HttpStatus.OK,
+        };
+    }
 }

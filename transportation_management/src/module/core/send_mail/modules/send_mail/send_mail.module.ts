@@ -9,7 +9,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { mailerConfig } from '../../mail_config/mailer.config';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
-import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 @Module({
     imports: [
@@ -17,7 +16,7 @@ import { AccessControllService } from 'src/shared/service/access_controll.servic
         ConfigModule,
         MailerModule.forRoot(mailerConfig),
     ],
-    providers: [SendMailService, AccountService, AccessControllService],
+    providers: [SendMailService, AccountService],
     controllers: [SendMailController],
     exports: [TypeOrmModule],
 })

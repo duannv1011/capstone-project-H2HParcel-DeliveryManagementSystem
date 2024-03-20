@@ -1,5 +1,5 @@
 // customer.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, AfterLoad } from 'typeorm';
 import { AccountEntity } from './account.entity';
 import { AddressEntity } from './address.entity';
 
@@ -25,7 +25,6 @@ export class CustomerEntity {
 
     @Column({ default: 1 })
     status: number;
-
     @Column({ nullable: true })
     address_id: number;
 
@@ -36,4 +35,17 @@ export class CustomerEntity {
     @ManyToOne(() => AddressEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'address_id' })
     address: AddressEntity;
+
+    private static Statuses: { [id: number]: string } = {
+        1: 'active',
+        2: 'suspend',
+        3: 'blocked',
+    };
+
+    @AfterLoad()
+    public setStatusName(): void {
+        this.status_name = CustomerEntity.Statuses[this.status];
+    }
+
+    public status_name: string;
 }

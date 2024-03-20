@@ -6,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
-import { AccessControllService } from 'src/shared/service/access_controll.service';
 import { AddressBookEntity } from 'src/entities/addressBook.entity';
 
 @Module({
@@ -19,7 +18,7 @@ import { AddressBookEntity } from 'src/entities/addressBook.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AddressBookService, AccessControllService],
+    providers: [AddressBookService],
     controllers: [AddressBookController],
     exports: [TypeOrmModule],
 })

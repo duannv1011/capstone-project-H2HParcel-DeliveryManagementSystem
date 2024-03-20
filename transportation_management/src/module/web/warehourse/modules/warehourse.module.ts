@@ -5,8 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
-import { ConfigService } from '@nestjs/config';
-import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 @Module({
     imports: [
@@ -17,7 +15,7 @@ import { AccessControllService } from 'src/shared/service/access_controll.servic
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [WarehourseService, AccessControllService, ConfigService],
+    providers: [WarehourseService],
     controllers: [WarehourseController],
     exports: [TypeOrmModule],
 })
