@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({
@@ -14,8 +15,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 password: configService.get('POSTGRES_PASSWORD'),
                 database: configService.get('POSTGRES_DB'),
                 // Update database structure (warning: will restructure database)
-                synchronize: true,
-                autoLoadEntities: true,
+                synchronize: false,
+                autoLoadEntities: false,
                 schema: configService.get('POSTGRES_SCHEMA'),
                 logging: false,
                 // Drops the schema each time connection is being established (dangerous: will reset database)

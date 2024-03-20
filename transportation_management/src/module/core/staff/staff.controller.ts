@@ -25,7 +25,7 @@ import { OrderViewService } from '../../../shared/service/order-view.service';
 import { UserLogin } from '../../../decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
 import { StaffService } from './staff.service';
-import { AssignCodeCreateDto } from './dto/assign-code.create.dto';
+import { AssignCodeDto } from './dto/assign-code.dto';
 import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
 
 @ApiTags('staff')
@@ -181,23 +181,20 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Assign code to order' })
-    @Roles(Role.STAFF)
-    @UseGuards(AuthGuard, RoleGuard)
+    // @Roles(Role.STAFF)
+    // @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
     @ApiUnauthorizedResponse()
-    @ApiBody({ type: AssignCodeCreateDto })
+    @ApiBody({ type: AssignCodeDto })
     @Post('qr-code/assign')
-    async assignCodeToOrder(@Body() request: AssignCodeCreateDto): Promise<Response> {
+    async assignCodeToOrder(@Body() request: AssignCodeDto): Promise<Response> {
         const result = await this.staffService.assignCodeToOrder(request);
-        if (result) {
-            return new Response(201, 'success', result, null, 1);
-        }
 
-        return new Response(200, 'false', false, null, 1);
+        return new Response(201, 'success', result, null, 1);
     }
 
     @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'Assign code to order' })
+    @ApiOkResponse({ description: 'Update order status' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
