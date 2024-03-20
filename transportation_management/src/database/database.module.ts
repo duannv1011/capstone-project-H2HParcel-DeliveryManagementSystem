@@ -17,7 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 synchronize: true,
                 autoLoadEntities: true,
                 schema: configService.get('POSTGRES_SCHEMA'),
-                logging: true,
+                logging: false,
                 // Drops the schema each time connection is being established (dangerous: will reset database)
                 //dropSchema: configService.get('POSTGRES_DROPSCHEMA'),
                 // Number of reconnect attempts

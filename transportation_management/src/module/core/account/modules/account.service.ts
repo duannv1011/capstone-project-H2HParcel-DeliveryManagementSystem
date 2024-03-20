@@ -34,13 +34,25 @@ export class AccountService {
         }
         // return accounts ? accounts.sort() : 'List of accounts is empty';
     }
-    async findAllAccount(): Promise<AccountEntity[]> {
-        return await this.accountRepository.find({
-            select: ['acc_id', 'username', 'role_id', 'date_create_at', 'date_update_at'],
-            order: {
-                acc_id: 'ASC',
-            },
-        });
+    async findAllAccount(pageNo: number, pageSize: number): Promise<any> {
+        const [list, count] = await this.accountRepository
+            .createQueryBuilder('account')
+            .select(['account.acc_id', 'account.username', 'account.role', 'account.refresh_token'])
+            .orderBy('account.acc_id', 'ASC')
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .getManyAndCount();
+        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
+        if (!count || totalpage < pageNo) {
+            return { status: 404, msg: 'not found!' };
+        }
+        return {
+            list,
+            count,
+            pageNo,
+            pageSize,
+            totalpage,
+        };
     }
     async getAccountById(id: number): Promise<AccountEntity> {
         try {

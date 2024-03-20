@@ -26,6 +26,7 @@ CREATE TABLE "Staff" (
   "email" varchar,
   "phone" varchar,
   "warehouse_id" integer,
+app.enableCors();
   "acc_id" integer
 );
 

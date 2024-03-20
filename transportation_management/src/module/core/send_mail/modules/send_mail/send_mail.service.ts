@@ -1,6 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { ResetPasswordDto } from '../../dto/reset_pass_send_mail_dto';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountEntity } from 'src/entities/account.entity';
@@ -8,6 +7,9 @@ import { Repository } from 'typeorm';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import * as bcrypt from 'bcrypt';
+import { sendEmailDto } from '../../dto/reset_pass_send_mail_dto';
+import { ResetPasswordDto } from '../../dto/reset_pass_update_dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class SendMailService {
@@ -20,57 +22,79 @@ export class SendMailService {
         private readonly customerRepository: Repository<CustomerEntity>,
         private readonly mailerService: MailerService,
         private configService: ConfigService,
+        private jwtService: JwtService,
     ) {}
 
-    async sendPasswordResetEmail(email: ResetPasswordDto): Promise<any> {
+    async sendPasswordResetEmail(email: sendEmailDto): Promise<any> {
         try {
-            const resetPass = this.genareatePassword();
-            const saltTime = await bcrypt.genSalt(10);
-            const hashpasswords = await bcrypt.hash(resetPass, saltTime);
+            const verifyCode = await this.genareatecode();
             const checkstaff = await this.staffRespository.findOne({ where: { email: email.email } });
             const checkscus = await this.customerRepository.findOne({ where: { email: email.email } });
             if (!checkstaff && !checkscus) {
                 return 'not found';
             }
-            const id = checkstaff.acc_id || checkscus.acc_id;
-            const updateAccount = await this.accountRepository.update(id, { password: hashpasswords });
-            if (!updateAccount) {
-                return 'update failed';
-            }
+            //const acc_id = checkstaff ? checkstaff.acc_id : checkscus.acc_id;
+
             await this.mailerService.sendMail({
                 to: email.email,
                 from: this.configService.get<string>('DEFAULT_EMAIL_FROM'),
                 subject: 'H2H App Password Reset',
                 template: 'src/teamplates/email/reset_pass',
-                html: `<p>We received a request to reset your password. Please click the following link to reset it:</p>
-                <H3>${resetPass}<H3>
+                html: `<p>We received a request to reset your password. Please qick to respon the verify code . This code will effect in 10 minute:</p>
+                <H3>${verifyCode}<H3>
                 <p>If you did not request a password reset, you can ignore this email.</p>`,
             });
+            // const payload = { id: acc_id, email: email.email, verify_code: verifyCode };
+            // const token = await this.genarateToken(payload);
             return 'successfull';
         } catch (error) {
             console.log(error);
             return 'eror';
         }
     }
-    private genareatePassword(): string {
-        const lowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz';
-        const upperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const numbers = '0123456789';
-        const specialCharacters = '!@#$%^&*()';
-        let password =
-            this.getRandomChar(lowerCaseLetters) +
-            this.getRandomChar(upperCaseLetters) +
-            this.getRandomChar(numbers) +
-            this.getRandomChar(specialCharacters);
-        const allCharacters = lowerCaseLetters + upperCaseLetters + numbers + specialCharacters;
-        for (let i = password.length; i < 8; i++) {
-            password += this.getRandomChar(allCharacters);
+    async updatePassword(request: ResetPasswordDto) {
+        const resetPass = request.password;
+        const saltTime = await bcrypt.genSalt(10);
+        const hashpasswords = await bcrypt.hash(resetPass, saltTime);
+        const checkscus = await this.customerRepository.findOne({ where: { email: request.email } });
+        const checkstaff = await this.staffRespository.findOne({ where: { email: request.email } });
+        const acc_id = checkstaff ? checkstaff.acc_id : checkscus.acc_id;
+
+        console.log(acc_id);
+        const updateAccount = await this.accountRepository.update({ acc_id: acc_id }, { password: hashpasswords });
+        if (!updateAccount) {
+            return 'update failed';
         }
-        return password;
+        return 'update successful';
+    }
+    private genareatecode(): string {
+        const numbers = '0123456789';
+        let leter = this.getRandomChar(numbers);
+        for (let i = 1; i < 6; i++) {
+            leter += this.getRandomChar(numbers);
+        }
+        return leter;
     }
     private getRandomChar(char: string): string {
         const characters = char;
         const randomIndex = Math.floor(Math.random() * characters.length);
         return characters[randomIndex];
+    }
+    private async genarateToken(payload: { id: number; email: string; verify_code: string }) {
+        const access_token = await this.jwtService.signAsync(payload, {
+            secret: this.configService.get<string>('VERIFICATION_CODE_SECRET'),
+            expiresIn: this.configService.get<string>('10p'),
+        });
+        return { access_token };
+    }
+    private verifyVerificationCode(verificationCode: string, userVerificationCode: string): boolean {
+        try {
+            this.jwtService.verify(verificationCode, {
+                secret: this.configService.get<string>('VERIFICATION_CODE_SECRET'),
+            });
+            return verificationCode === userVerificationCode;
+        } catch (error) {
+            return false;
+        }
     }
 }
