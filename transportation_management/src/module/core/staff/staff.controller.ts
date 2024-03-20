@@ -46,6 +46,7 @@ export class StaffController {
     @Get('profile')
     async getProfile(@UserLogin() userLogin: UserLoginData): Promise<Response> {
         const profile = await this.profileService.findOneStaffByAccId(userLogin.accId);
+        console.log(userLogin.accId);
 
         return new Response(200, 'success', profile, null, 1);
     }
