@@ -33,6 +33,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.6",
     "@types/hapi__joi": "^17.1.14",
+    "@types/moment-timezone": "^0.5.30",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "bcrypt": "^5.1.1",

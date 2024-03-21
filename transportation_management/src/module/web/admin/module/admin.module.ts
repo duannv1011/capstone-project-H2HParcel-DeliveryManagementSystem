@@ -11,11 +11,12 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { StatusService } from 'src/module/core/status/service/status.service';
 import { CustomerService } from 'src/module/client/customer/modules/customer.service';
 import { StaffService } from 'src/module/core/staff/staff.service';
-import { CodeEntity } from 'src/entities/code.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { WarehourseService } from '../../warehourse/modules/warehourse.service';
 import { AuthenticationService } from 'src/module/core/authentication/modules/authentication.service';
 import { RoleEntity } from 'src/entities/role.entity';
+import { QrCodeService } from 'src/module/core/qr-code/qr-code.service';
+import { QRCodeEntity } from 'src/entities/qrcode.entity';
 
 @Module({
     imports: [
@@ -24,10 +25,10 @@ import { RoleEntity } from 'src/entities/role.entity';
             StaffEntity,
             CustomerEntity,
             AddressEntity,
-            CodeEntity,
             WarehouseEntity,
             OrderEntity,
             RoleEntity,
+            QRCodeEntity,
         ]),
         JwtModule.register({
             global: true,
@@ -35,7 +36,16 @@ import { RoleEntity } from 'src/entities/role.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AdminService, StatusService, CustomerService, StaffService, AuthenticationService, WarehourseService],
+    providers: [
+        AdminService,
+        QrCodeService,
+        StatusService,
+        CustomerService,
+        StaffService,
+        AuthenticationService,
+        WarehourseService,
+        StatusService,
+    ],
     controllers: [AdminController],
     exports: [TypeOrmModule],
 })
