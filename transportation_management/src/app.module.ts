@@ -20,7 +20,6 @@ import { SendMailController } from './module/core/send_mail/modules/send_mail/se
 import { SendMailService } from './module/core/send_mail/modules/send_mail/send_mail.service';
 import { SendMailModule } from './module/core/send_mail/modules/send_mail/send_mail.module';
 import { SharedModule } from './shared/shared.module';
-import { AccessControllService } from './shared/service/access_controll.service';
 import { AdminModule } from './module/web/admin/module/admin.module';
 import { WarehourseModule } from './module/web/warehourse/modules/warehourse.module';
 import { WarehourseController } from './module/web/warehourse/modules/warehourse.controller';
@@ -32,6 +31,7 @@ import { StaffModule } from './module/core/staff/staff.module';
 import { ManagerModule } from './module/core/manager/manager.module';
 import { StaffController } from './module/core/staff/staff.controller';
 import { ProfileService } from './shared/service/profile.service';
+import { StatusModule } from './module/core/status/service/status.module';
 import { QrCodeModule } from './module/core/qr-code/qr-code.module';
 import { QrCodeController } from './module/core/qr-code/qr-code.controller';
 
@@ -50,6 +50,7 @@ import { QrCodeController } from './module/core/qr-code/qr-code.controller';
         AddressBookModule,
         StaffModule,
         ManagerModule,
+        StatusModule,
         QrCodeModule,
     ],
     controllers: [
@@ -74,7 +75,6 @@ import { QrCodeController } from './module/core/qr-code/qr-code.controller';
         CustomerService,
         ConfigService,
         SendMailService,
-        AccessControllService,
         WarehourseService,
         AddressBookService,
         ProfileService,

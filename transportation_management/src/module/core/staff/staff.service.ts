@@ -57,4 +57,7 @@ export class StaffService {
             throw new InternalServerErrorException();
         }
     }
+    async updateCustomerStatus(data: any): Promise<any> {
+        return data;
+    }
 }

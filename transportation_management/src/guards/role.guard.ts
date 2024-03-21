@@ -3,7 +3,6 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { ROLE_KEY } from 'src/decorators/role.decorator';
 import { Role } from 'src/enum/roles.enum';
-import { AccessControllService } from 'src/shared/service/access_controll.service';
 
 export class TokenDto {
     id: number;
@@ -18,10 +17,7 @@ interface IsAuthorizedParams {
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-    constructor(
-        private reflector: Reflector,
-        private accessControlService: AccessControllService,
-    ) {}
+    constructor(private reflector: Reflector) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLE_KEY, [

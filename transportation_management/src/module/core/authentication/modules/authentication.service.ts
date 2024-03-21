@@ -124,7 +124,7 @@ export class AuthenticationService {
         }
     }
 
-    private async hashpassword(password: string): Promise<string> {
+    public async hashpassword(password: string): Promise<string> {
         const saltTime = await bcrypt.genSalt(10);
         return await bcrypt.hash(password, saltTime);
     }

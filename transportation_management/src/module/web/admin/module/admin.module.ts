@@ -6,21 +6,36 @@ import { StaffEntity } from 'src/entities/staff.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { AccessControllService } from 'src/shared/service/access_controll.service';
 import { AddressEntity } from 'src/entities/address.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
-import { ConfigService } from '@nestjs/config';
+import { StatusService } from 'src/module/core/status/service/status.service';
+import { CustomerService } from 'src/module/client/customer/modules/customer.service';
+import { StaffService } from 'src/module/core/staff/staff.service';
+import { CodeEntity } from 'src/entities/code.entity';
+import { OrderEntity } from 'src/entities/order.entity';
+import { WarehourseService } from '../../warehourse/modules/warehourse.service';
+import { AuthenticationService } from 'src/module/core/authentication/modules/authentication.service';
+import { RoleEntity } from 'src/entities/role.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AccountEntity, StaffEntity, CustomerEntity, AddressEntity, WarehouseEntity]),
+        TypeOrmModule.forFeature([
+            AccountEntity,
+            StaffEntity,
+            CustomerEntity,
+            AddressEntity,
+            CodeEntity,
+            WarehouseEntity,
+            OrderEntity,
+            RoleEntity,
+        ]),
         JwtModule.register({
             global: true,
             secret: process.env.SECRET_KEY,
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AdminService, AccessControllService, ConfigService],
+    providers: [AdminService, StatusService, CustomerService, StaffService, AuthenticationService, WarehourseService],
     controllers: [AdminController],
     exports: [TypeOrmModule],
 })

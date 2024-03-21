@@ -1,6 +1,7 @@
 // staff.entity.ts
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountEntity } from './account.entity';
+import { WarehouseEntity } from './warehouse.entity';
 
 @Entity('Staff')
 export class StaffEntity {
@@ -16,8 +17,15 @@ export class StaffEntity {
     @Column()
     phone: string;
 
+    @Column({ nullable: true })
+    status: number;
+
     @Column()
     warehouse_id: number;
+
+    @ManyToOne(() => WarehouseEntity, { eager: true, nullable: true })
+    @JoinColumn({ name: 'warehouse_id' })
+    warehouse: AccountEntity;
 
     @Column({ nullable: true })
     acc_id: number;
@@ -25,4 +33,16 @@ export class StaffEntity {
     @ManyToOne(() => AccountEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'acc_id' })
     account: AccountEntity;
+    private static Statuses: { [id: number]: string } = {
+        1: 'Active',
+        2: 'Suspended',
+        3: 'Inactive',
+    };
+
+    @AfterLoad()
+    public setStatusName(): void {
+        this.status_name = StaffEntity.Statuses[this.status];
+    }
+
+    public status_name: string;
 }
