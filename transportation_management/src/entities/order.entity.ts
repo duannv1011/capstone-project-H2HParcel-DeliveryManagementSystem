@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
 import { RequestEntity } from './request.entity';
-import { CodeEntity } from './code.entity';
+import { QRCodeEntity } from './qrcode.entity';
 
 @Entity('Order')
 export class OrderEntity extends AbstractEntity {
@@ -45,7 +45,7 @@ export class OrderEntity extends AbstractEntity {
     @JoinColumn({ name: 'order_id' })
     requests: RequestEntity[];
 
-    @OneToMany(() => CodeEntity, (code) => code.order)
+    @OneToMany(() => QRCodeEntity, (code) => code.order)
     @JoinColumn({ name: 'order_id' })
-    codes: CodeEntity[];
+    codes: QRCodeEntity[];
 }
