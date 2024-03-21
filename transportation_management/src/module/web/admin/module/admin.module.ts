@@ -13,6 +13,9 @@ import { CustomerService } from 'src/module/client/customer/modules/customer.ser
 import { StaffService } from 'src/module/core/staff/staff.service';
 import { CodeEntity } from 'src/entities/code.entity';
 import { OrderEntity } from 'src/entities/order.entity';
+import { WarehourseService } from '../../warehourse/modules/warehourse.service';
+import { AuthenticationService } from 'src/module/core/authentication/modules/authentication.service';
+import { RoleEntity } from 'src/entities/role.entity';
 
 @Module({
     imports: [
@@ -24,6 +27,7 @@ import { OrderEntity } from 'src/entities/order.entity';
             CodeEntity,
             WarehouseEntity,
             OrderEntity,
+            RoleEntity,
         ]),
         JwtModule.register({
             global: true,
@@ -31,7 +35,7 @@ import { OrderEntity } from 'src/entities/order.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [AdminService, StatusService, CustomerService, StaffService],
+    providers: [AdminService, StatusService, CustomerService, StaffService, AuthenticationService, WarehourseService],
     controllers: [AdminController],
     exports: [TypeOrmModule],
 })

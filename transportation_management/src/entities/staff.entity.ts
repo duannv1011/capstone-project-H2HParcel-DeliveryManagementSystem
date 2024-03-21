@@ -18,7 +18,7 @@ export class StaffEntity {
     phone: string;
 
     @Column({ nullable: true })
-    status: string;
+    status: number;
 
     @Column()
     warehouse_id: number;
@@ -34,9 +34,9 @@ export class StaffEntity {
     @JoinColumn({ name: 'acc_id' })
     account: AccountEntity;
     private static Statuses: { [id: number]: string } = {
-        1: 'working',
-        2: 'temporary break',
-        3: 'quit',
+        1: 'Active',
+        2: 'Suspended',
+        3: 'Inactive',
     };
 
     @AfterLoad()

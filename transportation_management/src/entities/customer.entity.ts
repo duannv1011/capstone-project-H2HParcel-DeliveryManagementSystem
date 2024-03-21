@@ -37,9 +37,9 @@ export class CustomerEntity {
     address: AddressEntity;
 
     private static Statuses: { [id: number]: string } = {
-        1: 'active',
-        2: 'suspend',
-        3: 'blocked',
+        1: 'Active',
+        2: 'Suspended',
+        3: 'Inactive',
     };
 
     @AfterLoad()
