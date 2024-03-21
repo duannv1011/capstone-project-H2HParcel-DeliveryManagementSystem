@@ -226,3 +226,24 @@ INSERT INTO "WarehouseRule" ("warehouse_id", "ward_id") VALUES
   (3, 3),
   (4, 4),
   (5, 5);
+--insert into table "OrderStatus" 
+INSERT INTO "OrderStatus" ("stt_name") VALUES
+  ("Created"),
+  ("Await pickup"),
+  ("Picked up"),
+  ("Arrived pickup warehouse"),
+  ("On transit"),
+  ("Arrived deliver warehouse"),
+  ("On Delivery"),
+  ("Delivered"),
+  ("Confirmed");
+--insert into table RequestStatus 
+INSERT INTO "RequestStatus" ("rstt_name") VALUES
+  ("Processing"),
+  ("Aproved"),
+  ("Denied");
+--insert into table RequestType
+INSERT INTO "RequestType" ("rt_name") VALUES
+  ("Edit order"),
+  ("Cancel order"),
+  ("Make transit");
