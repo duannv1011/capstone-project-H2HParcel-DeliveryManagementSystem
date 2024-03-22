@@ -20,8 +20,8 @@ export class CustomerEntity {
     @Column({ nullable: true })
     acc_id: number;
 
-    @Column({ nullable: true })
-    default_address: number;
+    @Column()
+    default_book: number;
 
     @Column({ default: 1 })
     status: number;
@@ -46,6 +46,8 @@ export class CustomerEntity {
     public setStatusName(): void {
         this.status_name = CustomerEntity.Statuses[this.status];
     }
-
+    public getStatusName() {
+        return CustomerEntity.Statuses[this.status];
+    }
     public status_name: string;
 }

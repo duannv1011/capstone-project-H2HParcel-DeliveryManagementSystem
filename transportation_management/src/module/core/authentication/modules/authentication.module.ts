@@ -10,10 +10,20 @@ import { AddressEntity } from '../../../../entities/address.entity';
 import { CustomerEntity } from '../../../../entities/customer.entity';
 import { AccountEntity } from '../../../../entities/account.entity';
 import { RoleEntity } from '../../../../entities/role.entity';
+import { InformationEntity } from 'src/entities/Information.entity';
+import { AddressBookEntity } from 'src/entities/addressBook.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AccountEntity, CustomerEntity, StaffEntity, RoleEntity, AddressEntity]),
+        TypeOrmModule.forFeature([
+            AccountEntity,
+            InformationEntity,
+            CustomerEntity,
+            StaffEntity,
+            RoleEntity,
+            AddressEntity,
+            AddressBookEntity,
+        ]),
         ConfigModule,
         JwtModule.register({
             global: true,

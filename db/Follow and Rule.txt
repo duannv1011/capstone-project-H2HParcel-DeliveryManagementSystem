@@ -33,12 +33,11 @@ quickupdate for status:Aprove,denied.update status to order
 button(crateTransit Rq) rqtype=3:send :warehouse_id to, shipper_id(transiter),curent warehouse_id
 
 Request Create(Screen) for Customer only:
-rq	type 1 :edit order of Custoemr allow update deliver field .Set new Price
+rqtype 1 :edit order of Custoemr allow update deliver field .Set new Price
 rqtype 2 :.if order_status( =1,2 set price =0 or 3,4 set=0.4 old Price).change status of Order to "Cancel" 
 rqtype 3 :
 
-
-
+regiter follow : Create step by step :account-Adress-Information-AddressBook-Customer-
 
 
 
