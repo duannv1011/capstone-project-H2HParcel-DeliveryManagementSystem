@@ -25,8 +25,8 @@ import { OrderViewService } from '../../../shared/service/order-view.service';
 import { UserLogin } from '../../../decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
 import { StaffService } from './staff.service';
-import { AssignCodeDto } from './dto/assign-code.dto';
-import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
+import { AssignCodeDto } from './dto/request/assign-code.dto';
+import { OrderStatusUpdateDto } from './dto/request/order-status.update.dto';
 
 @ApiTags('staff')
 @Controller('staff')
@@ -46,7 +46,6 @@ export class StaffController {
     @Get('profile')
     async getProfile(@UserLogin() userLogin: UserLoginData): Promise<Response> {
         const profile = await this.profileService.findOneStaffByAccId(userLogin.accId);
-        console.log(userLogin.accId);
 
         return new Response(200, 'success', profile, null, 1);
     }

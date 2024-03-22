@@ -39,6 +39,8 @@ import { AdminService } from './module/web/admin/module/admin.service';
 import { StaffService } from './module/core/staff/staff.service';
 import { StatusService } from './module/core/status/service/status.service';
 import { AddressModule } from './module/core/address/address.module';
+import { ShiftModule } from './module/web/shift/shift.module';
+import { ShiftController } from './module/web/shift/shift.controller';
 
 @Module({
     imports: [
@@ -60,6 +62,7 @@ import { AddressModule } from './module/core/address/address.module';
         AdminModule,
         StaffModule,
         AddressModule,
+        ShiftModule,
     ],
     controllers: [
         AppController,
@@ -73,6 +76,7 @@ import { AddressModule } from './module/core/address/address.module';
         QrCodeController,
         AdminController,
         StaffController,
+        ShiftController,
     ],
     providers: [
         AppService,

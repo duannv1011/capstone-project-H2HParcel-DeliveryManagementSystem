@@ -1,8 +1,8 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AssignCodeDto } from './dto/assign-code.dto';
-import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
+import { AssignCodeDto } from './dto/request/assign-code.dto';
+import { OrderStatusUpdateDto } from './dto/request/order-status.update.dto';
 import { OrderEntity } from '../../../entities/order.entity';
 import { QRCodeEntity } from '../../../entities/qrcode.entity';
 
@@ -57,6 +57,7 @@ export class StaffService {
             throw new InternalServerErrorException();
         }
     }
+
     async updateCustomerStatus(data: any): Promise<any> {
         return data;
     }

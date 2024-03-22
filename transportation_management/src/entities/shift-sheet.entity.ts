@@ -1,12 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { StaffEntity } from './staff.entity';
+import { ShiftEntity } from './shift.entity';
+
 @Entity('ShiftSheet')
 export class ShiftSheetEntity {
-    @PrimaryGeneratedColumn()
-    public sheet_id: number;
+    @PrimaryGeneratedColumn({ name: 'sheet_id' })
+    sheetId: number;
 
-    @Column()
-    public shift_id: number;
+    @OneToMany(() => ShiftEntity, (shift) => shift.shiftSheet, { cascade: ['insert', 'update', 'remove'] })
+    @JoinColumn({ name: 'shift_id' })
+    shifts: ShiftEntity[];
 
-    @Column()
-    public staff_id: number;
+    @ManyToOne(() => StaffEntity, (staff) => staff.shiftSheets)
+    @JoinColumn({ name: 'staff_id' })
+    staff: StaffEntity;
 }
