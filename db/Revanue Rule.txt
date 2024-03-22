@@ -1,1 +1,46 @@
-pickup 40%  deliver 60%
+revanue Rule: pickup 40%  deliver 60%
+
+----------------------------------------
+Order Status
+status 1:null :pickup_shipper,deliver_shipper
+status 2: null: deliver_shipper,update pickup_shipper
+status 3: update status,update order_id to Code table by scan QR
+status 4: update status,updated by scan QR
+status 5: update status,updated by scan QR
+status 6: update status,updated by scan QR
+status 7: update status,updated by scan QR
+status 8: update status,updated when shipper take confirm picture
+----------------------------------------
+RequestType
+rt 1: check Order status in range 1-4 ,allow edit column:deliver(new price applied)
+rt 2: check Order status in range 1-4 ,update deliver to pickup(Price =40% old price)
+rt 3: only created by Staff,warehouse_id Deliver(B) to caculate effort (status 4 -5)
+----------------------------------------
+OrderList(screen)
+-Admin:getAll,filterBy status,filter by warehouseId,search by string in all field
+
+-Manager/staff:filter by status,filter by time,search by string in all field
+getAll by warehouse_id 
+if status 1-4:  show pickup only(for warehouse A) ,stauts =1,2:pickup_shiper: call quickupdate() to update pickup_shipper
+if status 6-8:  show deliver only (for warehouse B) ,status =6;call quickupdate() to update deliver_shiper
+quickupdate : api call multiple time to update shipper.
+
+Order Detail(Screen): show full data of Order but show warehouse instead shipper .show shiper of warehouse=warehouse_id and can call quickupdate
+
+ReqeustList(Screen):
+Staff/manager: getAll by wh_id,show by status asc
+quickupdate for status:Aprove,denied.update status to order
+button(crateTransit Rq) rqtype=3:send :warehouse_id to, shipper_id(transiter),curent warehouse_id
+
+Request Create(Screen) for Customer only:
+rq	type 1 :edit order of Custoemr allow update deliver field .Set new Price
+rqtype 2 :.if order_status( =1,2 set price =0 or 3,4 set=0.4 old Price).change status of Order to "Cancel" 
+rqtype 3 :
+
+
+
+
+
+
+
+

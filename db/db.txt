@@ -30,11 +30,26 @@ CREATE TABLE "Customer" (
   "fullname" varchar,
   "email" varchar,
   "phone" varchar,
-  "address" integer,
-  "default_address" integer,
+  "address_id" integer,
+  "default_book" integer,
   "status" integer,
   "acc_id" integer
 );
+//crate book when register
+
+CREATE TABLE "AddressBook" (
+  "book_id" SERIAL  PRIMARY KEY,
+  "cus_id" integer,
+  "infor_id" integer,
+  "is_deleted" boolean DEFAULT false
+);
+CREATE TABLE "Information"(
+ "infor_id" SERIAL  PRIMARY KEY,
+ "name" varchar,
+ "phone" varchar,
+ "address_id" integer
+);
+
 CREATE TABLE "City" (
   "city_id" SERIAL  PRIMARY KEY,
   "city_name" varchar
@@ -60,14 +75,6 @@ CREATE TABLE "Address" (
   "ward_id" integer,
   "house" varchar
 );
-
-CREATE TABLE "AddressBook" (
-  "book_id" SERIAL  PRIMARY KEY,
-  "cus_id" integer,
-  "address_id" integer,
-  "is_deleted" boolean DEFAULT false
-);
-
 
 CREATE TABLE "Warehouse" (
   "warehouse_id" SERIAL  PRIMARY KEY,
@@ -95,18 +102,13 @@ CREATE TABLE "priceMultiplier" (
 CREATE TABLE "Order" (
   "order_id" SERIAL  PRIMARY KEY,
   "cus_id" integer,
-  "pickup_name" varchar,
-  "pickup_phone" varchar,
-  "pickup_address" integer,
+  "pickup_infor_id" integer
   "pickup_shipper" integer,
-  "deliver_name" varchar,
-  "deliver_phone" varchar,
-  "deliver_address" integer,
+  "deliver_infor_id" integer
   "deliver_shipper" integer,
   "order_stt" integer,
   "estimated_price" integer
 );
-
 CREATE TABLE "Price" (
   "price_id" SERIAL  PRIMARY KEY,
   "price_type" varchar,
@@ -124,7 +126,8 @@ CREATE TABLE "ActivityLog" (
   "log_id" SERIAL  PRIMARY KEY,
   "order_id" integer,
   "time" timestamp,
-  "order_stt" integer
+  "curent_status" integer
+  "staff" integer
 );
 
 CREATE TABLE "Request" (
@@ -132,9 +135,18 @@ CREATE TABLE "Request" (
   "order_id" integer,
   "request_type" integer,
   "request_stt" integer,
+  "new_infor" integer,
   "note" varchar
 );
-
+-- 1 special request 
+CREATE TABLE "Transit" (
+  "trs_id" SERIAL  PRIMARY KEY,
+  "warehouse_from" integer,
+  "warehouse_to" integer,
+  "staff_id" integer,
+  "request_type" integer,
+  "request_stt" integer
+);
 CREATE TABLE "RequestStatus" (
   "rstt_id" SERIAL  PRIMARY KEY,
   "rstt_name" varchar

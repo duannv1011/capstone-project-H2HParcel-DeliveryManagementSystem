@@ -235,8 +235,8 @@ INSERT INTO "OrderStatus" ("stt_name") VALUES
   ("On transit"),
   ("Arrived deliver warehouse"),
   ("On Delivery"),
-  ("Delivered"),
-  ("Confirmed");
+  ("Delivered");
+
 --insert into table RequestStatus 
 INSERT INTO "RequestStatus" ("rstt_name") VALUES
   ("Processing"),
