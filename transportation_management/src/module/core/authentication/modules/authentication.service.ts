@@ -103,7 +103,7 @@ export class AuthenticationService {
         //get
         //const data_result = await this.getAdditionalData(account);
         const token = await this.genarateToken(payload);
-        return { token: token };
+         return [{ token: token }, { payload: payload }];
     }
     async refreshToken(refresh_token: string): Promise<any> {
         try {
