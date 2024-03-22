@@ -314,7 +314,7 @@ export class AdminService {
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(AccountEntity)
-                .set({ role_id: 3 })
+                .set({ role_id: 4 })
                 .where('acc_id = :acc_id', { acc_id: staff.acc_id })
                 .execute()
                 .catch((error) => {
