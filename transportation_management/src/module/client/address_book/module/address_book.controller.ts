@@ -22,6 +22,13 @@ export class AddressBookController {
     async getAddressBookByCusId(@UserLogin() userLogin: UserLoginData): Promise<any> {
         return this.addressBookService.getAddressBookByCusId(Number(userLogin.accId));
     }
+    @Get('getDefaultBookByCusId')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    async getDefaultBookByCusId(@UserLogin() userLogin: UserLoginData): Promise<any> {
+        return this.addressBookService.getDefaultBookByCusId(Number(userLogin.accId));
+    }
     @Post('CreateDefaultAddress')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)

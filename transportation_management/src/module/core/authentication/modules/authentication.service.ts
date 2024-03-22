@@ -11,6 +11,8 @@ import { StaffEntity } from '../../../../entities/staff.entity';
 import { CustomerEntity } from '../../../../entities/customer.entity';
 import { AddressEntity } from '../../../../entities/address.entity';
 import { AccountEntity } from '../../../../entities/account.entity';
+import { InformationEntity } from 'src/entities/Information.entity';
+import { AddressBookEntity } from 'src/entities/addressBook.entity';
 
 @Injectable()
 export class AuthenticationService {
@@ -21,6 +23,8 @@ export class AuthenticationService {
         private readonly customerRepository: Repository<CustomerEntity>,
         @InjectRepository(StaffEntity)
         private readonly staffRepository: Repository<StaffEntity>,
+        @InjectRepository(InformationEntity)
+        private readonly informationRepository: Repository<InformationEntity>,
         @InjectRepository(AddressEntity)
         private readonly addressRepository: Repository<AddressEntity>,
         private customerService: CustomerService,
@@ -29,17 +33,28 @@ export class AuthenticationService {
         private dataSource: DataSource,
     ) {}
     async register(registerData: RegisterDto): Promise<any> {
-        const checkexistingUsername = await this.accountRepository.findOne({
-            where: { username: registerData.username },
-        });
-        const checkscus = await this.customerRepository.findOne({ where: { email: registerData.customer.email } });
-        const checkstaff = await this.staffRepository.findOne({ where: { email: registerData.customer.email } });
+        const checkexistingUsername = await this.accountRepository
+            .createQueryBuilder('account')
+            .where('account.username = :username', { username: registerData.username })
+            .getOne();
+
+        const checkscus = await this.customerRepository
+            .createQueryBuilder('customer')
+            .where('customer.email = :email', { email: registerData.customer.email })
+            .leftJoinAndSelect('customer.account', 'account') // only select the AccountEntity, not the related ones
+            .getOne();
+
+        const checkstaff = await this.staffRepository
+            .createQueryBuilder('staff')
+            .where('staff.email = :email', { email: registerData.customer.email })
+            .leftJoinAndSelect('staff.account', 'account') // only select the AccountEntity, not the related ones
+            .getOne();
 
         if (checkexistingUsername) {
-            throw new HttpException('user already exist', HttpStatus.CONFLICT);
+            return 'user is already exsit';
         }
         if (checkscus || checkstaff) {
-            throw new HttpException('please chose another email', HttpStatus.CONFLICT);
+            return 'email is already exsit';
         }
         const hashedPassword = await this.hashpassword(registerData.password);
         registerData.password = hashedPassword;
@@ -53,32 +68,35 @@ export class AuthenticationService {
                 refresh_token: 'refresh_token_string',
                 password: hashedPassword,
             });
-            if (!accountInsertResult) {
-                throw new HttpException('account save error', HttpStatus.BAD_REQUEST);
-            }
             const accountId = accountInsertResult.acc_id; // Assuming 'id' is the auto-incremented column name
             // create address
             const addressDtoData = registerData.address;
             const addressdata = await queryRunner.manager.save(AddressEntity, {
                 ...addressDtoData,
             });
-            if (!addressdata) {
-                throw new HttpException('address save error', HttpStatus.BAD_REQUEST);
-            }
+            console.log('address' + addressdata);
+            //create information
+            const information = new InformationEntity();
+            information.name = registerData.customer.fullname;
+            information.phone = registerData.customer.phone;
+            information.address = addressdata;
+            const informationResult = await queryRunner.manager.save(InformationEntity, information);
             // create customer
             const customerDtodata = registerData.customer;
             customerDtodata.address_id = addressdata.address_id;
-            customerDtodata.default_address = customerDtodata.default_address || addressdata.address_id;
             customerDtodata.acc_id = accountId;
             customerDtodata.status = 1;
-
             const customerdata = await queryRunner.manager.save(CustomerEntity, customerDtodata);
-
-            if (!customerdata) {
-                throw new HttpException('customer save error', HttpStatus.BAD_REQUEST);
-            }
-
+            //create AdressBook
+            const addressBook = new AddressBookEntity();
+            addressBook.customer = customerdata;
+            addressBook.is_deleted = false;
+            addressBook.infor = informationResult;
+            const addressbookdata = await queryRunner.manager.save(AddressBookEntity, addressBook);
             await queryRunner.commitTransaction();
+            //update default_book of Customer
+            customerdata.default_book = addressbookdata.book_id;
+            await queryRunner.manager.save(CustomerEntity, customerdata);
             return accountInsertResult;
         } catch (error) {
             await queryRunner.rollbackTransaction();
@@ -103,7 +121,7 @@ export class AuthenticationService {
         //get
         //const data_result = await this.getAdditionalData(account);
         const token = await this.genarateToken(payload);
-         return [{ token: token }, { payload: payload }];
+        return [{ token: token }, { payload: payload }];
     }
     async refreshToken(refresh_token: string): Promise<any> {
         try {

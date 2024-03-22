@@ -22,9 +22,6 @@ export class CustomerDto {
     address_id: number;
 
     @IsNumber()
-    default_address: number;
-
-    @IsNumber()
     status: number = 1;
 
     @IsNumber()

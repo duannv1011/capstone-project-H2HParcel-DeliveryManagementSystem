@@ -6,7 +6,12 @@ export class UpdateAddresBookDto {
     @IsNotEmpty({ message: 'Null value book_id' })
     @IsNumber()
     book_id: number;
-
+    @ApiProperty({ example: 'Nguyen Van D', description: 'name' })
+    @IsNotEmpty({ message: 'Null value name' })
+    name: string;
+    @ApiProperty({ example: '0125196112', description: 'phone' })
+    @IsNotEmpty({ message: 'Null value phone' })
+    phone: string;
     @ApiProperty({ example: 'so nha 120 ngo A', description: 'house' })
     @IsNotEmpty({ message: 'Null value house' })
     house: string;

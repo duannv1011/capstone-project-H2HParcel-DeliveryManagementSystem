@@ -17,6 +17,7 @@ import { AuthenticationService } from 'src/module/core/authentication/modules/au
 import { RoleEntity } from 'src/entities/role.entity';
 import { QrCodeService } from 'src/module/core/qr-code/qr-code.service';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
+import { InformationEntity } from 'src/entities/Information.entity';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { QRCodeEntity } from 'src/entities/qrcode.entity';
             OrderEntity,
             RoleEntity,
             QRCodeEntity,
+            InformationEntity,
         ]),
         JwtModule.register({
             global: true,
