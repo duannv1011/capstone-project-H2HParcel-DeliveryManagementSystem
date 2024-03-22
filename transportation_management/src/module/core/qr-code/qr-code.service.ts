@@ -35,7 +35,6 @@ export class QrCodeService {
 
                 const entity: QRCodeEntity = new QRCodeEntity();
                 entity.code_value = qrKey;
-                entity.qr_url = `qr-code/${moment().tz(TIMEZONE).format(DATE_FORMAT)}/${qrKey}.png`;
                 codeEnitties.push(entity);
             }
             await this.codeRepository.save(codeEnitties);
@@ -91,7 +90,7 @@ export class QrCodeService {
         }
     }
 
-    async zipQrCodeList(request: QrCodeListDto): Promise<Buffer> {
+    async zipQrCodeList(request: QrCodeListDto): Promise<string> {
         try {
             const zip: JSZip = new JSZip();
             const qrEntities: QRCodeEntity[] = [];
@@ -109,10 +108,10 @@ export class QrCodeService {
             }
 
             if (qrEntities.length > 0) {
-                return await zip.generateAsync({ type: 'nodebuffer' });
+                return await zip.generateAsync({ type: 'base64' });
             }
 
-            return new Buffer('');
+            return '';
         } catch (error) {
             Logger.log(error);
             throw new InternalServerErrorException();

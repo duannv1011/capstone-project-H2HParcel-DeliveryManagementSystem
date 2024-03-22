@@ -15,6 +15,7 @@ import { CreateWarehouseDto } from '../../warehourse/dto/createWarehouse_dto';
 import { UpdateWarehouseDto } from '../../warehourse/dto/updateWarehoue_dto';
 import { updateActiveDto } from '../../warehourse/dto/changeActive_dto';
 import { updateStaffDto } from '../dto/staff-update.dto';
+import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 
 @Controller('admin')
 @ApiTags('SUPER ADMIN')
@@ -140,6 +141,15 @@ export class AdminController {
     @ApiResponse({ status: 200, description: 'Update staff data successfully.' })
     async updateStaff(@Body() data: updateStaffDto): Promise<any> {
         return await this.adminService.adminUpdateStaff(data);
+    }
+    @Patch('setManager')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'Update staff to Manager' })
+    @ApiResponse({ status: 200, description: 'Update staff to Manager successfully.' })
+    async setManager(@Body() data: setStaffToManagerDto): Promise<any> {
+        return await this.adminService.adminsetManager(data);
     }
     @Post('createStaff')
     @Roles(Role.ADMIN)

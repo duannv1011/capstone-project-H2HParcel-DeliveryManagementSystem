@@ -13,6 +13,7 @@ import { updateStaffDto } from '../dto/staff-update.dto';
 import { CreateStaffDto } from '../dto/staff-create.dto';
 import { AuthenticationService } from 'src/module/core/authentication/modules/authentication.service';
 import { RoleEntity } from 'src/entities/role.entity';
+import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 
 @Injectable()
 export class AdminService {
@@ -90,7 +91,7 @@ export class AdminService {
         };
     }
     async getAllRoleStaff(): Promise<RoleEntity[]> {
-        return this.roleRepository.find({ where: { role_id: Not(In([1, 5])) } });
+        return this.roleRepository.find({ where: { role_id: Not(In([1, 4, 5])) } });
     }
     async getAllWarehouse(pageNo: number, pageSize: number): Promise<any> {
         const [list, count] = await this.warehouseRepository
@@ -258,7 +259,7 @@ export class AdminService {
         if (checkemail) {
             return { status: 409, msg: 'email is exist!' };
         }
-        if (data.role_id === 1 || data.role_id === 4) {
+        if (data.role_id === 1 || data.role_id === 5 || data.role_id === 4) {
             return { status: 409, msg: 'Role not  ilegal' };
         }
         const hashedPassword = await this.authenticationService.hashpassword(data.password);
@@ -288,6 +289,45 @@ export class AdminService {
             return {
                 status: 200,
                 msg: 'create success',
+            };
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            return error;
+        } finally {
+            await queryRunner.release();
+        }
+    }
+    async adminsetManager(data: setStaffToManagerDto): Promise<any> {
+        const staff = await this.staffRepository.findOne({
+            where: {
+                staff_id: data.staff_id,
+            },
+        });
+        if (!staff || staff.staff_id === 1) {
+            return { status: 404, msg: 'not found!' };
+        }
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            //update Account
+            await queryRunner.manager
+                .createQueryBuilder()
+                .update(AccountEntity)
+                .set({ role_id: 3 })
+                .where('acc_id = :acc_id', { acc_id: staff.acc_id })
+                .execute()
+                .catch((error) => {
+                    console.error('Error updating address:', error);
+                    throw error;
+                });
+            //update staff
+            staff.warehouse_id = data.warehouse_id;
+            await queryRunner.manager.save(staff);
+            await queryRunner.commitTransaction();
+            return {
+                status: 200,
+                msg: 'update success',
             };
         } catch (error) {
             await queryRunner.rollbackTransaction();
