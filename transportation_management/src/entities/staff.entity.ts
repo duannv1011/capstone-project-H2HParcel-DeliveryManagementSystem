@@ -1,7 +1,8 @@
 // staff.entity.ts
-import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountEntity } from './account.entity';
 import { WarehouseEntity } from './warehouse.entity';
+import { ShiftSheetEntity } from './shift-sheet.entity';
 
 @Entity('Staff')
 export class StaffEntity {
@@ -45,4 +46,8 @@ export class StaffEntity {
     }
 
     public status_name: string;
+
+    @OneToMany(() => ShiftSheetEntity, (shiftSheet) => shiftSheet.staff)
+    @JoinColumn({ name: 'staff_id' })
+    shiftSheets: ShiftSheetEntity[];
 }
