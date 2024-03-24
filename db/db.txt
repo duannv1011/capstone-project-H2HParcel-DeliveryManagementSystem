@@ -95,7 +95,7 @@ CREATE TABLE "WarehouseRule" (
 -- ALTER TABLE "WarehouseRule" 
 -- RENAME COLUMN "rule_content" TO "ward_id";
 
-CREATE TABLE "priceMultiplier" (
+CREATE TABLE "PriceMultiplier" (
   "id" SERIAL  PRIMARY KEY,
   "maxDistance" integer,
   "multiplier" decimal(10,5)
@@ -168,6 +168,10 @@ CREATE TABLE "RequestRecord" (
 )
 
 CREATE TABLE "RequestType" (
+  "rt_id" SERIAL  PRIMARY KEY,
+  "rt_name" varchar
+);
+CREATE TABLE "RequestStatus" (
   "rt_id" SERIAL  PRIMARY KEY,
   "rt_name" varchar
 );

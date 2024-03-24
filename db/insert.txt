@@ -308,12 +308,12 @@ VALUES
 ('Delivered');
 
 --insert into table RequestStatus 
-INSERT INTO "RequestStatus" ("rstt_name") VALUES
-  ("Processing"),
-  ("Aproved"),
-  ("Denied");
+INSERT INTO RequestStatus (rstt_name) VALUES
+('Processing'),
+('Approved'),
+('Denied');
 --insert into table RequestType
-INSERT INTO "RequestType" ("rt_name") VALUES
-  ("Edit order"),
-  ("Cancel order"),
-  ("Make transit");
+INSERT INTO RequestType (rt_name) VALUES
+('Edit order'),
+('Cancel order'),
+('Make transit');
