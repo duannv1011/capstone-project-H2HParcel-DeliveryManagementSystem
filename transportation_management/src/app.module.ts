@@ -38,6 +38,7 @@ import { AdminController } from './module/web/admin/module/admin.controller';
 import { AdminService } from './module/web/admin/module/admin.service';
 import { StaffService } from './module/core/staff/staff.service';
 import { StatusService } from './module/core/status/service/status.service';
+import { AddressModule } from './module/core/address/address.module';
 
 @Module({
     imports: [
@@ -58,6 +59,7 @@ import { StatusService } from './module/core/status/service/status.service';
         QrCodeModule,
         AdminModule,
         StaffModule,
+        AddressModule,
     ],
     controllers: [
         AppController,

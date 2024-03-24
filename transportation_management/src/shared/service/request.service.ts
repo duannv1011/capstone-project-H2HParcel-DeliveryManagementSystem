@@ -79,20 +79,20 @@ export class RequestService {
      * @param requestId number
      */
     async cancelRequest(requestId: number): Promise<boolean> {
-        try {
-            const requestCancel = await this.requestRepository.findOne({ where: { requestId: requestId } });
-            if (requestCancel) {
-                // TODO: QA request status
-                requestCancel.requestStatus = 5;
-                await this.requestRepository.update(requestId, requestCancel);
+        // try {
+        //     const requestCancel = await this.requestRepository.findOne({ where: { requestId: requestId } });
+        //     if (requestCancel) {
+        //         // TODO: QA request status
+        //         requestCancel.re = 5;
+        //         await this.requestRepository.update(requestId, requestCancel);
 
-                return true;
-            }
+        //         return true;
+        //     }
 
-            return false;
-        } catch (error) {
-            Logger.log(error);
-            throw new InternalServerErrorException();
-        }
+        return false;
+        // } catch (error) {
+        //     Logger.log(error);
+        //     throw new InternalServerErrorException();
+        // }
     }
 }

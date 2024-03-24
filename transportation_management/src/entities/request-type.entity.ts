@@ -1,6 +1,5 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
-import { RequestEntity } from './request.entity';
 
 @Entity('RequestType')
 export class RequestTypeEntity extends AbstractEntity {
@@ -9,8 +8,4 @@ export class RequestTypeEntity extends AbstractEntity {
 
     @Column({ name: 'rt_name' })
     public requestTypeName: string;
-
-    @OneToMany(() => RequestEntity, (request) => request.requestType)
-    @JoinColumn({ name: 'request_type' })
-    requests: RequestEntity[];
 }

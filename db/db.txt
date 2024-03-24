@@ -64,7 +64,8 @@ CREATE TABLE "District" (
 CREATE TABLE "Ward" (
   "ward_id" SERIAL  PRIMARY KEY,
   "district_id" integer,
-  "ward_name" varchar
+  "ward_name" varchar,
+  "warehouse_id" varchar
 );
 
 
@@ -79,7 +80,9 @@ CREATE TABLE "Address" (
 CREATE TABLE "Warehouse" (
   "warehouse_id" SERIAL  PRIMARY KEY,
   "address_id"  integer,
-  "warehouse_name" varchar
+  "warehouse_name" varchar,
+  "isActive" boolean
+
 );
 
 
@@ -98,6 +101,12 @@ CREATE TABLE "priceMultiplier" (
   "multiplier" decimal(10,5)
 );
 
+CREATE TABLE "Information"(
+ "infor_id" SERIAL  PRIMARY KEY,
+ "name" varchar,
+ "phone" varchar,
+ "address_id" integer
+);
 
 CREATE TABLE "Order" (
   "order_id" SERIAL  PRIMARY KEY,
@@ -107,7 +116,14 @@ CREATE TABLE "Order" (
   "deliver_infor_id" integer
   "deliver_shipper" integer,
   "order_stt" integer,
+  "pk_id" integer,
   "estimated_price" integer
+);
+
+CREATE TABLE "PackageType" (
+  "pk_id" SERIAL  PRIMARY KEY,
+  "pk_name" varchar,
+  "pk_price" decimal
 );
 CREATE TABLE "Price" (
   "price_id" SERIAL  PRIMARY KEY,
@@ -129,29 +145,28 @@ CREATE TABLE "ActivityLog" (
   "curent_status" integer
   "staff" integer
 );
-
+--request1,2
 CREATE TABLE "Request" (
   "request_id" SERIAL  PRIMARY KEY,
   "order_id" integer,
-  "request_type" integer,
-  "request_stt" integer,
   "new_infor" integer,
-  "note" varchar
 );
--- 1 special request 
+-- request special
 CREATE TABLE "Transit" (
-  "trs_id" SERIAL  PRIMARY KEY,
+  "transit_id" SERIAL  PRIMARY KEY,
   "warehouse_from" integer,
   "warehouse_to" integer,
   "staff_id" integer,
+);
+--if request type ==3 refer_id =transit_id, if request_type =1or 2,refer_id= request_id
+CREATE TABLE "RequestRecord" (
+  "record_id" SERIAL PRIMARY KEY,
+  "refer_id" integer,
   "request_type" integer,
   "request_stt" integer
-);
-CREATE TABLE "RequestStatus" (
-  "rstt_id" SERIAL  PRIMARY KEY,
-  "rstt_name" varchar
-);
-// data
+  "note" varchar
+)
+
 CREATE TABLE "RequestType" (
   "rt_id" SERIAL  PRIMARY KEY,
   "rt_name" varchar

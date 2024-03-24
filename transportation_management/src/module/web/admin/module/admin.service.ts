@@ -5,7 +5,6 @@ import { AccountEntity } from 'src/entities/account.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
-import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { StatusService } from 'src/module/core/status/service/status.service';
 import { Response } from 'src/module/response/Response';
 import { Repository, DataSource, Not, In } from 'typeorm';
@@ -24,8 +23,6 @@ export class AdminService {
         private customerRepository: Repository<CustomerEntity>,
         @InjectRepository(StaffEntity)
         private staffRepository: Repository<StaffEntity>,
-        @InjectRepository(WarehouseEntity)
-        private warehouseRepository: Repository<WarehouseEntity>,
         @InjectRepository(AddressEntity)
         private addressRepository: Repository<AddressEntity>,
         @InjectRepository(RoleEntity)
@@ -92,38 +89,6 @@ export class AdminService {
     }
     async getAllRoleStaff(): Promise<RoleEntity[]> {
         return this.roleRepository.find({ where: { role_id: Not(In([1, 4, 5])) } });
-    }
-    async getAllWarehouse(pageNo: number, pageSize: number): Promise<any> {
-        const [list, count] = await this.warehouseRepository
-            .createQueryBuilder('warehouse')
-            .select([
-                'warehouse.warehouse_id',
-                'warehouse.warehouse_name',
-                'address.house',
-                'city.city_name',
-                'district.district_name',
-                'ward.ward_name',
-            ])
-            .leftJoin('warehouse.address', 'address')
-            .leftJoin('address.city', 'city')
-            .leftJoin('address.district', 'district')
-            .leftJoin('address.ward', 'ward')
-            .where('warehouse.isActive = :isActive', { isActive: true })
-            .orderBy('warehouse.warehouse_id', 'ASC')
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize)
-            .getManyAndCount();
-        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
-        if (!count || totalpage < pageNo) {
-            return { status: 404, msg: 'not found!' };
-        }
-        return {
-            list,
-            count,
-            pageNo,
-            pageSize,
-            totalpage,
-        };
     }
     async getAllStaff(pageNo: number): Promise<any> {
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));

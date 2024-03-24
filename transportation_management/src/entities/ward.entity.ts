@@ -12,4 +12,7 @@ export class WardEntity {
 
     @Column()
     ward_name: string;
+
+    @Column({ nullable: true })
+    warehouse_id: number;
 }

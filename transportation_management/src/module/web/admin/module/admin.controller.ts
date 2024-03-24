@@ -10,10 +10,6 @@ import { CustomerStatusUpdateDTO } from '../dto/customer-status-update.dto';
 import { CustomerService } from 'src/module/client/customer/modules/customer.service';
 import { CreateStaffDto } from '../dto/staff-create.dto';
 import { StaffService } from 'src/module/core/staff/staff.service';
-import { WarehourseService } from '../../warehourse/modules/warehourse.service';
-import { CreateWarehouseDto } from '../../warehourse/dto/createWarehouse_dto';
-import { UpdateWarehouseDto } from '../../warehourse/dto/updateWarehoue_dto';
-import { updateActiveDto } from '../../warehourse/dto/changeActive_dto';
 import { updateStaffDto } from '../dto/staff-update.dto';
 import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 
@@ -25,54 +21,8 @@ export class AdminController {
         private customerService: CustomerService,
         private staffService: StaffService,
         private configService: ConfigService,
-        private readonly warehouseService: WarehourseService,
     ) {}
-    @Get('getAllWarehouse')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'get All Warehouse' })
-    @ApiResponse({ status: 200, description: 'get All Warehouse successfully.' })
-    async getAllWarehouse(@Query('pageNo') pageNo: string): Promise<any> {
-        const pagesize = this.configService.get<string>('PAGE_SIZE');
-        return this.adminService.getAllWarehouse(Number(pageNo), Number(pagesize));
-    }
-    @Get('getDetailWarehouse')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'get Detail of Warehouse' })
-    @ApiResponse({ status: 200, description: 'get Warehouse data successfully.' })
-    async getDetailWarehouse(@Query('warehouse_id') warehouse_id: string): Promise<any> {
-        return this.warehouseService.getDetailWarehouse(Number(warehouse_id));
-    }
-    @Post('createWarehouse')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'create new Warehouse' })
-    @ApiResponse({ status: 200, description: 'create Warehouse successfully.' })
-    async createWarehouse(@Body() data: CreateWarehouseDto): Promise<any> {
-        return this.warehouseService.createWarehouse(data);
-    }
-    @Put('updateWarehouse')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'update Warehouse' })
-    @ApiResponse({ status: 200, description: 'update Warehouse successfully.' })
-    async updateWarehouse(@Body() data: UpdateWarehouseDto): Promise<any> {
-        return this.warehouseService.updateWarehouse(data);
-    }
-    @Put('changeActiveWarehouse')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'update status Warehouse' })
-    @ApiResponse({ status: 200, description: 'update  Warehouse status successfully.' })
-    async changeActiveWarehouse(@Body() data: updateActiveDto): Promise<any> {
-        return this.warehouseService.updateActive(data);
-    }
+
     @Get('getAllAccount')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
