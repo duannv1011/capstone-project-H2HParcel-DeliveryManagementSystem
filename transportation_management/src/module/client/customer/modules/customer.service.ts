@@ -30,7 +30,7 @@ export class CustomerService {
                 'customer.fullname',
                 'customer.email',
                 'customer.phone',
-                'customer.default_address',
+                'customer.default_book',
                 'customer.address_id',
                 'address',
                 'city',
