@@ -6,10 +6,7 @@ import { Role } from 'src/enum/roles.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AdminService } from './admin.service';
-import { CustomerStatusUpdateDTO } from '../dto/customer-status-update.dto';
-import { CustomerService } from 'src/module/client/customer/modules/customer.service';
 import { CreateStaffDto } from '../dto/staff-create.dto';
-import { StaffService } from 'src/module/core/staff/staff.service';
 import { updateStaffDto } from '../dto/staff-update.dto';
 import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 
@@ -18,8 +15,6 @@ import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 export class AdminController {
     constructor(
         private adminService: AdminService,
-        private customerService: CustomerService,
-        private staffService: StaffService,
         private configService: ConfigService,
     ) {}
 
@@ -42,28 +37,7 @@ export class AdminController {
     async getAllRoleStaff(): Promise<any> {
         return this.adminService.getAllRoleStaff();
     }
-    @Get('getAllCustomer')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'get All Customer' })
-    @ApiResponse({ status: 200, description: 'get All Customer successfully.' })
-    async getAllCustomer(@Query('pageNo') pageNo: string): Promise<any> {
-        const pagesize = this.configService.get<string>('PAGE_SIZE');
-        return this.adminService.getAllCustomer(Number(pageNo), Number(pagesize));
-    }
-    @Patch('updateCustomerStatus')
-    @Roles(Role.ADMIN)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'Update customer status' })
-    @ApiResponse({ status: 200, description: 'Updated customer status successfully.' })
-    async updateCustomerStatus(@Body() customerStatusUpdateDTO: CustomerStatusUpdateDTO): Promise<any> {
-        return await this.customerService.updateCustomerStatus(
-            customerStatusUpdateDTO.cus_id,
-            customerStatusUpdateDTO.status,
-        );
-    }
+
     @Get('getAllStaff')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)

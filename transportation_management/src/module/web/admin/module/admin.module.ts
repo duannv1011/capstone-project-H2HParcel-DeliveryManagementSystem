@@ -8,7 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AddressEntity } from 'src/entities/address.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
-import { StatusService } from 'src/module/core/status/service/status.service';
 import { CustomerService } from 'src/module/client/customer/modules/customer.service';
 import { StaffService } from 'src/module/core/staff/staff.service';
 import { OrderEntity } from 'src/entities/order.entity';
@@ -18,6 +17,7 @@ import { RoleEntity } from 'src/entities/role.entity';
 import { QrCodeService } from 'src/module/core/qr-code/qr-code.service';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
 import { InformationEntity } from 'src/entities/Information.entity';
+import { OrderStatusEntity } from 'src/entities/order-status.entity';
 
 @Module({
     imports: [
@@ -31,6 +31,7 @@ import { InformationEntity } from 'src/entities/Information.entity';
             RoleEntity,
             QRCodeEntity,
             InformationEntity,
+            OrderStatusEntity,
         ]),
         JwtModule.register({
             global: true,
@@ -38,16 +39,7 @@ import { InformationEntity } from 'src/entities/Information.entity';
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
     ],
-    providers: [
-        AdminService,
-        QrCodeService,
-        StatusService,
-        CustomerService,
-        StaffService,
-        AuthenticationService,
-        WarehourseService,
-        StatusService,
-    ],
+    providers: [AdminService, QrCodeService, CustomerService, StaffService, AuthenticationService, WarehourseService],
     controllers: [AdminController],
     exports: [TypeOrmModule],
 })

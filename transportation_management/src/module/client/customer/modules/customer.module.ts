@@ -6,10 +6,11 @@ import { CustomerService } from './customer.service';
 import { CustomerController } from './customer.controller';
 import { CustomerEntity } from '../../../../entities/customer.entity';
 import { AddressEntity } from 'src/entities/address.entity';
+import { AccountEntity } from 'src/entities/account.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([CustomerEntity, AddressEntity]),
+        TypeOrmModule.forFeature([CustomerEntity, AddressEntity, AccountEntity]),
         ConfigModule,
         JwtModule.register({
             global: true,

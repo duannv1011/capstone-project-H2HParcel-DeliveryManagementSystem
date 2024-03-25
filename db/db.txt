@@ -82,7 +82,6 @@ CREATE TABLE "Warehouse" (
   "address_id"  integer,
   "warehouse_name" varchar,
   "isActive" boolean
-
 );
 
 

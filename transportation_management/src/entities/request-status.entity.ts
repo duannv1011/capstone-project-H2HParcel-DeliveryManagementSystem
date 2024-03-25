@@ -3,9 +3,9 @@ import { AbstractEntity } from './abstract-entity';
 
 @Entity('RequestStatus')
 export class RequestStatusEntity extends AbstractEntity {
-    @PrimaryGeneratedColumn({ name: 'rt_id' })
+    @PrimaryGeneratedColumn({ name: 'rqs_id' })
     public rqs_id: number;
 
-    @Column({ name: 'rts_name' })
-    public rts_name: string;
+    @Column({ name: 'rqs_name' })
+    public rqs_name: string;
 }
