@@ -305,7 +305,8 @@ VALUES
 ('On transit'),
 ('Arrived deliver warehouse'),
 ('On Delivery'),
-('Delivered');
+('Delivered'),
+('Canceled'),
 
 --insert into table RequestStatus 
 INSERT INTO RequestStatus (rstt_name) VALUES

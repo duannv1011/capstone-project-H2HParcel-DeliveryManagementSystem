@@ -20,7 +20,7 @@ export class CustomerEntity {
     @Column({ nullable: true })
     acc_id: number;
 
-    @Column()
+    @Column({ nullable: true })
     default_book: number;
 
     @Column({ default: 1 })
