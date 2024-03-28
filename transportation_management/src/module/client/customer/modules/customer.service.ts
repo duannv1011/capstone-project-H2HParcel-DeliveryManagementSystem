@@ -83,13 +83,10 @@ export class CustomerService {
         dataView.fullname = customer.fullname;
         dataView.email = customer.email;
         dataView.phone = customer.phone;
-        const addressTotal = this.combineAddress([
-            customer.address.house,
-            customer.address.city.city_name,
-            customer.address.district.district_name,
-            customer.address.ward.ward_name,
-        ]);
-        dataView.address = addressTotal;
+        dataView.house = customer.address.house;
+        dataView.city = customer.address.city.city_name;
+        dataView.district = customer.address.district.district_name;
+        dataView.ward = customer.address.ward.ward_name;
         return dataView;
     }
 

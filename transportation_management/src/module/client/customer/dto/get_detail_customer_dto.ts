@@ -28,7 +28,22 @@ export class DetailCustommerDto {
     phone: string;
 
     @IsObject()
-    @IsNotEmpty({ message: 'Null value error for Address' })
-    @ApiProperty({ example: 'Address', description: 'Address' })
-    address: string;
+    @IsNotEmpty({ message: 'Null value error for house' })
+    @ApiProperty({ example: 'Address', description: 'house' })
+    house: string;
+
+    @IsObject()
+    @IsNotEmpty({ message: 'Null value error for city' })
+    @ApiProperty({ example: 'Address', description: 'city' })
+    city: string;
+
+    @IsObject()
+    @IsNotEmpty({ message: 'Null value error for district' })
+    @ApiProperty({ example: 'Address', description: 'district' })
+    district: string;
+
+    @IsObject()
+    @IsNotEmpty({ message: 'Null value error for ward' })
+    @ApiProperty({ example: 'Address', description: 'ward' })
+    ward: string;
 }
