@@ -17,6 +17,8 @@ import { Role } from '../../../enum/roles.enum';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { RoleGuard } from '../../../guards/role.guard';
 import { ProfileService } from '../../../shared/service/profile.service';
+import { UserLogin } from '../../../decorators/user_login.decorator';
+import { UserLoginData } from '../authentication/dto/user_login_data';
 
 @ApiTags('manager')
 @Controller('manager')
@@ -54,8 +56,11 @@ export class ManagerController {
     @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
     @Post('profiles/staff/update')
-    async updateProfile(@Body() request: StaffProfileUpdateDto): Promise<Response> {
-        const result = await this.profileService.updateStaffProfile(request);
+    async updateProfile(
+        @Body() request: StaffProfileUpdateDto,
+        @UserLogin() userLogin: UserLoginData,
+    ): Promise<Response> {
+        const result = await this.profileService.updateStaffProfile(request, userLogin.accId);
 
         if (result) {
             return new Response(201, 'success', result, null, 1);

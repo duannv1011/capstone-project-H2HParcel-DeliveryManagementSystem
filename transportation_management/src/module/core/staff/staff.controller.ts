@@ -21,12 +21,12 @@ import { RequestCreateDto } from '../../../shared/dto/request/request.create.dto
 import { RequestUpdateDto } from '../../../shared/dto/request/request.update.dto';
 import { ProfileService } from '../../../shared/service/profile.service';
 import { RequestService } from '../../../shared/service/request.service';
-import { OrderViewService } from '../../../shared/service/order-view.service';
 import { UserLogin } from '../../../decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
 import { StaffService } from './staff.service';
 import { AssignCodeDto } from './dto/assign-code.dto';
 import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
+import { OrderViewService } from '../../../shared/service/order-view.service';
 
 @ApiTags('staff')
 @Controller('staff')
@@ -34,8 +34,8 @@ export class StaffController {
     constructor(
         private readonly profileService: ProfileService,
         private readonly requestService: RequestService,
-        private readonly orderViewService: OrderViewService,
         private readonly staffService: StaffService,
+        private readonly orderService: OrderViewService,
     ) {}
 
     @ApiBearerAuth('JWT-auth')
@@ -46,7 +46,6 @@ export class StaffController {
     @Get('profile')
     async getProfile(@UserLogin() userLogin: UserLoginData): Promise<Response> {
         const profile = await this.profileService.findOneStaffByAccId(userLogin.accId);
-        console.log(userLogin.accId);
 
         return new Response(200, 'success', profile, null, 1);
     }
@@ -59,8 +58,11 @@ export class StaffController {
     @ApiUnauthorizedResponse()
     @ApiBody({ type: StaffProfileUpdateDto })
     @Post('profile/update')
-    async updateProfile(@Body() request: StaffProfileUpdateDto): Promise<Response> {
-        const result = await this.profileService.updateStaffProfile(request);
+    async updateProfile(
+        @Body() request: StaffProfileUpdateDto,
+        @UserLogin() userLogin: UserLoginData,
+    ): Promise<Response> {
+        const result = await this.profileService.updateStaffProfile(request, userLogin.accId);
 
         if (result) {
             return new Response(201, 'success', result, null, 1);
@@ -144,42 +146,6 @@ export class StaffController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'View all pickup order of staff' })
-    @Roles(Role.STAFF)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiUnauthorizedResponse()
-    @Get('order/pickup')
-    async findAllPickupOrderByStaff(@Query('staffId', ParseIntPipe) staffId: number): Promise<Response> {
-        const orders = await this.orderViewService.findAllPickupOrderByStaff(staffId);
-
-        return new Response(200, 'true', orders, null, 1);
-    }
-
-    @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'View all deliver order of staff' })
-    @Roles(Role.STAFF)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiUnauthorizedResponse()
-    @Get('order/deliver')
-    async findAllDeliverOrderByStaff(@Query('staffId', ParseIntPipe) staffId: number): Promise<Response> {
-        const orders = await this.orderViewService.findAllDeliverOrderByStaff(staffId);
-
-        return new Response(200, 'true', orders, null, 1);
-    }
-
-    @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'View order detail' })
-    @Roles(Role.STAFF)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiUnauthorizedResponse()
-    @Get('order/detail')
-    async findOneOrder(@Query('orderId', ParseIntPipe) orderId: number): Promise<Response> {
-        const orders = await this.orderViewService.findOneOrder(orderId);
-
-        return new Response(200, 'true', orders, null, 1);
-    }
-
-    @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Assign code to order' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
@@ -208,5 +174,65 @@ export class StaffController {
         }
 
         return new Response(200, 'false', false, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View all order by warehouse of staff' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/all')
+    async findAllByWarehouse(
+        @UserLogin() userLogin: UserLoginData,
+        @Query('pageNo', ParseIntPipe) pageNo: number,
+    ): Promise<Response> {
+        const result = await this.orderService.findAllByStaff(pageNo, userLogin);
+
+        return new Response(200, 'true', result.orders, result.paging, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View order detail' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/detail')
+    async findOrderDetail(@Query('orderId', ParseIntPipe) orderId: number): Promise<Response> {
+        const order = await this.orderService.findOneOrder(orderId);
+
+        return new Response(200, 'true', order, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View order detail by status' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/search/status')
+    async findOrderByStatus(
+        @Query('status', ParseIntPipe) status: number,
+        @Query('pageNo', ParseIntPipe) pageNo: number,
+        @UserLogin() userLogin: UserLoginData,
+    ): Promise<Response> {
+        const order = await this.orderService.findOrderByStatus(pageNo, status, userLogin);
+
+        return new Response(200, 'true', order, null, 1);
+    }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View order detail by range time' })
+    @Roles(Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('order/search/time')
+    async findOrderByTime(
+        @Query('from') fromDate: string,
+        @Query('to') toDate: string,
+        @Query('pageNo', ParseIntPipe) pageNo: number,
+        @UserLogin() userLogin: UserLoginData,
+    ): Promise<Response> {
+        const order = await this.orderService.findOrderByTime(pageNo, fromDate, toDate, userLogin);
+
+        return new Response(200, 'true', order, null, 1);
     }
 }

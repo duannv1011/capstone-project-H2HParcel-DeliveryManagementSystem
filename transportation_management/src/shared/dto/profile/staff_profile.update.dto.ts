@@ -1,12 +1,7 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StaffProfileUpdateDto {
-    @ApiProperty({ example: 1 })
-    @IsNumber()
-    @IsNotEmpty()
-    staff_id: number;
-
     @ApiProperty({ example: 'test' })
     @IsString()
     @IsOptional()
@@ -25,5 +20,25 @@ export class StaffProfileUpdateDto {
     @ApiProperty({ example: 1 })
     @IsNumber()
     @IsOptional()
-    warehouse_id?: number;
+    addressId?: number;
+
+    @ApiProperty({ example: 'so nha 1 ngo X duong y' })
+    @IsString()
+    @IsOptional()
+    house?: string;
+
+    @IsNumber()
+    @ApiProperty({ example: '1', description: 'city' })
+    @IsOptional()
+    city_id?: number;
+
+    @IsNumber()
+    @ApiProperty({ example: '1', description: 'district' })
+    @IsOptional()
+    district_id?: number;
+
+    @IsNumber()
+    @ApiProperty({ example: '1', description: 'ward' })
+    @IsOptional()
+    ward_id?: number;
 }
