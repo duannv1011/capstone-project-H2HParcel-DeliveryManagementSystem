@@ -43,6 +43,6 @@ export class OrderViewService {
      * @param orderId number
      */
     async findOneOrder(orderId: number): Promise<OrderEntity> {
-        return await this.orderRepository.findOne({ where: { orderId: orderId } });
+        return await this.orderRepository.findOne({ where: { order_id: orderId } });
     }
 }

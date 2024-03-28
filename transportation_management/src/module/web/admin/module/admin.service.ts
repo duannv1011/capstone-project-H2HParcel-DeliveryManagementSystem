@@ -5,8 +5,6 @@ import { AccountEntity } from 'src/entities/account.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
-import { StatusService } from 'src/module/core/status/service/status.service';
-import { Response } from 'src/module/response/Response';
 import { Repository, DataSource, Not, In } from 'typeorm';
 import { updateStaffDto } from '../dto/staff-update.dto';
 import { CreateStaffDto } from '../dto/staff-create.dto';
@@ -29,7 +27,6 @@ export class AdminService {
         private roleRepository: Repository<RoleEntity>,
         private dataSource: DataSource,
         private configService: ConfigService,
-        private statusService: StatusService,
         private authenticationService: AuthenticationService,
     ) {}
     async findAllAccount(pageNo: number, pageSize: number): Promise<any> {
@@ -43,41 +40,6 @@ export class AdminService {
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };
-        }
-        return {
-            list,
-            count,
-            pageNo,
-            pageSize,
-            totalpage,
-        };
-    }
-    async getAllCustomer(pageNo: number, pageSize: number): Promise<any> {
-        const [list, count] = await this.customerRepository
-            .createQueryBuilder('customer')
-            .select([
-                'customer.cus_id',
-                'customer.fullname',
-                'customer.email',
-                'customer.phone',
-                'customer.status',
-                'city.city_name',
-                'district.district_name',
-                'ward.ward_name',
-            ])
-            .leftJoin('customer.account', 'account')
-            .leftJoin('customer.address', 'address')
-            .leftJoin('address.city', 'city')
-            .leftJoin('address.district', 'district')
-            .leftJoin('address.ward', 'ward')
-            .where('account.isActive = :isActive', { isActive: true })
-            .orderBy('customer.cus_id', 'ASC')
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize)
-            .getManyAndCount();
-        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
-        if (!count || totalpage < pageNo) {
-            return new Response(200, 'not found', list);
         }
         return {
             list,

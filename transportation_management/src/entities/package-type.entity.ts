@@ -5,8 +5,8 @@ export class PackageTypeEntity {
     public pk_id: number;
 
     @Column()
-    public pk_name: Date;
+    public pk_name: string;
 
-    @Column()
-    public pk_price: number;
+    @Column({ nullable: true })
+    public pk_price: string;
 }

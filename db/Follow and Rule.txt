@@ -39,7 +39,5 @@ rqtype 3 :
 
 regiter follow : Create step by step :account-Adress-Information-AddressBook-Customer-
 
-
-
-
-
+-- create order : create new order if pickup_infor_id null create new address+infor+adress_book.
+					if pickup_infor_id not null save infor from default_book.

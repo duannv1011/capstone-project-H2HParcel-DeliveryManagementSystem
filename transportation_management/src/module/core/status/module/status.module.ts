@@ -5,10 +5,13 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from '../../authentication/modules/authentication.module';
+import { OrderStatusEntity } from 'src/entities/order-status.entity';
+import { RequestStatusEntity } from 'src/entities/request-status.entity';
+import { RequestTypeEntity } from 'src/entities/request-type.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([]),
+        TypeOrmModule.forFeature([OrderStatusEntity, RequestStatusEntity, RequestTypeEntity]),
         ConfigModule,
         AuthenticationModule,
         JwtModule.register({

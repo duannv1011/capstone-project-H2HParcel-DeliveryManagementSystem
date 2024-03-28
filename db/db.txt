@@ -82,7 +82,6 @@ CREATE TABLE "Warehouse" (
   "address_id"  integer,
   "warehouse_name" varchar,
   "isActive" boolean
-
 );
 
 
@@ -149,7 +148,8 @@ CREATE TABLE "ActivityLog" (
 CREATE TABLE "Request" (
   "request_id" SERIAL  PRIMARY KEY,
   "order_id" integer,
-  "new_infor" integer,
+  "pickup_infor" integer,-- new infor to update order
+  "deliver_infor" integer,-- new infor to update order
 );
 -- request special
 CREATE TABLE "Transit" (

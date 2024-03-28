@@ -26,8 +26,8 @@ export class StaffService {
 
             if (code) {
                 const order: OrderEntity = new OrderEntity();
-                order.orderId = request.orderId;
-                code.order = order;
+                order.order_id = request.orderId;
+                //code.order = order;
                 await this.codeRepository.save(code);
 
                 return true;
@@ -47,8 +47,8 @@ export class StaffService {
      */
     async updateOrderStatus(request: OrderStatusUpdateDto): Promise<boolean> {
         try {
-            const order = await this.orderRepository.findOne({ where: { orderId: request.orderId } });
-            order.orderStatus = request.orderStatus;
+            const order = await this.orderRepository.findOne({ where: { order_id: request.orderId } });
+            order.order_stt = request.orderStatus;
             await this.orderRepository.update(request.orderId, order);
 
             return true;

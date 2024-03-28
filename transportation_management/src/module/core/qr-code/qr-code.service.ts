@@ -80,20 +80,20 @@ export class QrCodeService {
         try {
             const zip: JSZip = new JSZip();
 
-            for (const code of request.codeValues) {
-                const qrCode = await this.codeRepository.findOne({ where: { code_value: code } });
+            // for (const code of request.codeValues) {
+            //     const qrCode = await this.codeRepository.findOne({ where: { code_value: code } });
 
-                if (qrCode) {
-                    const imageName = `${qrCode.code_value}.png`;
-                    let orderId: number = null;
-                    if (qrCode.order) {
-                        orderId = qrCode.order.orderId;
-                    }
-                    const qrContent = `{ codeValue: ${qrCode.code_value}, orderId: ${orderId} }`;
-                    const qrFile = await QrCode.toBuffer(`${qrContent}`);
-                    zip.file(imageName, qrFile);
-                }
-            }
+            //     if (qrCode) {
+            //         const imageName = `${qrCode.code_value}.png`;
+            //         let orderId: number = null;
+            //         if (qrCode.order) {
+            //             orderId = qrCode.order.order_id;
+            //         }
+            //         const qrContent = `{ codeValue: ${qrCode.code_value}, orderId: ${orderId} }`;
+            //         const qrFile = await QrCode.toBuffer(`${qrContent}`);
+            //         zip.file(imageName, qrFile);
+            //     }
+            // }
 
             return await zip.generateAsync({ type: 'nodebuffer' });
         } catch (error) {

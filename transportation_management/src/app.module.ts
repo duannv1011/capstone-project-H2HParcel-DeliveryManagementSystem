@@ -31,14 +31,16 @@ import { StaffModule } from './module/core/staff/staff.module';
 import { ManagerModule } from './module/core/manager/manager.module';
 import { StaffController } from './module/core/staff/staff.controller';
 import { ProfileService } from './shared/service/profile.service';
-import { StatusModule } from './module/core/status/service/status.module';
+import { StatusModule } from './module/core/status/module/status.module';
 import { QrCodeModule } from './module/core/qr-code/qr-code.module';
 import { QrCodeController } from './module/core/qr-code/qr-code.controller';
 import { AdminController } from './module/web/admin/module/admin.controller';
 import { AdminService } from './module/web/admin/module/admin.service';
 import { StaffService } from './module/core/staff/staff.service';
-import { StatusService } from './module/core/status/service/status.service';
+import { StatusService } from './module/core/status/module/status.service';
 import { AddressModule } from './module/core/address/address.module';
+import { OrderModule } from './module/web/order/module/order.module';
+import { ManagercrudModule } from './module/web/managercrud/module/managercrud.module';
 
 @Module({
     imports: [
@@ -60,6 +62,8 @@ import { AddressModule } from './module/core/address/address.module';
         AdminModule,
         StaffModule,
         AddressModule,
+        OrderModule,
+        ManagercrudModule,
     ],
     controllers: [
         AppController,
