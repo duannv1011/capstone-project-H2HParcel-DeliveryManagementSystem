@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { OrderEntity } from '../../entities/order.entity';
 import { StaffEntity } from '../../entities/staff.entity';
-import { Order, OrderDetailResponse, OrderResponse } from '../../module/core/staff/dto/response/order.response';
+import { Order, OrderDetailResponse, OrderResponse } from '../../module/core/staff/response/order.response';
 import { UserLoginData } from '../../module/core/authentication/dto/user_login_data';
 import { Paging } from '../../module/response/Paging';
 import { OrderStatus } from '../../enum/order-status.enum';

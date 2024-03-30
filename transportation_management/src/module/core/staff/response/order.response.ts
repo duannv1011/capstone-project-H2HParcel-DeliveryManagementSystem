@@ -1,4 +1,4 @@
-import { Paging } from '../../../../response/Paging';
+import { Paging } from '../../../response/Paging';
 
 export interface OrderResponse {
     orders: Order[];
