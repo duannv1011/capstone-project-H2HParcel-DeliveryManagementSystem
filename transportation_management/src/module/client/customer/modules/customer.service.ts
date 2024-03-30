@@ -120,7 +120,7 @@ export class CustomerService {
                 .createQueryBuilder()
                 .update(AddressEntity)
                 .set({
-                    house: data.address_id,
+                    house: data.house,
                     city_id: data.city_id,
                     district_id: data.district_id,
                     ward_id: data.ward_id,
