@@ -2,6 +2,7 @@
 import { AfterLoad, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AccountEntity } from './account.entity';
 import { WarehouseEntity } from './warehouse.entity';
+import { AddressEntity } from './address.entity';
 
 @Entity('Staff')
 export class StaffEntity {
@@ -25,7 +26,7 @@ export class StaffEntity {
 
     @ManyToOne(() => WarehouseEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'warehouse_id' })
-    warehouse: AccountEntity;
+    warehouse: WarehouseEntity;
 
     @Column({ nullable: true })
     acc_id: number;
@@ -45,4 +46,11 @@ export class StaffEntity {
     }
 
     public status_name: string;
+
+    @Column({ nullable: true })
+    address_id: number;
+
+    @ManyToOne(() => AddressEntity, { eager: true, nullable: true })
+    @JoinColumn({ name: 'address_id' })
+    address: AddressEntity;
 }
