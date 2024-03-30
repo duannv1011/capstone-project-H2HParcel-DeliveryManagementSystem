@@ -11,7 +11,7 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { Response } from '../../response/Response';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { StaffProfileUpdateDto } from '../../../shared/dto/profile/staff_profile.update.dto';
 import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
@@ -24,7 +24,6 @@ import { RequestService } from '../../../shared/service/request.service';
 import { UserLogin } from '../../../decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
 import { StaffService } from './staff.service';
-import { AssignCodeDto } from './dto/assign-code.dto';
 import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
 import { OrderViewService } from '../../../shared/service/order-view.service';
 
@@ -40,6 +39,7 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Get staff profile' })
+    @ApiOperation({ summary: 'Get staff profile' })
     @Roles(Role.STAFF, Role.SHIPPER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
@@ -52,6 +52,7 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Update staff profile' })
+    @ApiOperation({ summary: 'Update staff profile' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
@@ -146,20 +147,6 @@ export class StaffController {
     }
 
     @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'Assign code to order' })
-    @Roles(Role.STAFF)
-    @UseGuards(AuthGuard, RoleGuard)
-    @UsePipes(ValidationPipe)
-    @ApiUnauthorizedResponse()
-    @ApiBody({ type: AssignCodeDto })
-    @Post('qr-code/assign')
-    async assignCodeToOrder(@Body() request: AssignCodeDto): Promise<Response> {
-        const result = await this.staffService.assignCodeToOrder(request);
-
-        return new Response(201, 'success', result, null, 1);
-    }
-
-    @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Update order status' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
@@ -178,6 +165,7 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View all order by warehouse of staff' })
+    @ApiOperation({ summary: 'View all order by warehouse of staff' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
@@ -193,6 +181,7 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View order detail' })
+    @ApiOperation({ summary: 'View order detail' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
@@ -205,6 +194,7 @@ export class StaffController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View order detail by status' })
+    @ApiOperation({ summary: 'View order detail by status' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
@@ -216,11 +206,12 @@ export class StaffController {
     ): Promise<Response> {
         const order = await this.orderService.findOrderByStatus(pageNo, status, userLogin);
 
-        return new Response(200, 'true', order, null, 1);
+        return new Response(200, 'true', order.orders, order.paging, 1);
     }
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View order detail by range time' })
+    @ApiOperation({ summary: 'View order detail by range time' })
     @Roles(Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
@@ -233,6 +224,6 @@ export class StaffController {
     ): Promise<Response> {
         const order = await this.orderService.findOrderByTime(pageNo, fromDate, toDate, userLogin);
 
-        return new Response(200, 'true', order, null, 1);
+        return new Response(200, 'true', order.orders, order.paging, 1);
     }
 }

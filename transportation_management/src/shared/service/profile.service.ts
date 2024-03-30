@@ -4,7 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { AccountEntity } from '../../entities/account.entity';
 import { StaffEntity } from '../../entities/staff.entity';
 import { StaffProfileUpdateDto } from '../dto/profile/staff_profile.update.dto';
-import { Address, Staff, StaffResponse } from '../../module/core/staff/dto/response/staff.reponse';
+import { Address, Staff, StaffResponse } from '../../module/core/staff/response/staff.reponse';
 import { Builder } from 'builder-pattern';
 import { AddressEntity } from '../../entities/address.entity';
 
