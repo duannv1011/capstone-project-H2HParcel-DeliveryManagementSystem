@@ -25,7 +25,7 @@ export class updateCusProfileDto {
     @IsString()
     @ApiProperty({ example: 'hourse', description: 'The hourse' })
     @IsNotEmpty({ message: 'Null value error hourse' })
-    hourse: string;
+    house: string;
 
     @IsNumber()
     @ApiProperty({ example: '1', description: 'The city' })
