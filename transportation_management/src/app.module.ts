@@ -40,6 +40,7 @@ import { StatusService } from './module/core/status/module/status.service';
 import { AddressModule } from './module/core/address/address.module';
 import { OrderModule } from './module/web/order/module/order.module';
 import { ManagercrudModule } from './module/web/managercrud/module/managercrud.module';
+import { RequestModule } from './module/core/request/request.module';
 
 @Module({
     imports: [
@@ -63,6 +64,7 @@ import { ManagercrudModule } from './module/web/managercrud/module/managercrud.m
         AddressModule,
         OrderModule,
         ManagercrudModule,
+        RequestModule,
     ],
     controllers: [
         AppController,
