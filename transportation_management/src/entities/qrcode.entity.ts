@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
+import { OrderEntity } from './order.entity';
 
 @Entity('QRCode')
 export class QRCodeEntity extends AbstractEntity {
@@ -14,4 +15,8 @@ export class QRCodeEntity extends AbstractEntity {
 
     @Column({ nullable: true })
     price: string;
+
+    @ManyToOne(() => OrderEntity, { eager: true, nullable: true })
+    @JoinColumn({ name: 'order_id' })
+    order: OrderEntity;
 }

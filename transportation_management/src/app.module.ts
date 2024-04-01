@@ -36,11 +36,11 @@ import { QrCodeModule } from './module/core/qr-code/qr-code.module';
 import { QrCodeController } from './module/core/qr-code/qr-code.controller';
 import { AdminController } from './module/web/admin/module/admin.controller';
 import { AdminService } from './module/web/admin/module/admin.service';
-import { StaffService } from './module/core/staff/staff.service';
 import { StatusService } from './module/core/status/module/status.service';
 import { AddressModule } from './module/core/address/address.module';
 import { OrderModule } from './module/web/order/module/order.module';
 import { ManagercrudModule } from './module/web/managercrud/module/managercrud.module';
+import { RequestModule } from './module/core/request/request.module';
 
 @Module({
     imports: [
@@ -64,6 +64,7 @@ import { ManagercrudModule } from './module/web/managercrud/module/managercrud.m
         AddressModule,
         OrderModule,
         ManagercrudModule,
+        RequestModule,
     ],
     controllers: [
         AppController,
@@ -94,7 +95,6 @@ import { ManagercrudModule } from './module/web/managercrud/module/managercrud.m
         ProfileService,
         AdminService,
         StatusService,
-        StaffService,
     ],
 })
 export class AppModule {}
