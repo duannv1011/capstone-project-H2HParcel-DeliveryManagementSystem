@@ -28,8 +28,8 @@ export class OrderController {
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'get Order Detail Customer Orders' })
     @ApiResponse({ status: 200, description: 'get Order Detail Customer Orders  successfully.' })
-    async getOrderDetail(@UserLogin() userLogin: UserLoginData) {
-        return 'get Order Detail';
+    async getOrderDetail(@UserLogin() userLogin: UserLoginData, @Query('order_id') order_id: number) {
+        return this.orderService.getDetailOrder(order_id, userLogin.accId);
     }
     @Put('createOrder')
     @Roles(Role.CUSTOMER)
@@ -39,14 +39,5 @@ export class OrderController {
     @ApiResponse({ status: 200, description: 'create new Order for Customer  successfully.' })
     async createOrder(@Body() data: CusCreateOrderDto, @UserLogin() userLogin: UserLoginData) {
         return this.orderService.createOrder(data, userLogin.accId);
-    }
-    @Put('editOrder')
-    @Roles(Role.CUSTOMER)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'edit Order for Customer Orders' })
-    @ApiResponse({ status: 200, description: 'edit Order for Customer  successfully.' })
-    async editOrder(@UserLogin() userLogin: UserLoginData) {
-        return 'editOrder';
     }
 }

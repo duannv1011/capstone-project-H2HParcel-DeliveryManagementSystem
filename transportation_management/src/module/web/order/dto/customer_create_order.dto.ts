@@ -2,15 +2,20 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
 
 export class CusCreateOrderDto {
-    @ApiProperty({ example: 11, description: 'cus_id' })
+    //@ApiProperty({ example: 11, description: 'cus_id' })
     @IsString()
     @IsNotEmpty({ message: 'null value for cus_id ' })
     cus_id: number;
 
     @ApiProperty({ example: 10, description: 'pickup_infor_id' })
-    @IsString()
-    @IsNotEmpty({ message: 'null value for pickup_infor_id ' })
+    @IsNumber()
+    //@IsNotEmpty({ message: 'null value for pickup_infor_id ' })
     pickup_infor_id: number;
+
+    @ApiProperty({ example: 'Duan Nguyen', description: 'pickup_name' })
+    @IsString()
+    @IsNotEmpty({ message: 'null value for pickup_name ' })
+    pickup_name: string;
 
     @ApiProperty({ example: '0209151875', description: 'pickup_phone' })
     @IsString()
@@ -38,10 +43,15 @@ export class CusCreateOrderDto {
     @ApiProperty({ example: '1', description: 'pickup_ward_id' })
     pickup_ward_id: number;
 
-    @ApiProperty({ example: 10, description: 'deliver_infor_id' })
+    // @ApiProperty({ example: 10, description: 'deliver_infor_id' })
+    // @IsString()
+    // @IsNotEmpty({ message: 'null value for deliver_infor_id ' })
+    // deliver_infor_id: number;
+
+    @ApiProperty({ example: 'Long ', description: 'deliver_name' })
     @IsString()
-    @IsNotEmpty({ message: 'null value for deliver_infor_id ' })
-    deliver_infor_id: number;
+    @IsNotEmpty({ message: 'null value for deliver_name ' })
+    deliver_name: string;
 
     @ApiProperty({ example: '0209151875', description: 'deliver_phone' })
     @IsString()
@@ -69,12 +79,12 @@ export class CusCreateOrderDto {
     @ApiProperty({ example: '1', description: 'deliver_ward_id' })
     deliver_ward_id: number;
 
-    @ApiProperty({ example: 10, description: 'order_stt' })
+    @ApiProperty({ example: 1, description: 'order_stt', default: 1 })
     @IsString()
     @IsNotEmpty({ message: 'null value for order_stt ' })
     order_stt: number;
 
-    @ApiProperty({ example: 10, description: 'pk_id' })
+    @ApiProperty({ example: 1, description: 'pk_id' })
     @IsString()
     @IsNotEmpty({ message: 'null value for pk_id ' })
     pk_id: number;
