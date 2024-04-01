@@ -11,5 +11,8 @@ export class DistrictEntity {
     city: CityEntity;
 
     @Column()
+    city_id: number;
+
+    @Column()
     district_name: string;
 }

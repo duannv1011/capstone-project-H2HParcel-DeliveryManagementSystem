@@ -102,7 +102,7 @@ export class ProfileService {
             if (staffEntity) {
                 if (request.addressId) {
                     const addressEntity: AddressEntity = await this.addressRepository.findOne({
-                        where: { address_id: request.addressId },
+                        where: { address_id: staffEntity.address_id },
                     });
 
                     if (addressEntity) {
@@ -123,6 +123,14 @@ export class ProfileService {
                         }
 
                         await queryRunner.manager.save(addressEntity);
+                    } else {
+                        const address = new AddressEntity();
+                        address.address_id = 0;
+                        address.house = request.house;
+                        address.city_id = request.city_id;
+                        address.district_id = request.district_id;
+                        address.ward_id = request.ward_id;
+                        await queryRunner.manager.save(address);
                     }
                 }
 

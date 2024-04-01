@@ -17,7 +17,7 @@ export class StaffProfileUpdateDto {
     @IsOptional()
     phone?: string;
 
-    @ApiProperty({ example: 1 })
+    //@ApiProperty({ example: 1 })
     @IsNumber()
     @IsOptional()
     addressId?: number;
