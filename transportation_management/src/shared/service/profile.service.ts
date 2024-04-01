@@ -91,70 +91,66 @@ export class ProfileService {
      * @param accId number
      */
     async updateStaffProfile(request: StaffProfileUpdateDto, accId: number): Promise<boolean> {
+        const queryRunner = this.dataSource.createQueryRunner();
+
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
         try {
-            const queryRunner = this.dataSource.createQueryRunner();
+            const staffEntity = await this.staffRepository.findOne({ where: { acc_id: accId } });
 
-            await queryRunner.connect();
-            await queryRunner.startTransaction();
-            try {
-                const staffEntity = await this.staffRepository.findOne({ where: { acc_id: accId } });
+            if (staffEntity) {
+                if (request.addressId) {
+                    const addressEntity: AddressEntity = await this.addressRepository.findOne({
+                        where: { address_id: request.addressId },
+                    });
 
-                if (staffEntity) {
-                    if (request.addressId) {
-                        const addressEntity: AddressEntity = await this.addressRepository.findOne({
-                            where: { address_id: request.addressId },
-                        });
-
-                        if (addressEntity) {
-                            if (request.house) {
-                                addressEntity.house = request.house;
-                            }
-
-                            if (request.city_id) {
-                                addressEntity.city_id = request.city_id;
-                            }
-
-                            if (request.district_id) {
-                                addressEntity.district_id = request.district_id;
-                            }
-
-                            if (request.ward_id) {
-                                addressEntity.ward_id = request.ward_id;
-                            }
-
-                            await queryRunner.manager.save(addressEntity);
+                    if (addressEntity) {
+                        if (request.house) {
+                            addressEntity.house = request.house;
                         }
+
+                        if (request.city_id) {
+                            addressEntity.city_id = request.city_id;
+                        }
+
+                        if (request.district_id) {
+                            addressEntity.district_id = request.district_id;
+                        }
+
+                        if (request.ward_id) {
+                            addressEntity.ward_id = request.ward_id;
+                        }
+
+                        await queryRunner.manager.save(addressEntity);
                     }
-
-                    if (request.fullname) {
-                        staffEntity.fullname = request.fullname;
-                    }
-
-                    if (request.phone) {
-                        staffEntity.phone = request.phone;
-                    }
-
-                    if (request.email) {
-                        staffEntity.email = request.email;
-                    }
-
-                    await queryRunner.manager.save(staffEntity);
-                    await queryRunner.commitTransaction();
-
-                    return true;
                 }
 
-                return false;
-            } catch (error) {
-                Logger.error(error);
-                await queryRunner.rollbackTransaction();
-                return false;
-            } finally {
-                await queryRunner.release();
+                if (request.fullname) {
+                    staffEntity.fullname = request.fullname;
+                }
+
+                if (request.phone) {
+                    staffEntity.phone = request.phone;
+                }
+
+                if (request.email) {
+                    staffEntity.email = request.email;
+                }
+
+                await queryRunner.manager.save(staffEntity);
+                await queryRunner.commitTransaction();
+
+                return true;
             }
+
+            return false;
         } catch (error) {
             Logger.error(error);
-            throw new InternalServerErrorException();
+            await queryRunner.rollbackTransaction();
+            return false;
+        } finally {
+            await queryRunner.release();
         }
     }
 
