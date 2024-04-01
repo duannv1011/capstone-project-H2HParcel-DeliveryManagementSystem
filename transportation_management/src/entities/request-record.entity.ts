@@ -8,11 +8,11 @@ export class RequestRecordEntity {
     @Column()
     public refer_id: number;
 
-    @Column({ type: 'varchar' })
-    public request_type: string;
+    @Column()
+    public request_type: number;
 
-    @Column({ type: 'varchar' })
-    public request_stt: string;
+    @Column()
+    public request_stt: number;
 
     @Column({ type: 'varchar' })
     public note: string;
