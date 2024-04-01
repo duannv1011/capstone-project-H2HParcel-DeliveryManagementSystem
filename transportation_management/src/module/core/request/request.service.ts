@@ -13,6 +13,7 @@ import { RequestTypeEntity } from '../../../entities/request-type.entity';
 import { RequestStatusEntity } from '../../../entities/request-status.entity';
 import { InformationEntity } from '../../../entities/Information.entity';
 import { RequestStatus } from '../../../enum/request-status.enum';
+import { UpdateOrderCustomer } from './dto/customer_update_order.dto';
 
 @Injectable()
 export class RequestService {
@@ -251,4 +252,5 @@ export class RequestService {
 
         return null;
     }
+    async updateOrder(data: UpdateOrderCustomer, acc_id: number) {}
 }

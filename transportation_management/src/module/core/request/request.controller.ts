@@ -10,7 +10,7 @@ import {
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { RequestService } from './request.service';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { Response } from '../../response/Response';
@@ -18,6 +18,9 @@ import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
 import { RoleGuard } from '../../../guards/role.guard';
 import { RequestUpdateDto } from './dto/request.update.dto';
+import { UpdateOrderCustomer } from './dto/customer_update_order.dto';
+import { UserLogin } from 'src/decorators/user_login.decorator';
+import { UserLoginData } from '../authentication/dto/user_login_data';
 
 @ApiTags('request')
 @Controller('request')
@@ -77,5 +80,15 @@ export class RequestController {
         const requestCancel = await this.requestService.cancelRequest(recordId);
 
         return new Response(200, 'true', requestCancel, null, 1);
+    }
+ 
+    @Put('updateOrder')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'update Order for Customer' })
+    @ApiResponse({ status: 200, description: 'update Order for Customer  successfully.' })
+    async updateOrder(@Body() data: UpdateOrderCustomer, @UserLogin() userLogin: UserLoginData) {
+        return this.requestService.updateOrder(data, Number(userLogin.accId));
     }
 }

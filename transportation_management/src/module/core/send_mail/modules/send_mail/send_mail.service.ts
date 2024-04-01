@@ -46,7 +46,7 @@ export class SendMailService {
             });
             // const payload = { id: acc_id, email: email.email, verify_code: verifyCode };
             // const token = await this.genarateToken(payload);
-            return 'successfull';
+            return { email: email, verifyCode: verifyCode };
         } catch (error) {
             console.log(error);
             return 'eror';
