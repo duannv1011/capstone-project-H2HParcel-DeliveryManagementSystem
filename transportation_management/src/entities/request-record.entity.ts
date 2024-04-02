@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { RequestEntity } from './request.entity';
 
 @Entity('RequestRecord')
 export class RequestRecordEntity {
@@ -8,12 +9,16 @@ export class RequestRecordEntity {
     @Column()
     public refer_id: number;
 
+    @ManyToOne(() => RequestEntity, { eager: true })
+    @JoinColumn({ name: 'refer_id' })
+    request: RequestEntity;
+
     @Column()
     public request_type: number;
 
     @Column()
     public request_stt: number;
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar', nullable: true })
     public note: string;
 }
