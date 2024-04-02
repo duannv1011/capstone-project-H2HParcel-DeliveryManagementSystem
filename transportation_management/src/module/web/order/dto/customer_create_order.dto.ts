@@ -7,7 +7,7 @@ export class CusCreateOrderDto {
     @IsNotEmpty({ message: 'null value for cus_id ' })
     cus_id: number;
 
-    @ApiProperty({ example: 10, description: 'pickup_infor_id' })
+    @ApiProperty({ example: 10, description: 'pickup_infor_id is null or = 0 if not a default' })
     @IsNumber()
     //@IsNotEmpty({ message: 'null value for pickup_infor_id ' })
     pickup_infor_id: number;

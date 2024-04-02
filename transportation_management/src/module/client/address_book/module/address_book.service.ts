@@ -77,6 +77,7 @@ export class AddressBookService {
             city: item.infor.address.city.city_name,
             district: item.infor.address.district.district_name,
             ward: item.infor.address.ward.ward_name,
+            infor_id: item.infor.infor_id,
         }));
 
         return { addressbooks: transformedListAddressBook };

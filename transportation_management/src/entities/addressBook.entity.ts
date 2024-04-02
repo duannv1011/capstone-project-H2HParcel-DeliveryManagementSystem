@@ -16,7 +16,8 @@ export class AddressBookEntity {
     cus_id: number;
     @Column()
     is_deleted: boolean;
-
+    @Column()
+    infor_id: number;
     @ManyToOne(() => InformationEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'infor_id' })
     infor: InformationEntity;
