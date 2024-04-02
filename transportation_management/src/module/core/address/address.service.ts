@@ -27,10 +27,22 @@ export class AddressService {
     async getDistricById(district_id: number): Promise<DistrictEntity> {
         return await this.districtRepository.findOne({ where: { district_id: district_id } });
     }
+    async getDistrictByCityId(city_id: number): Promise<DistrictEntity[]> {
+        return await this.districtRepository.find({ where: { city_id: city_id } });
+    }
     async getAllWard() {
         return await this.wardRepository.find();
     }
     async getWardById(ward_id: number): Promise<WardEntity> {
         return await this.wardRepository.findOne({ where: { ward_id: ward_id } });
+    }
+    async getWardByDitrictId(district_id: number): Promise<WardEntity[]> {
+        return await this.wardRepository.find({
+            where: {
+                district: {
+                    district_id: district_id,
+                },
+            },
+        });
     }
 }

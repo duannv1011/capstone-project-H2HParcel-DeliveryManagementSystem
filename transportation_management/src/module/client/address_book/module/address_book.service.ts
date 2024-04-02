@@ -161,6 +161,7 @@ export class AddressBookService {
         const adressBook = await this.addressBookRepository.findOne({
             where: { cus_id: customer.cus_id, book_id: book_id, is_deleted: false },
         });
+        console.log(book_id);
         if (!adressBook) {
             return new Response(404, 'addressBook in this customer not found ', null);
         }

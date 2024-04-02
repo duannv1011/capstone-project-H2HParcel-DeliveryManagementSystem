@@ -5,17 +5,27 @@ export class RequestUpdateDto {
     @ApiProperty({ example: 1 })
     @IsNumber()
     @IsNotEmpty()
-    requestId: number;
+    recordId: number;
+
+    @ApiProperty({ example: 1 })
+    @IsNumber()
+    @IsOptional()
+    orderId?: number;
+
+    @ApiProperty({ example: 1 })
+    @IsNumber()
+    @IsOptional()
+    deliverInfoId?: number;
 
     @ApiProperty({ example: 1 })
     @IsNumber()
     @IsNotEmpty()
-    requestType: number;
+    requestType?: number;
 
     @ApiProperty({ example: 1 })
     @IsNumber()
     @IsNotEmpty()
-    requestStatus: number;
+    requestStatus?: number;
 
     @ApiProperty({ example: 'note' })
     @IsString()
