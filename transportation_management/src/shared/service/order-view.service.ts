@@ -143,9 +143,9 @@ export class OrderViewService {
                 .leftJoinAndSelect('deliverAddress.ward', 'deliverWard')
                 .andWhere(
                     new Brackets((qb) => {
-                        qb.where('pickupShipperStaff.warehouse_id = :warehouseId', {
+                        qb.where('pickupWard.warehouse_id = :warehouseId', {
                             warehouseId: warehouseId,
-                        }).orWhere('deliverShipperStaff.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                        }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
                     }),
                 )
                 .orderBy('order.date_create_at', 'DESC')

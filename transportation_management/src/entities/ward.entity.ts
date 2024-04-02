@@ -13,6 +13,6 @@ export class WardEntity {
     @Column()
     ward_name: string;
 
-    @Column({ nullable: true })
+    @Column()
     warehouse_id: number;
 }
