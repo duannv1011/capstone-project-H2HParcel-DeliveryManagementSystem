@@ -27,7 +27,7 @@ export class RequestService {
         private staffRepository: Repository<StaffEntity>,
     ) {}
 
-    pageSize = Number(process.env.PAGE_SIZE);
+    pageSize = Number(process.env.PAGESIZE);
 
     /**
      * Find all request.
@@ -42,27 +42,27 @@ export class RequestService {
                     'requestRecord.request',
                     RequestEntity,
                     'request',
-                    'requestRecord.refer_id = request.request_id',
+                    'requestRecord.referId = request.requestId',
                 )
                 .leftJoinAndMapOne(
                     'request.deliverInformation',
                     InformationEntity,
                     'deliverInformation',
-                    'request.deliver_infor = deliverInformation.infor_id',
+                    'request.deliverInfor = deliverInformation.inforId',
                 )
                 .leftJoinAndMapOne(
                     'requestRecord.requestType',
                     RequestTypeEntity,
                     'requestType',
-                    'requestRecord.request_type = requestType.rt_id',
+                    'requestRecord.requestType = requestType.rtId',
                 )
                 .leftJoinAndMapOne(
                     'requestRecord.requestStatus',
                     RequestStatusEntity,
                     'requestStatus',
-                    'requestRecord.request_stt = requestStatus.rqs_id',
+                    'requestRecord.requestStt = requestStatus.rqsId',
                 )
-                .andWhere('requestStatus.rqs_id IN (:...requestStatusIn)', {
+                .andWhere('requestStatus.rqsId IN (:...requestStatusIn)', {
                     requestStatusIn: [RequestStatus.PROCESSING, RequestStatus.APPROVED],
                 })
                 .skip((pageNo - 1) * this.pageSize)
@@ -98,28 +98,28 @@ export class RequestService {
                     'requestRecord.request',
                     RequestEntity,
                     'request',
-                    'requestRecord.refer_id = request.request_id',
+                    'requestRecord.referId = request.requestId',
                 )
                 .leftJoinAndMapOne(
                     'request.deliverInformation',
                     InformationEntity,
                     'deliverInformation',
-                    'request.deliver_infor = deliverInformation.infor_id',
+                    'request.deliverInfor = deliverInformation.inforId',
                 )
                 .leftJoinAndMapOne(
                     'requestRecord.requestType',
                     RequestTypeEntity,
                     'requestType',
-                    'requestRecord.request_type = requestType.rt_id',
+                    'requestRecord.requestType = requestType.rtId',
                 )
                 .leftJoinAndMapOne(
                     'requestRecord.requestStatus',
                     RequestStatusEntity,
                     'requestStatus',
-                    'requestRecord.request_stt = requestStatus.rqs_id',
+                    'requestRecord.requestStt = requestStatus.rqsId',
                 )
-                .where('requestRecord.record_id = :recordId', { recordId: recordId })
-                .andWhere('requestStatus.rqs_id IN (:...requestStatusIn)', {
+                .where('requestRecord.recordId = :recordId', { recordId: recordId })
+                .andWhere('requestStatus.rqsId IN (:...requestStatusIn)', {
                     requestStatusIn: [RequestStatus.PROCESSING, RequestStatus.APPROVED],
                 })
                 .getOne();
@@ -144,16 +144,16 @@ export class RequestService {
 
         try {
             const requestRecord = await this.requestRecordRepository.findOne({
-                where: { record_id: request.recordId },
+                where: { recordId: request.recordId },
             });
 
             if (requestRecord) {
                 if (request.requestType) {
-                    requestRecord.request_type = request.requestType;
+                    requestRecord.requestType = request.requestType;
                 }
 
                 if (request.requestStatus) {
-                    requestRecord.request_stt = request.requestStatus;
+                    requestRecord.requestStt = request.requestStatus;
                 }
 
                 if (request.note) {
@@ -162,7 +162,7 @@ export class RequestService {
                 await queryRunner.manager.save(requestRecord);
 
                 const requestEntity = await this.requestRepository.findOne({
-                    where: { requestId: requestRecord.refer_id },
+                    where: { requestId: requestRecord.referId },
                 });
 
                 if (requestEntity) {
@@ -171,7 +171,7 @@ export class RequestService {
                     }
 
                     if (request.orderId) {
-                        requestEntity.order.order_id = request.orderId;
+                        requestEntity.order.orderId = request.orderId;
                     }
 
                     await queryRunner.manager.save(requestEntity);
@@ -198,9 +198,9 @@ export class RequestService {
      */
     async cancelRequest(recordId: number): Promise<boolean> {
         try {
-            const requestCancel = await this.requestRecordRepository.findOne({ where: { record_id: recordId } });
+            const requestCancel = await this.requestRecordRepository.findOne({ where: { recordId: recordId } });
             if (requestCancel) {
-                requestCancel.request_stt = RequestStatus.DENIED;
+                requestCancel.requestStt = RequestStatus.DENIED;
                 await this.requestRecordRepository.update(recordId, requestCancel);
 
                 return true;
@@ -222,11 +222,11 @@ export class RequestService {
                     : ''
                 : '';
             const requestType = entity.requestType ? entity.requestType.requestTypeName : '';
-            const requestStatus = entity.requestStatus ? entity.requestStatus.rqs_name : '';
+            const requestStatus = entity.requestStatus ? entity.requestStatus.rqsName : '';
 
             return Builder<RequestRecord>()
-                .requestRecordId(entity.record_id)
-                .requestId(entity.refer_id)
+                .requestRecordId(entity.recordId)
+                .requestId(entity.referId)
                 .orderId(orderId)
                 .deliverName(deliverName)
                 .requestType(requestType)
@@ -244,7 +244,7 @@ export class RequestService {
      * @param userLogin UserLoginData
      */
     private async getStaff(userLogin: UserLoginData): Promise<StaffEntity> {
-        const staff = await this.staffRepository.findOne({ where: { acc_id: userLogin.accId } });
+        const staff = await this.staffRepository.findOne({ where: { accId: userLogin.accId } });
 
         if (staff) {
             return staff;
@@ -252,5 +252,5 @@ export class RequestService {
 
         return null;
     }
-    async updateOrder(data: UpdateOrderCustomer, acc_id: number) {}
+    async updateOrder(data: UpdateOrderCustomer, accId: number) {}
 }

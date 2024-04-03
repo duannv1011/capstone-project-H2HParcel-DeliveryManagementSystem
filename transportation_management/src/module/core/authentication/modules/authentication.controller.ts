@@ -1,9 +1,9 @@
 import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { ApiTags } from '@nestjs/swagger';
-import { RegisterDto } from '../dto/register_dto';
-import { loginDto } from '../dto/authentication_dto';
-import { refreshTokenDto } from '../dto/refresh_token_dto';
+import { RegisterDto } from '../dto/register-dto';
+import { loginDto } from '../dto/authentication-dto';
+import { refreshTokenDto } from '../dto/refresh-token-dto';
 
 @ApiTags('authentication-api')
 @Controller('authentication')

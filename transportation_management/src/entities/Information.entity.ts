@@ -3,13 +3,13 @@ import { AddressEntity } from './address.entity';
 
 @Entity('Information')
 export class InformationEntity {
-    @PrimaryGeneratedColumn()
-    infor_id: number;
+    @PrimaryGeneratedColumn({ name: 'infor_id' })
+    inforId: number;
 
-    @Column({ nullable: true })
+    @Column({ name: 'name', nullable: true })
     name: string;
 
-    @Column({ nullable: true })
+    @Column({ name: 'phone', nullable: true })
     phone: string;
 
     @ManyToOne(() => AddressEntity, { eager: true, nullable: true })

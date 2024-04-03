@@ -111,7 +111,7 @@ export class QrCodeService {
                     const imageName = `${qrCode.code_value}.png`;
                     let orderId: number = null;
                     if (qrCode.order) {
-                        orderId = qrCode.order.order_id;
+                        orderId = qrCode.order.orderId;
                     }
                     const qrContent = `{ codeValue: ${qrCode.code_value}, orderId: ${orderId} }`;
                     const qrFile = await QrCodeGenerator.toBuffer(`${qrContent}`);
@@ -137,7 +137,7 @@ export class QrCodeService {
 
             if (code) {
                 const order: OrderEntity = new OrderEntity();
-                order.order_id = request.orderId;
+                order.orderId = request.orderId;
                 code.order = order;
                 await this.codeRepository.save(code);
 
@@ -158,7 +158,7 @@ export class QrCodeService {
      */
     private toQrCode(entity?: QRCodeEntity): QrCode {
         if (entity) {
-            const orderId = entity.order ? entity.order.order_id : null;
+            const orderId = entity.order ? entity.order.orderId : null;
 
             return Builder<QrCode>()
                 .codeId(entity.code_id)

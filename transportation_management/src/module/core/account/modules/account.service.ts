@@ -24,7 +24,7 @@ export class AccountService {
     async getAllAccount() {
         const [accounts, count] = await this.accountRepository.findAndCount({
             order: {
-                acc_id: 'ASC',
+                accId: 'ASC',
             },
         });
         if (accounts && accounts.length > 0) {
@@ -38,7 +38,7 @@ export class AccountService {
         try {
             const account = await this.accountRepository.findOne({
                 where: {
-                    acc_id: id,
+                    accId: id,
                 },
             });
             return account;
@@ -76,7 +76,7 @@ export class AccountService {
 
     async updateCustomerPass(password: string, token: string): Promise<any> {
         const JwtPayload = decode(token) as JwtPayload;
-        const account = await this.accountRepository.findOne({ where: { acc_id: JwtPayload.id } });
+        const account = await this.accountRepository.findOne({ where: { accId: JwtPayload.id } });
         if (!account) {
             return new Response(404, 'notfound', null);
         }
@@ -85,7 +85,7 @@ export class AccountService {
             .createQueryBuilder()
             .update(AccountEntity)
             .set({ password: newpass })
-            .where('acc_id = :acc_id', { acc_id: JwtPayload.id })
+            .where('acc_id = :accId', { accId: JwtPayload.id })
             .execute()
             .catch((error) => {
                 console.error('Error save password:', error);

@@ -18,8 +18,8 @@ export class StaffService {
      */
     async updateOrderStatus(request: OrderStatusUpdateDto): Promise<boolean> {
         try {
-            const order = await this.orderRepository.findOne({ where: { order_id: request.orderId } });
-            order.order_stt = request.orderStatus;
+            const order = await this.orderRepository.findOne({ where: { orderId: request.orderId } });
+            order.orderStt = request.orderStatus;
             await this.orderRepository.update(request.orderId, order);
 
             return true;

@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('OrderStatus')
 export class OrderStatusEntity {
-    @PrimaryGeneratedColumn()
-    public stt_id: number;
+    @PrimaryGeneratedColumn({ name: 'stt_id' })
+    public sttId: number;
 
-    @Column()
-    public stt_name: string;
+    @Column({ name: 'stt_name' })
+    public sttName: string;
 }

@@ -4,18 +4,18 @@ import { AbstractEntity } from './abstract-entity';
 
 @Entity('Warehouse')
 export class WarehouseEntity extends AbstractEntity {
-    @PrimaryGeneratedColumn()
-    warehouse_id: number;
+    @PrimaryGeneratedColumn({ name: 'warehouse_id' })
+    warehouseId: number;
 
-    @Column()
-    address_id: number;
+    @Column({ name: 'address_id' })
+    addressId: number;
 
     @ManyToOne(() => AddressEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'address_id' })
     address: AddressEntity;
 
-    @Column()
-    warehouse_name: string;
+    @Column({ name: 'warehouse_name' })
+    warehouseName: string;
 
     @Column({ default: true, nullable: true })
     isActive: boolean;

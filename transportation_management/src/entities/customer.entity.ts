@@ -5,11 +5,11 @@ import { AddressEntity } from './address.entity';
 
 @Entity('Customer')
 export class CustomerEntity {
-    @PrimaryGeneratedColumn()
-    cus_id: number;
+    @PrimaryGeneratedColumn({ name: 'cus_id' })
+    cusId: number;
 
-    @Column()
-    fullname: string;
+    @Column({ name: 'fullname' })
+    fullName: string;
 
     @Column()
     email: string;
@@ -17,16 +17,16 @@ export class CustomerEntity {
     @Column()
     phone: string;
 
-    @Column({ nullable: true })
-    acc_id: number;
+    @Column({ name: 'acc_id', nullable: true })
+    accId: number;
 
-    @Column({ nullable: true })
-    default_book: number;
+    @Column({ name: 'default_book', nullable: true })
+    defaultBook: number;
 
     @Column({ default: 1 })
     status: number;
-    @Column({ nullable: true })
-    address_id: number;
+    @Column({ name: 'address_id', nullable: true })
+    addressId: number;
 
     @ManyToOne(() => AccountEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'acc_id' })
@@ -44,10 +44,10 @@ export class CustomerEntity {
 
     @AfterLoad()
     public setStatusName(): void {
-        this.status_name = CustomerEntity.Statuses[this.status];
+        this.statusName = CustomerEntity.Statuses[this.status];
     }
     public getStatusName() {
         return CustomerEntity.Statuses[this.status];
     }
-    public status_name: string;
+    public statusName: string;
 }

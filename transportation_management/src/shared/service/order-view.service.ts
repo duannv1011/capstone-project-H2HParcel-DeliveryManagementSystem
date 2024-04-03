@@ -56,7 +56,7 @@ export class OrderViewService {
      * @param userLogin
      */
     async findOrderByStatus(pageNo: number, status: number, userLogin: UserLoginData): Promise<OrderResponse> {
-        const warehouseId = (await this.getStaff(userLogin)).warehouse_id;
+        const warehouseId = (await this.getStaff(userLogin)).warehouseId;
 
         if (status > 0 && status < OrderStatus.ON_TRANSIT) {
             const [orders, total] = await this.orderRepository
@@ -122,7 +122,7 @@ export class OrderViewService {
      * @param userLogin
      */
     async findAllByStaff(pageNo: number, userLogin: UserLoginData): Promise<OrderResponse> {
-        const warehouseId = (await this.getStaff(userLogin)).warehouse_id;
+        const warehouseId = (await this.getStaff(userLogin)).warehouseId;
 
         if (warehouseId) {
             const [orders, total] = await this.orderRepository
@@ -176,7 +176,7 @@ export class OrderViewService {
      */
     async findOrderByTime(pageNo: number, from: string, to: string, userLogin: UserLoginData): Promise<OrderResponse> {
         try {
-            const warehouseId = (await this.getStaff(userLogin)).warehouse_id;
+            const warehouseId = (await this.getStaff(userLogin)).warehouseId;
 
             if (warehouseId) {
                 const [orders, total] = await this.orderRepository
@@ -231,34 +231,34 @@ export class OrderViewService {
      * @param entity OrderEntity
      */
     private toOrder(entity?: OrderEntity): Order {
-        const pickupUser = entity.pickup_information;
-        const deliverUser = entity.deliver_information;
-        const pickupStaff = entity.pickup_shipper_staff;
-        const deliverStaff = entity.deliver_shipper_staff;
-        const package_type = entity.package_type;
+        const pickupUser = entity.pickupInformation;
+        const deliverUser = entity.deliverInformation;
+        const pickupStaff = entity.pickupShipperStaff;
+        const deliverStaff = entity.deliverShipperStaff;
+        const packageType = entity.packageType;
 
         if (entity) {
             return Builder<Order>()
-                .orderId(entity.order_id)
-                .status(entity.status.stt_name)
+                .orderId(entity.orderId)
+                .status(entity.status.sttName)
                 .senderName(pickupUser ? pickupUser.name : '')
                 .pickupPhoneNumber(pickupUser ? pickupUser.phone : '')
                 .pickupAddress(
                     pickupUser
-                        ? `${pickupUser.address.district.district_name} - ${pickupUser.address.city.city_name}`
+                        ? `${pickupUser.address.district.districtName} - ${pickupUser.address.city.cityName}`
                         : '',
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
-                .packageType(package_type ? package_type.pk_name : '')
+                .packageType(packageType ? packageType.pkName : '')
                 .receiverName(deliverUser ? deliverUser.name : '')
                 .deliverPhoneNumber(deliverUser ? deliverUser.phone : '')
                 .deliverAddress(
                     deliverUser
-                        ? `${deliverUser.address.district.district_name} - ${deliverUser.address.city.city_name}`
+                        ? `${deliverUser.address.district.districtName} - ${deliverUser.address.city.cityName}`
                         : '',
                 )
                 .deliverStaffName(deliverStaff ? deliverStaff.fullname : '')
-                .price(entity.estimated_price)
+                .price(entity.estimatedPrice)
                 .build();
         }
 
@@ -272,21 +272,21 @@ export class OrderViewService {
      */
     private toPickupOrder(entity?: OrderEntity): Order {
         if (entity) {
-            const pickupUser = entity.pickup_information;
-            const pickupStaff = entity.pickup_shipper_staff;
+            const pickupUser = entity.pickupInformation;
+            const pickupStaff = entity.pickupShipperStaff;
 
             return Builder<Order>()
-                .orderId(entity.order_id)
-                .status(entity.status.stt_name)
+                .orderId(entity.orderId)
+                .status(entity.status.sttName)
                 .senderName(pickupUser ? pickupUser.name : '')
                 .pickupPhoneNumber(pickupUser ? pickupUser.phone : '')
                 .pickupAddress(
                     pickupUser
-                        ? `${pickupUser.address.district.district_name} - ${pickupUser.address.city.city_name}`
+                        ? `${pickupUser.address.district.districtName} - ${pickupUser.address.city.cityName}`
                         : '',
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
-                .price(entity.estimated_price)
+                .price(entity.estimatedPrice)
                 .build();
         }
 
@@ -300,21 +300,21 @@ export class OrderViewService {
      */
     private toDeliverOrder(entity?: OrderEntity): Order {
         if (entity) {
-            const deliverUser = entity.deliver_information;
-            const deliverStaff = entity.deliver_shipper_staff;
+            const deliverUser = entity.deliverInformation;
+            const deliverStaff = entity.deliverShipperStaff;
 
             return Builder<Order>()
-                .orderId(entity.order_id)
-                .status(entity.status.stt_name)
+                .orderId(entity.orderId)
+                .status(entity.status.sttName)
                 .receiverName(deliverUser ? deliverUser.name : '')
                 .deliverPhoneNumber(deliverUser ? deliverUser.phone : '')
                 .deliverAddress(
                     deliverUser
-                        ? `${deliverUser.address.district.district_name} - ${deliverUser.address.city.city_name}`
+                        ? `${deliverUser.address.district.districtName} - ${deliverUser.address.city.cityName}`
                         : '',
                 )
                 .deliverStaffName(deliverStaff ? deliverStaff.fullname : '')
-                .price(entity.estimated_price)
+                .price(entity.estimatedPrice)
                 .build();
         }
 
@@ -327,7 +327,7 @@ export class OrderViewService {
      * @param userLogin UserLoginData
      */
     private async getStaff(userLogin: UserLoginData): Promise<StaffEntity> {
-        const staff = await this.staffRepository.findOne({ where: { acc_id: userLogin.accId } });
+        const staff = await this.staffRepository.findOne({ where: { accId: userLogin.accId } });
 
         if (staff) {
             return staff;

@@ -5,8 +5,8 @@ import { CustomerEntity } from './customer.entity';
 import { AbstractEntity } from './abstract-entity';
 @Entity('Account')
 export class AccountEntity extends AbstractEntity {
-    @PrimaryGeneratedColumn()
-    public acc_id: number;
+    @PrimaryGeneratedColumn({ name: 'acc_id' })
+    public accId: number;
 
     @Column()
     public username: string;
@@ -14,15 +14,15 @@ export class AccountEntity extends AbstractEntity {
     @Column()
     public password: string;
 
-    @Column({ default: 1 })
-    public role_id: number;
+    @Column({ name: 'role_id', default: 1 })
+    public roleId: number;
 
     @ManyToOne(() => RoleEntity, { eager: true })
     @JoinColumn({ name: 'role_id' })
     role: RoleEntity;
 
-    @Column({ nullable: true })
-    refresh_token: string;
+    @Column({ nullable: true, name: 'refresh_token' })
+    refreshToken: string;
 
     @Column({ default: true })
     public isActive: boolean;

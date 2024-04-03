@@ -3,15 +3,15 @@ import { AbstractEntity } from './abstract-entity';
 
 @Entity('WarehouseRule')
 export class WarehouseRuleEntity extends AbstractEntity {
-    @PrimaryGeneratedColumn()
-    rule_id: number;
+    @PrimaryGeneratedColumn({ name: 'ruleId' })
+    ruleId: number;
 
-    @Column()
-    warehouse_id_1: number;
+    @Column({ name: 'warehouseId1' })
+    warehouseId1: number;
 
-    @Column()
-    warehouse_id_2: number;
+    @Column({ name: 'warehouseId2' })
+    warehouseId2: number;
 
-    @Column()
+    @Column({ name: 'distance' })
     distance: string;
 }

@@ -18,29 +18,29 @@ export class AddressService {
     async getAllCity() {
         return await this.cityRepository.find();
     }
-    async getCityById(city_id: number): Promise<CityEntity> {
-        return await this.cityRepository.findOne({ where: { city_id: city_id } });
+    async getCityById(cityId: number): Promise<CityEntity> {
+        return await this.cityRepository.findOne({ where: { cityId: cityId } });
     }
     async getAllDistrict() {
         return await this.districtRepository.createQueryBuilder('d').leftJoinAndSelect('d.city', 'c').getMany();
     }
-    async getDistricById(district_id: number): Promise<DistrictEntity> {
-        return await this.districtRepository.findOne({ where: { district_id: district_id } });
+    async getDistricById(districtId: number): Promise<DistrictEntity> {
+        return await this.districtRepository.findOne({ where: { districtId: districtId } });
     }
-    async getDistrictByCityId(city_id: number): Promise<DistrictEntity[]> {
-        return await this.districtRepository.find({ where: { city_id: city_id } });
+    async getDistrictByCityId(cityId: number): Promise<DistrictEntity[]> {
+        return await this.districtRepository.find({ where: { cityId: cityId } });
     }
     async getAllWard() {
         return await this.wardRepository.find();
     }
-    async getWardById(ward_id: number): Promise<WardEntity> {
-        return await this.wardRepository.findOne({ where: { ward_id: ward_id } });
+    async getWardById(wardId: number): Promise<WardEntity> {
+        return await this.wardRepository.findOne({ where: { wardId: wardId } });
     }
-    async getWardByDitrictId(district_id: number): Promise<WardEntity[]> {
+    async getWardByDitrictId(districtId: number): Promise<WardEntity[]> {
         return await this.wardRepository.find({
             where: {
                 district: {
-                    district_id: district_id,
+                    districtId: districtId,
                 },
             },
         });

@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class UpdateAddresBookDto {
-    @ApiProperty({ example: '1', description: 'book_id' })
-    @IsNotEmpty({ message: 'Null value book_id' })
+    @ApiProperty({ example: '1', description: 'bookId' })
+    @IsNotEmpty({ message: 'Null value bookId' })
     @IsNumber()
-    book_id: number;
+    bookId: number;
     @ApiProperty({ example: 'Nguyen Van D', description: 'name' })
     @IsNotEmpty({ message: 'Null value name' })
     name: string;
@@ -16,18 +16,18 @@ export class UpdateAddresBookDto {
     @IsNotEmpty({ message: 'Null value house' })
     house: string;
 
-    @ApiProperty({ example: '1', description: 'city_id' })
-    @IsNotEmpty({ message: 'Null value city_id' })
+    @ApiProperty({ example: '1', description: 'cityId' })
+    @IsNotEmpty({ message: 'Null value cityId' })
     @IsNumber({ allowNaN: false })
-    city_id: number;
+    cityId: number;
 
-    @ApiProperty({ example: '1', description: 'district_id' })
-    @IsNotEmpty({ message: 'Null value district_id' })
+    @ApiProperty({ example: '1', description: 'districtId' })
+    @IsNotEmpty({ message: 'Null value districtId' })
     @IsNumber({ allowNaN: false })
-    district_id: number;
+    districtId: number;
 
-    @ApiProperty({ example: '1', description: 'ward_id' })
-    @IsNotEmpty({ message: 'Null value ward_id' })
+    @ApiProperty({ example: '1', description: 'wardId' })
+    @IsNotEmpty({ message: 'Null value wardId' })
     @IsNumber({ allowNaN: false })
-    ward_id: number;
+    wardId: number;
 }

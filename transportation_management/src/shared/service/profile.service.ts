@@ -35,7 +35,7 @@ export class ProfileService {
                 .leftJoinAndSelect('address.city', 'city')
                 .leftJoinAndSelect('address.district', 'district')
                 .leftJoinAndSelect('address.ward', 'ward')
-                .where({ acc_id: accId })
+                .where({ accId: accId })
                 .andWhere('warehouse.isActive = :isActive', { isActive: true })
                 .getOne();
 
@@ -59,7 +59,7 @@ export class ProfileService {
                 .createQueryBuilder('account')
                 .innerJoinAndSelect('account.staffs', 'staffs')
                 .innerJoinAndSelect('account.customers', 'customers')
-                .where({ acc_id: accId })
+                .where({ accId: accId })
                 .getOne();
         } catch (error) {
             Logger.error(error);
@@ -97,12 +97,12 @@ export class ProfileService {
         await queryRunner.startTransaction();
 
         try {
-            const staffEntity = await this.staffRepository.findOne({ where: { acc_id: accId } });
+            const staffEntity = await this.staffRepository.findOne({ where: { accId: accId } });
 
             if (staffEntity) {
                 if (request.addressId) {
                     const addressEntity: AddressEntity = await this.addressRepository.findOne({
-                        where: { address_id: staffEntity.address_id },
+                        where: { addressId: staffEntity.addressId },
                     });
 
                     if (addressEntity) {
@@ -110,26 +110,26 @@ export class ProfileService {
                             addressEntity.house = request.house;
                         }
 
-                        if (request.city_id) {
-                            addressEntity.city_id = request.city_id;
+                        if (request.cityId) {
+                            addressEntity.cityId = request.cityId;
                         }
 
-                        if (request.district_id) {
-                            addressEntity.district_id = request.district_id;
+                        if (request.districtId) {
+                            addressEntity.districtId = request.districtId;
                         }
 
-                        if (request.ward_id) {
-                            addressEntity.ward_id = request.ward_id;
+                        if (request.wardId) {
+                            addressEntity.wardId = request.wardId;
                         }
 
                         await queryRunner.manager.save(addressEntity);
                     } else {
                         const address = new AddressEntity();
-                        address.address_id = 0;
+                        address.addressId = 0;
                         address.house = request.house;
-                        address.city_id = request.city_id;
-                        address.district_id = request.district_id;
-                        address.ward_id = request.ward_id;
+                        address.cityId = request.cityId;
+                        address.districtId = request.districtId;
+                        address.wardId = request.wardId;
                         await queryRunner.manager.save(address);
                     }
                 }
@@ -169,14 +169,14 @@ export class ProfileService {
      */
     private toStaff(entity?: StaffEntity): Staff {
         if (entity) {
-            const warehouseName = entity.warehouse ? entity.warehouse.warehouse_name : '';
-            const city = entity.address ? entity.address.city.city_name : '';
-            const disstrict = entity.address ? entity.address.district.district_name : '';
-            const wardName = entity.address ? entity.address.ward.ward_name : '';
+            const warehouseName = entity.warehouse ? entity.warehouse.warehouseName : '';
+            const city = entity.address ? entity.address.city.cityName : '';
+            const disstrict = entity.address ? entity.address.district.districtName : '';
+            const wardName = entity.address ? entity.address.ward.wardName : '';
             const house = entity.address ? entity.address.house : '';
             const address: Address = entity.address
                 ? {
-                      addressId: entity.address.address_id,
+                      addressId: entity.address.addressId,
                       cityName: city,
                       districtName: disstrict,
                       wardName: wardName,
@@ -185,11 +185,11 @@ export class ProfileService {
                 : null;
 
             return Builder<Staff>()
-                .staffId(entity.staff_id)
+                .staffId(entity.staffId)
                 .fullname(entity.fullname)
                 .email(entity.email)
                 .phone(entity.phone)
-                .statusName(entity.status_name)
+                .statusName(entity.statusName)
                 .warehouseName(warehouseName)
                 .address(address)
                 .build();

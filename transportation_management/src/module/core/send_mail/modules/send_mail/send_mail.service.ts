@@ -33,7 +33,7 @@ export class SendMailService {
             if (!checkstaff && !checkscus) {
                 return 'not found';
             }
-            //const acc_id = checkstaff ? checkstaff.acc_id : checkscus.acc_id;
+            //const accId = checkstaff ? checkstaff.accId : checkscus.accId;
 
             await this.mailerService.sendMail({
                 to: email.email,
@@ -44,7 +44,7 @@ export class SendMailService {
                 <H3>${verifyCode}<H3>
                 <p>If you did not request a password reset, you can ignore this email.</p>`,
             });
-            // const payload = { id: acc_id, email: email.email, verify_code: verifyCode };
+            // const payload = { id: accId, email: email.email, verify_code: verifyCode };
             // const token = await this.genarateToken(payload);
             return { email: email, verifyCode: verifyCode };
         } catch (error) {
@@ -58,10 +58,10 @@ export class SendMailService {
         const hashpasswords = await bcrypt.hash(resetPass, saltTime);
         const checkscus = await this.customerRepository.findOne({ where: { email: request.email } });
         const checkstaff = await this.staffRespository.findOne({ where: { email: request.email } });
-        const acc_id = checkstaff ? checkstaff.acc_id : checkscus.acc_id;
+        const accId = checkstaff ? checkstaff.accId : checkscus.accId;
 
-        console.log(acc_id);
-        const updateAccount = await this.accountRepository.update({ acc_id: acc_id }, { password: hashpasswords });
+        console.log(accId);
+        const updateAccount = await this.accountRepository.update({ accId: accId }, { password: hashpasswords });
         if (!updateAccount) {
             return 'update failed';
         }

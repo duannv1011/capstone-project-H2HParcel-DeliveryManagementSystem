@@ -10,7 +10,7 @@ export class updateCusProfileDto {
     @IsString()
     @ApiProperty({ example: 'fullname', description: 'The fullname' })
     @IsNotEmpty({ message: 'Null value error for fullname' })
-    fullname: string;
+    fullName: string;
 
     @IsString()
     @ApiProperty({ example: 'phone', description: 'The phone' })
@@ -20,7 +20,7 @@ export class updateCusProfileDto {
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error: city' })
-    address_id: number;
+    addressId: number;
 
     @IsString()
     @ApiProperty({ example: 'hourse', description: 'The hourse' })
@@ -30,15 +30,15 @@ export class updateCusProfileDto {
     @IsNumber()
     @ApiProperty({ example: '1', description: 'The city' })
     @IsNotEmpty({ message: 'Null value error: city' })
-    city_id: number;
+    cityId: number;
 
     @IsNumber()
     @ApiProperty({ example: '4', description: 'The district' })
     @IsNotEmpty({ message: 'Null value error: district' })
-    district_id: number;
+    districtId: number;
 
     @IsNumber()
     @ApiProperty({ example: '49', description: 'The ward' })
     @IsNotEmpty({ message: 'Null value error: ward' })
-    ward_id: number;
+    wardId: number;
 }

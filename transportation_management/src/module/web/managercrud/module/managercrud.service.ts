@@ -15,29 +15,29 @@ export class ManagercrudService {
         @InjectRepository(CustomerEntity)
         private customerRepository: Repository<CustomerEntity>,
     ) {}
-    async getAllStaff(pageNo: number, acc_id: number): Promise<any> {
-        const getwarehoue = await this.staffRepository.findOneBy({ acc_id });
+    async getAllStaff(pageNo: number, accId: number): Promise<any> {
+        const getwarehoue = await this.staffRepository.findOneBy({ accId });
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
         //const [list, count] = await this.staffRepository.findAndCount();
         const [list, count] = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
-                'staff.staff_id',
+                'staff.staffId',
                 'staff.fullname',
                 'staff.email',
                 'staff.phone',
                 'staff.warehouse',
                 'staff.account',
                 'staff.status',
-                'warehouse.warehouse_id',
-                'account.acc_id',
+                'warehouse.warehouseId',
+                'account.accId',
                 'role',
             ])
             .leftJoin('staff.warehouse', 'warehouse')
             .leftJoin('staff.account', 'account')
             .leftJoin('account.role', 'role')
-            .where('role.role_id != :role_id', { role_id: 5 })
-            .andWhere('staff.warehouse_id = :warehouse_id', { warehouse_id: getwarehoue.warehouse_id })
+            .where('role.role_id != :roleId', { roleId: 5 })
+            .andWhere('staff.warehouse_id = :warehouseId', { warehouseId: getwarehoue.warehouseId })
             .orderBy('warehouse.warehouse_id', 'ASC')
             .addOrderBy('staff.staff_id', 'ASC')
             .skip((pageNo - 1) * pageSize)
@@ -55,17 +55,17 @@ export class ManagercrudService {
             totalpage,
         };
     }
-    async adminUpdateStaff(data: updateStaffDto, acc_id: number): Promise<any> {
-        const getwarehoue = await this.staffRepository.findOneBy({ acc_id });
+    async adminUpdateStaff(data: updateStaffDto, accId: number): Promise<any> {
+        const getwarehoue = await this.staffRepository.findOneBy({ accId });
         const staff = await this.staffRepository
             .createQueryBuilder('staff')
-            .where('staff.staff_id = :staffId', { staffId: data.staff_id })
-            .andWhere('staff.warehouse_id = :warehouseId', { warehouseId: getwarehoue.warehouse_id })
+            .where('staff.staff_id = :staffId', { staffId: data.staffId })
+            .andWhere('staff.warehouseId = :warehouseId', { warehouseId: getwarehoue.warehouseId })
             .getOne();
-        if (!staff || staff.staff_id === 1) {
+        if (!staff || staff.staffId === 1) {
             return { status: 404, msg: 'not found!' };
         }
-        const checkemail = await this.checkEmailIsEsit(data.email, data.staff_id);
+        const checkemail = await this.checkEmailIsEsit(data.email, data.staffId);
         if (checkemail) {
             return { status: 404, msg: 'email is exist!' };
         }
@@ -73,7 +73,7 @@ export class ManagercrudService {
         staff.fullname = data.fullname;
         staff.email = data.email;
         staff.phone = data.phone;
-        staff.warehouse_id = data.warehouse_id ? data.warehouse_id : staff.warehouse_id;
+        staff.warehouseId = data.warehouseId ? data.warehouseId : staff.warehouseId;
         staff.status = data.status ? data.status : staff.status;
         await this.staffRepository.save(staff);
         return {
@@ -81,19 +81,19 @@ export class ManagercrudService {
             msg: 'update success',
         };
     }
-    async checkEmailIsEsit(email: string, staff_id: number): Promise<boolean> {
+    async checkEmailIsEsit(email: string, staffId: number): Promise<boolean> {
         if (email == null) {
             return false;
         }
         const checkcus = await this.customerRepository.findOne({ where: { email: email } });
         let checkstaff = null;
-        if (staff_id === null) {
+        if (staffId === null) {
             checkstaff = await this.staffRepository.findOne({
                 where: { email: email },
             });
         } else {
             checkstaff = await this.staffRepository.findOne({
-                where: { email: email, staff_id: Not(staff_id) },
+                where: { email: email, staffId: Not(staffId) },
             });
         }
 
@@ -102,29 +102,29 @@ export class ManagercrudService {
         }
         return false;
     }
-    async getAllStaffByRole(pageNo: number, role_id: number, acc_id: number): Promise<any> {
-        const getwarehoue = await this.staffRepository.findOneBy({ acc_id });
+    async getAllStaffByRole(pageNo: number, roleId: number, accId: number): Promise<any> {
+        const getwarehoue = await this.staffRepository.findOneBy({ accId });
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
         //const [list, count] = await this.staffRepository.findAndCount();
         const [list, count] = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
-                'staff.staff_id',
+                'staff.staffId',
                 'staff.fullname',
                 'staff.email',
                 'staff.phone',
                 'staff.warehouse',
                 'staff.account',
                 'staff.status',
-                'warehouse.warehouse_id',
-                'account.acc_id',
+                'warehouse.warehouseId',
+                'account.accId',
                 'role',
             ])
             .leftJoin('staff.warehouse', 'warehouse')
             .leftJoin('staff.account', 'account')
             .leftJoin('account.role', 'role')
-            .where('role.role_id = :role_id', { role_id: role_id })
-            .andWhere('staff.warehouse_id = :warehouse_id', { warehouse_id: getwarehoue.warehouse_id })
+            .where('role.role_id = :roleId', { roleId: roleId })
+            .andWhere('staff.warehouse_id = :warehouseId', { warehouseId: getwarehoue.warehouseId })
             .orderBy('warehouse.warehouse_id', 'ASC')
             .addOrderBy('staff.staff_id', 'ASC')
             .skip((pageNo - 1) * pageSize)

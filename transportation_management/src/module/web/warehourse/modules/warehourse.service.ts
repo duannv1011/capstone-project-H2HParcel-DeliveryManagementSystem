@@ -17,21 +17,14 @@ export class WarehourseService {
     ) {}
     async getAllWarehouse(pageNo: number, pageSize: number): Promise<any> {
         const [list, count] = await this.warehouseRepository
-            .createQueryBuilder('warehouse')
-            .select([
-                'warehouse.warehouse_id',
-                'warehouse.warehouse_name',
-                'address.house',
-                'city.city_name',
-                'district.district_name',
-                'ward.ward_name',
-            ])
-            .leftJoin('warehouse.address', 'address')
-            .leftJoin('address.city', 'city')
-            .leftJoin('address.district', 'district')
-            .leftJoin('address.ward', 'ward')
-            .where('warehouse.isActive = :isActive', { isActive: true })
-            .orderBy('warehouse.warehouse_id', 'ASC')
+            .createQueryBuilder('wh')
+            .select(['wh.warehouseId', 'wh.warehouse_name', 'a.house', 'c.city_name', 'd.district_name', 'w.ward_name'])
+            .leftJoinAndSelect('wh.address', 'a')
+            .leftJoinAndSelect('a.city', 'c')
+            .leftJoinAndSelect('a.district', 'd')
+            .leftJoinAndSelect('a.ward', 'w')
+            .where('wh.isActive = :isActive', { isActive: true })
+            .orderBy('wh.warehouseId', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -47,18 +40,18 @@ export class WarehourseService {
             totalpage,
         };
     }
-    async getDetailWarehouse(warehouse_id: number): Promise<any> {
-        const wh = await this.warehouseRepository.findOneBy({ warehouse_id: warehouse_id });
+    async getDetailWarehouse(warehouseId: number): Promise<any> {
+        const wh = await this.warehouseRepository.findOneBy({ warehouseId: warehouseId });
         if (!wh) {
             return null;
         }
         const data = {
-            warehouse_id: wh.warehouse_id,
-            warehouse_name: wh.warehouse_name,
+            warehouseId: wh.warehouseId,
+            warehouseName: wh.warehouseName,
             house: wh.address.house,
-            city: wh.address.city.city_name,
-            district: wh.address.district.district_name,
-            ward: wh.address.ward.ward_name,
+            city: wh.address.city.cityName,
+            district: wh.address.district.districtName,
+            ward: wh.address.ward.wardName,
         };
         return new Response(200, 'success', data);
     }
@@ -71,9 +64,9 @@ export class WarehourseService {
             const addressInsertResult = await queryRunner.manager
                 .save(AddressEntity, {
                     house: data.hourse,
-                    city_id: data.city_id,
-                    district_id: data.district_id,
-                    ward_id: data.ward_id,
+                    cityId: data.cityId,
+                    districtId: data.districtId,
+                    wardId: data.wardId,
                 })
                 .catch((error) => {
                     console.error('Error save address:', error);
@@ -82,8 +75,8 @@ export class WarehourseService {
             //create warehouse
             const warehouseInsertResult = await queryRunner.manager
                 .save(WarehouseEntity, {
-                    address_id: addressInsertResult.address_id,
-                    warehouse_name: data.warehouse_name,
+                    addressId: addressInsertResult.addressId,
+                    warehouseName: data.warehouseName,
                     isActive: true,
                 })
                 .catch((error) => {
@@ -101,40 +94,40 @@ export class WarehourseService {
     }
 
     async updateWarehouse(data: any) {
-        const warehourse = await this.warehouseRepository.findOne({ where: { warehouse_id: data.warehouse_id } });
+        const warehourse = await this.warehouseRepository.findOne({ where: { warehouseId: data.warehouseId } });
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
             // update address
-            data.address_id = warehourse.address_id;
+            data.addressId = warehourse.addressId;
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(AddressEntity)
                 .set({
                     house: data.hourse,
-                    city_id: data.city_id,
-                    district_id: data.district_id,
-                    ward_id: data.ward_id,
+                    cityId: data.cityId,
+                    districtId: data.districtId,
+                    wardId: data.wardId,
                 })
-                .where('address_id = :address_id', { address_id: data.address_id })
+                .where('address_id = :addressId', { addressId: data.addressId })
                 .execute()
                 .catch((error) => {
                     console.error('Error updating address:', error);
-                    throw error;
+                    return error;
                 });
             // update warehouse
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(WarehouseEntity)
                 .set({
-                    warehouse_name: data.warehouse_name,
+                    warehouseName: data.warehouseName,
                 })
-                .where('warehouse_id = :warehouse_id', { warehouse_id: data.warehouse_id })
+                .where('warehouse_id = :warehouseId', { warehouseId: data.warehouseId })
                 .execute()
                 .catch((error) => {
                     console.error('Error updating warehouse:', error);
-                    throw error;
+                    return error;
                 });
             await queryRunner.commitTransaction();
             return { success: true, msg: 'updated successfully', status: HttpStatus.OK };
@@ -147,9 +140,9 @@ export class WarehourseService {
     }
     async updateActive(data: updateActiveDto): Promise<any> {
         try {
-            const wh = await this.warehouseRepository.findOne({ where: { warehouse_id: data.warehouse_id } });
+            const wh = await this.warehouseRepository.findOne({ where: { warehouseId: data.warehouseId } });
             wh.isActive = !wh.isActive;
-            await this.warehouseRepository.update(data.warehouse_id, wh);
+            await this.warehouseRepository.update(data.warehouseId, wh);
             return { success: true, msg: 'updated successfully', status: HttpStatus.OK };
         } catch (error) {
             return { success: false, msg: 'updated fialed', status: HttpStatus.OK };

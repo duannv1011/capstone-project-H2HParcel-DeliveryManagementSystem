@@ -9,16 +9,16 @@ export class AddresDto {
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for cityid' })
-    @ApiProperty({ example: '1', description: 'city_id' })
-    city_id: number;
+    @ApiProperty({ example: '1', description: 'cityId' })
+    cityId: number;
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for districtid' })
-    @ApiProperty({ example: '1', description: 'district_id' })
-    district_id: number;
+    @ApiProperty({ example: '1', description: 'districtId' })
+    districtId: number;
 
     @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for ward_id' })
-    @ApiProperty({ example: '1', description: 'ward_id' })
-    ward_id: number;
+    @IsNotEmpty({ message: 'Null value error for wardId' })
+    @ApiProperty({ example: '1', description: 'wardId' })
+    wardId: number;
 }

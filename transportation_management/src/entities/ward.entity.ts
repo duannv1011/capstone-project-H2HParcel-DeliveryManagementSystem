@@ -3,16 +3,16 @@ import { DistrictEntity } from './district.entity';
 
 @Entity('Ward')
 export class WardEntity {
-    @PrimaryGeneratedColumn()
-    ward_id: number;
+    @PrimaryGeneratedColumn({ name: 'ward_id ' })
+    wardId: number;
 
     @ManyToOne(() => DistrictEntity, { eager: true })
     @JoinColumn({ name: 'district_id' })
     district: DistrictEntity;
 
-    @Column()
-    ward_name: string;
+    @Column({ name: 'ward_name' })
+    wardName: string;
 
-    @Column()
-    warehouse_id: number;
+    @Column({ name: 'warehouse_id', nullable: false })
+    warehouseId: number;
 }

@@ -12,7 +12,7 @@ import { QRCodeEntity } from 'src/entities/qrcode.entity';
 import { RoleEntity } from 'src/entities/role.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
-import { AddressBookEntity } from 'src/entities/addressBook.entity';
+import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { RequestEntity } from 'src/entities/request.entity';
 import { RequestRecordEntity } from 'src/entities/request-record.entity';
 import { RequestStatusEntity } from 'src/entities/request-status.entity';

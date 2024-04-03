@@ -6,20 +6,20 @@ import { WardEntity } from './ward.entity';
 
 @Entity('Address')
 export class AddressEntity {
-    @PrimaryGeneratedColumn()
-    public address_id: number;
+    @PrimaryGeneratedColumn({ name: 'address_id' })
+    public addressId: number;
 
-    @Column({ nullable: true })
+    @Column({ name: 'house', nullable: true })
     public house: string;
 
-    @Column({ nullable: true })
-    public city_id: number;
+    @Column({ name: 'city_id', nullable: true })
+    public cityId: number;
 
-    @Column({ nullable: true })
-    public district_id: number;
+    @Column({ name: 'district_id', nullable: true })
+    public districtId: number;
 
-    @Column({ nullable: true })
-    public ward_id: number;
+    @Column({ name: 'ward_id', nullable: true })
+    public wardId: number;
 
     @ManyToOne(() => CityEntity, { eager: true })
     @JoinColumn({ name: 'city_id' })

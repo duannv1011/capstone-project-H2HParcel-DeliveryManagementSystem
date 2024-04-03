@@ -6,8 +6,8 @@ import { AddressEntity } from './address.entity';
 
 @Entity('Staff')
 export class StaffEntity {
-    @PrimaryGeneratedColumn()
-    staff_id: number;
+    @PrimaryGeneratedColumn({ name: 'staff_id' })
+    staffId: number;
 
     @Column()
     fullname: string;
@@ -21,15 +21,15 @@ export class StaffEntity {
     @Column({ nullable: true })
     status: number;
 
-    @Column()
-    warehouse_id: number;
+    @Column({ name: 'warehouse_id' })
+    warehouseId: number;
 
     @ManyToOne(() => WarehouseEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'warehouse_id' })
     warehouse: WarehouseEntity;
 
-    @Column({ nullable: true })
-    acc_id: number;
+    @Column({ name: 'acc_id', nullable: true })
+    accId: number;
 
     @ManyToOne(() => AccountEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'acc_id' })
@@ -42,13 +42,13 @@ export class StaffEntity {
 
     @AfterLoad()
     public setStatusName(): void {
-        this.status_name = StaffEntity.Statuses[this.status];
+        this.statusName = StaffEntity.Statuses[this.status];
     }
 
-    public status_name: string;
+    public statusName: string;
 
-    @Column({ nullable: true })
-    address_id: number;
+    @Column({ name: 'address_id', nullable: true })
+    addressId: number;
 
     @ManyToOne(() => AddressEntity, { eager: true, nullable: true })
     @JoinColumn({ name: 'address_id' })
