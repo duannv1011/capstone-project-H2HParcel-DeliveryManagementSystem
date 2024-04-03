@@ -13,16 +13,29 @@ import { AddressBookEntity } from 'src/entities/addressBook.entity';
 import { RequestStatusEntity } from 'src/entities/request-status.entity';
 import { RequestTypeEntity } from 'src/entities/request-type.entity';
 import { CustomerCancelOrder } from '../dto/customer-cancel-order.dto';
+import { PackageTypeEntity } from 'src/entities/package-type.entity';
+import { CaculataOrderPrice } from '../dto/caculate-order-price.dto';
+import { WardEntity } from 'src/entities/ward.entity';
+import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
 
 @Injectable()
 export class OrderService {
     constructor(
         @InjectRepository(OrderEntity)
         private orderRepository: Repository<OrderEntity>,
+        @InjectRepository(PriceMultiplierEntity)
+        private priceMutiPlierRepository: Repository<PriceMultiplierEntity>,
+        @InjectRepository(WardEntity)
+        private wardRepository: Repository<WardEntity>,
+        @InjectRepository(PackageTypeEntity)
+        private packageTypeRepository: Repository<PackageTypeEntity>,
         @InjectRepository(AddressBookEntity)
         private addressbookRepository: Repository<AddressBookEntity>,
         @InjectRepository(RequestEntity)
         private requestRepository: Repository<RequestEntity>,
+        @InjectRepository(WarehouseRuleEntity)
+        private warehouseRuleRepository: Repository<WarehouseRuleEntity>,
         @InjectRepository(RequestStatusEntity)
         private requestStatusRepository: Repository<RequestStatusEntity>,
         @InjectRepository(RequestTypeEntity)
@@ -352,11 +365,8 @@ export class OrderService {
         }
     }
     async customeCancelOrder(data: CustomerCancelOrder, acc_id: number) {
-        console.log(acc_id);
         const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
-        console.log(customer);
         const cus_id = customer ? customer.cus_id : 0;
-        console.log(cus_id);
         const order = await this.orderRepository.findOne({ where: { order_id: data.order_id, cus_id: cus_id } });
         if (!order) {
             return 'order not found';
@@ -413,5 +423,30 @@ export class OrderService {
         } finally {
             await queryRunner.release();
         }
+    }
+    async caculateOrderPrice(data: CaculataOrderPrice, acc_id: number) {
+        const pkdata = await this.packageTypeRepository.findOneBy({ pk_id: data.pk_id });
+        const getPickupWarehouse = await this.wardRepository.findOneBy({ ward_id: data.pickup_ward_id });
+        const getDeliverWarehouse = await this.wardRepository.findOneBy({ ward_id: data.deliver_ward_id });
+        if (!getPickupWarehouse || !getDeliverWarehouse) {
+            return { error: 'warehouse not found' };
+        }
+        const pickupWard = Number(getPickupWarehouse.warehouse_id);
+        const deliverWard = Number(getPickupWarehouse.warehouse_id);
+        const distance = await this.warehouseRuleRepository.findOne({
+            where: { warehouse_id_1: pickupWard, warehouse_id_2: deliverWard },
+        });
+        const mutiplier = await this.checkMutipelPrice(Number(distance.distance));
+        const price = Number(pkdata.pk_price);
+        return pkdata.pk_id === 4 ? null : { price: mutiplier * price };
+    }
+    async checkMutipelPrice(distance: number) {
+        const priceMultiplier = await this.priceMutiPlierRepository
+            .createQueryBuilder('price_multiplier')
+            .where('price_multiplier.maxDistance >= :distance', { distance })
+            .andWhere('price_multiplier.minDistance < :distance', { distance })
+            .orderBy('price_multiplier.minDistance', 'DESC')
+            .getOne();
+        return Number(priceMultiplier.multiplier);
     }
 }

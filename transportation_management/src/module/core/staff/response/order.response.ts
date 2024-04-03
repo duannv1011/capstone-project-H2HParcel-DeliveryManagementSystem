@@ -21,4 +21,5 @@ export interface Order {
     pickupStaffName: string;
     deliverStaffName: string;
     price: number;
+    packageType: string;
 }

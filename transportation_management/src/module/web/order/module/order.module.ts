@@ -17,6 +17,10 @@ import { RequestEntity } from 'src/entities/request.entity';
 import { RequestRecordEntity } from 'src/entities/request-record.entity';
 import { RequestStatusEntity } from 'src/entities/request-status.entity';
 import { RequestTypeEntity } from 'src/entities/request-type.entity';
+import { WardEntity } from 'src/entities/ward.entity';
+import { PackageTypeEntity } from 'src/entities/package-type.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
+import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 
 @Module({
     imports: [
@@ -24,9 +28,13 @@ import { RequestTypeEntity } from 'src/entities/request-type.entity';
             AccountEntity,
             AddressBookEntity,
             StaffEntity,
+            WarehouseRuleEntity,
             CustomerEntity,
             AddressEntity,
             WarehouseEntity,
+            WardEntity,
+            PriceMultiplierEntity,
+            PackageTypeEntity,
             OrderEntity,
             RoleEntity,
             QRCodeEntity,

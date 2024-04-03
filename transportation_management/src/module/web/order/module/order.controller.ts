@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enum/roles.enum';
@@ -10,6 +10,7 @@ import { UserLoginData } from 'src/module/core/authentication/dto/user_login_dat
 import { CusCreateOrderDto } from '../dto/customer_create_order.dto';
 import { CustomerEditOrder } from '../dto/custoemr-edit-order.dto';
 import { CustomerCancelOrder } from '../dto/customer-cancel-order.dto';
+import { CaculataOrderPrice } from '../dto/caculate-order-price.dto';
 
 @Controller('order')
 @ApiTags('Order-api')
@@ -59,5 +60,14 @@ export class OrderController {
     @ApiResponse({ status: 200, description: 'create new Order for Customer  successfully.' })
     async customeCancelOrder(@Body() data: CustomerCancelOrder, @UserLogin() userLogin: UserLoginData) {
         return this.orderService.customeCancelOrder(data, userLogin.accId);
+    }
+    @Post('customer/caculateOrderPrice')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'send request to cancel Order for Customer Orders' })
+    @ApiResponse({ status: 200, description: 'create new Order for Customer  successfully.' })
+    async caculateOrderPrice(@Body() data: CaculataOrderPrice, @UserLogin() userLogin: UserLoginData) {
+        return this.orderService.caculateOrderPrice(data, userLogin.accId);
     }
 }

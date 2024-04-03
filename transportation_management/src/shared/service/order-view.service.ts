@@ -235,6 +235,7 @@ export class OrderViewService {
         const deliverUser = entity.deliver_information;
         const pickupStaff = entity.pickup_shipper_staff;
         const deliverStaff = entity.deliver_shipper_staff;
+        const package_type = entity.package_type;
 
         if (entity) {
             return Builder<Order>()
@@ -248,6 +249,7 @@ export class OrderViewService {
                         : '',
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
+                .packageType(package_type ? package_type.pk_name : '')
                 .receiverName(deliverUser ? deliverUser.name : '')
                 .deliverPhoneNumber(deliverUser ? deliverUser.phone : '')
                 .deliverAddress(
