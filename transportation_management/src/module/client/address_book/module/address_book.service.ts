@@ -47,9 +47,41 @@ export class AddressBookService {
             city: item.infor.address.city.city_name,
             district: item.infor.address.district.district_name,
             ward: item.infor.address.ward.ward_name,
+            infor_id: item.infor.infor_id,
         }));
 
         return { addressbooks: transformedListAddressBook, default_book: customer.default_book };
+    }
+    async getAddressBookById(acc_id: number, book_id: number) {
+        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+        if (!customer) {
+            return new Response(404, 'Customer not found ', null);
+        }
+        const cus_id = customer.cus_id;
+        const AddressBook = await this.addressBookRepository
+            .createQueryBuilder('addressbook')
+            .leftJoinAndSelect('addressbook.infor', 'infor')
+            .leftJoinAndSelect('infor.address', 'address')
+            .leftJoinAndSelect('address.city', 'city')
+            .leftJoinAndSelect('address.district', 'district')
+            .leftJoinAndSelect('address.ward', 'ward')
+            .where('addressbook.cus_id = :cus_id', { cus_id: cus_id })
+            .andWhere('addressbook.is_deleted = :is_deleted', { is_deleted: false })
+            .andWhere('addressbook.book_id = :book_id', { book_id: book_id })
+            .orderBy('addressbook.book_id', 'ASC')
+            .getMany();
+        const transformedListAddressBook = AddressBook.map((item) => ({
+            book_id: item.book_id,
+            name: item.infor.name,
+            phone: item.infor.phone,
+            house: item.infor.address.house,
+            city: item.infor.address.city.city_name,
+            district: item.infor.address.district.district_name,
+            ward: item.infor.address.ward.ward_name,
+            infor_id: item.infor.infor_id,
+        }));
+
+        return { addressbooks: transformedListAddressBook };
     }
     async getDefaultBookByCusId(acc_id: number) {
         const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });

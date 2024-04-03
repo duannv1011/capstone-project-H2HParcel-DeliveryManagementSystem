@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AddressBookService } from './address_book.service';
 import { createAddresBookDto } from '../dto/create_address_book_dto';
@@ -21,6 +21,13 @@ export class AddressBookController {
     @ApiBearerAuth('JWT-auth')
     async getAddressBookByCusId(@UserLogin() userLogin: UserLoginData): Promise<any> {
         return this.addressBookService.getAddressBookByCusId(Number(userLogin.accId));
+    }
+    @Get('getAddressBookById')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    async getAddressBookById(@UserLogin() userLogin: UserLoginData, @Query('book_id') book_id: number): Promise<any> {
+        return this.addressBookService.getAddressBookById(Number(userLogin.accId), book_id);
     }
     @Get('getDefaultBookByCusId')
     @Roles(Role.CUSTOMER)
