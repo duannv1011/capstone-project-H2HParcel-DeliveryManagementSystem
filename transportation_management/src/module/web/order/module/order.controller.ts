@@ -11,6 +11,7 @@ import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
 import { CustomerEditOrder } from '../dto/custoemr-edit-order.dto';
 import { CustomerCancelOrder } from '../dto/customer-cancel-order.dto';
 import { CaculataOrderPrice } from '../dto/caculate-order-price.dto';
+import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 
 @Controller('order')
 @ApiTags('Order-api')
@@ -69,5 +70,14 @@ export class OrderController {
     @ApiResponse({ status: 200, description: 'create new Order for Customer  successfully.' })
     async caculateOrderPrice(@Body() data: CaculataOrderPrice) {
         return this.orderService.caculateOrderPrice(data);
+    }
+    @Put('customer-order/quick-update-order')
+    @Roles(Role.MANAGER, Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'asign Shipper To Order ' })
+    @ApiResponse({ status: 200, description: 'asign Shipper To Orde  successfully.' })
+    async asignShipperToOrder(@Body() data: asignShipperDto) {
+        return this.orderService.asignShipperToOrder(data);
     }
 }

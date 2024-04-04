@@ -18,7 +18,8 @@ import { WardEntity } from 'src/entities/ward.entity';
 import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
 import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
-
+import { asignShipperDto } from '../dto/asing-shipper-order.dto';
+import { OrderStatusEntity } from 'src/entities/order-status.entity';
 @Injectable()
 export class OrderService {
     constructor(
@@ -449,5 +450,23 @@ export class OrderService {
             .orderBy('price_multiplier.minDistance', 'DESC')
             .getOne();
         return Number(priceMultiplier.multiplier);
+    }
+    async asignShipperToOrder(data: asignShipperDto) {
+        const order = await this.orderRepository.findOneBy({ orderId: data.orderId });
+        const orderStatus = new OrderStatusEntity();
+
+        if ([1, 2].includes(order.orderStt)) {
+            orderStatus.sttId = 2;
+            order.pickupShipper = data.shiperrId;
+        }
+
+        if ([6, 7].includes(order.orderStt)) {
+            orderStatus.sttId = 7;
+            order.deliverShipper = data.shiperrId;
+        }
+
+        order.status = orderStatus;
+        await this.orderRepository.save(order);
+        return 'assign shipper successfully';
     }
 }

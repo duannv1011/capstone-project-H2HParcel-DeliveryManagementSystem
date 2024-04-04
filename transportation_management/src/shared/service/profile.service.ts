@@ -7,6 +7,7 @@ import { StaffProfileUpdateDto } from '../dto/profile/staff_profile.update.dto';
 import { Address, Staff, StaffResponse } from '../../module/core/staff/response/staff.reponse';
 import { Builder } from 'builder-pattern';
 import { AddressEntity } from '../../entities/address.entity';
+import { Paging } from 'src/module/response/Paging';
 
 @Injectable()
 export class ProfileService {
@@ -45,7 +46,47 @@ export class ProfileService {
             throw new InternalServerErrorException();
         }
     }
+    async getAllWarehouseStaffByRole(accid: number, pageNo: number, roleId: number) {
+        const arrrole = [2, 3];
+        const queryCondition = arrrole.includes(Number(roleId));
+        const manager = await this.staffRepository.findOneBy({ accId: accid });
+        const pageSize = Number(process.env.PAGE_SIZE);
+        if (!manager) {
+            return 'manager not found';
+        }
+        const [staffs, count] = await this.staffRepository
+            .createQueryBuilder('s')
+            .leftJoinAndSelect('s.warehouse', 'wh')
+            .leftJoinAndSelect('s.address', 'a')
+            .leftJoinAndSelect('a.city', 'c')
+            .leftJoinAndSelect('a.district', 'd')
+            .leftJoinAndSelect('a.ward', 'w')
+            .leftJoinAndSelect('s.account', 'acc')
+            .leftJoinAndSelect('acc.role', 'r')
+            .where('s.warehouse_id =:warehouseId', { warehouseId: manager.warehouseId })
+            .andWhere('acc.isActive = :isActive', { isActive: true })
+            .andWhere(queryCondition ? 'r.role_id =:roleId' : 'r.role_id NOT IN (:...roleId)', {
+                roleId: queryCondition ? roleId : [4, 5],
+            })
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .getManyAndCount();
+        const respone = staffs.map((s) => ({
+            staffName: s.fullname,
+            staffEmail: s.email,
+            staffPhone: s.phone,
+            staffStatus: s.statusName,
+            staffRole: s.account.role.roleName,
+            warehouse: s.warehouse.warehouseName,
+            staffhouse: s.address ? s.address.house : '',
+            staffcity: s.address ? s.address.city.cityName : '',
+            staffdistrict: s.address ? s.address.district.districtName : '',
+            staffward: s.address ? s.address.ward.wardName : '',
+        }));
+        const pageging = new Paging(pageNo, pageSize, count);
 
+        return pageging.getPage() <= pageging.getTotalPages() ? { respone, pageging } : 'staffs not find';
+    }
     /**
      * Get all profiles by accId.
      *
