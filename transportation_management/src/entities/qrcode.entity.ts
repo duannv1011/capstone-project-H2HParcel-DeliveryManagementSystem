@@ -4,16 +4,16 @@ import { OrderEntity } from './order.entity';
 
 @Entity('QRCode')
 export class QRCodeEntity extends AbstractEntity {
-    @PrimaryGeneratedColumn()
-    code_id: number;
+    @PrimaryGeneratedColumn({ name: 'code_id' })
+    codeId: number;
 
-    @Column({ nullable: true, unique: true })
-    code_value: string;
+    @Column({ name: 'code_value', nullable: true, unique: true })
+    codeValue: string;
 
-    @Column({ nullable: true })
-    qr_url: string;
+    @Column({ name: 'qr_url', nullable: true })
+    qrUrl: string;
 
-    @Column({ nullable: true })
+    @Column({ name: 'price', nullable: true })
     price: string;
 
     @ManyToOne(() => OrderEntity, { eager: true, nullable: true })

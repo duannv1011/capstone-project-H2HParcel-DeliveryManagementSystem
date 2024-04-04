@@ -125,9 +125,13 @@ export class ShipperService {
             .createQueryBuilder('s')
             .leftJoinAndSelect('s.account', 'a')
             .leftJoinAndSelect('a.role', 'r')
-            .where('s.warehouse_id =: warehouseId', { warehouseId: staff.warehouseId })
-            .where('r.role_id =: roleId', { roleId: 2 })
+            .where('s.warehouse_id =:warehouseId', { warehouseId: staff.warehouseId })
+            .where('r.role_id =:roleId', { roleId: 2 })
             .getMany();
-        return shippers ? shippers : 'not found!';
+        const response = shippers.map((s) => ({
+            staffId: s.staffId,
+            fullname: s.fullname,
+        }));
+        return shippers ? response : 'not found!';
     }
 }
