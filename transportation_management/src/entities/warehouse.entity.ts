@@ -17,6 +17,6 @@ export class WarehouseEntity extends AbstractEntity {
     @Column({ name: 'warehouse_name' })
     warehouseName: string;
 
-    @Column({ default: true, nullable: true })
+    @Column({ name: 'is_active', default: true, nullable: true })
     isActive: boolean;
 }

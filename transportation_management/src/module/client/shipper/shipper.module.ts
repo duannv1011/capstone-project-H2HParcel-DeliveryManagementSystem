@@ -3,7 +3,7 @@ import { ShipperService } from './shipper.service';
 import { ShipperController } from './shipper.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { InformationEntity } from 'src/entities/Information.entity';
+import { InformationEntity } from 'src/entities/information.entity';
 import { AccountEntity } from 'src/entities/account.entity';
 import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { AddressEntity } from 'src/entities/address.entity';

@@ -5,7 +5,7 @@ export class PriceMultiplierEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ name: 'max_distance' })
     maxDistance: number;
 
     @Column()

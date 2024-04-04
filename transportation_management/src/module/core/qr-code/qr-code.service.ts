@@ -180,6 +180,7 @@ export class QrCodeService {
 
         return Builder<QrCode>().build();
     }
+
     async scanQR(data: ScanQrDto, accId: number) {
         const staff = await this.staffRepository.findOneBy({ accId: accId });
         if (!staff) {
@@ -217,6 +218,7 @@ export class QrCodeService {
             await queryRunner.release();
         }
     }
+
     async updateOrder(order: OrderEntity, queryRunner: QueryRunner, staffId: number) {
         order.orderStt++;
         const orderUpdate = await queryRunner.manager.save(order);
@@ -226,7 +228,7 @@ export class QrCodeService {
         activityLog.logId = 0;
         activityLog.orderId = order.orderId;
         activityLog.time = new Date();
-        activityLog.curentStatus = orderUpdate.orderStt;
+        activityLog.currentStatus = orderUpdate.orderStt;
         await queryRunner.manager.save(activityLog);
     }
 }

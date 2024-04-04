@@ -1,7 +1,7 @@
 // address-book.entity.ts
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
-import { InformationEntity } from './Information.entity';
+import { InformationEntity } from './information.entity';
 
 @Entity('AddressBook')
 export class AddressBookEntity {

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
-import { InformationEntity } from './Information.entity';
+import { InformationEntity } from './information.entity';
 import { StaffEntity } from './staff.entity';
 import { OrderStatusEntity } from './order-status.entity';
 import { PackageTypeEntity } from './package-type.entity';

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { DataSource, Repository } from 'typeorm';
-import { InformationEntity } from 'src/entities/Information.entity';
+import { InformationEntity } from 'src/entities/information.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEditOrder } from '../dto/custoemr-edit-order.dto';
 import { RequestEntity } from 'src/entities/request.entity';
@@ -20,6 +20,7 @@ import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
 import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
 import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
+
 @Injectable()
 export class OrderService {
     constructor(
@@ -51,6 +52,7 @@ export class OrderService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
+
     async getAllOrders(accId: number, pageNo: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
@@ -107,6 +109,7 @@ export class OrderService {
             totalpage,
         };
     }
+
     async getDetailOrder(orderId: number, accId: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
@@ -155,6 +158,7 @@ export class OrderService {
             : null;
         return order ? order : 'query error or not found';
     }
+
     async createOrder(data: CusCreateOrderDto, accId: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
@@ -226,6 +230,7 @@ export class OrderService {
             await queryRunner.release();
         }
     }
+
     async customeEditOrder(data: CustomerEditOrder, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
@@ -366,6 +371,7 @@ export class OrderService {
             await queryRunner.release();
         }
     }
+
     async customeCancelOrder(data: CustomerCancelOrder, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
@@ -426,6 +432,7 @@ export class OrderService {
             await queryRunner.release();
         }
     }
+
     async caculateOrderPrice(data: CaculataOrderPrice) {
         const pkdata = await this.packageTypeRepository.findOneBy({ pkId: data.pkId });
         const getPickupWarehouse = await this.wardRepository.findOneBy({ wardId: data.pickupWardId });
@@ -442,6 +449,7 @@ export class OrderService {
         const price = Number(pkdata.pkPrice);
         return pkdata.pkId === 4 ? null : { price: mutiplier * price };
     }
+
     async checkMutipelPrice(distance: number) {
         const priceMultiplier = await this.priceMutiPlierRepository
             .createQueryBuilder('price_multiplier')
@@ -451,6 +459,7 @@ export class OrderService {
             .getOne();
         return Number(priceMultiplier.multiplier);
     }
+
     async asignShipperToOrder(data: asignShipperDto) {
         const order = await this.orderRepository.findOneBy({ orderId: data.orderId });
         const orderStatus = new OrderStatusEntity();
