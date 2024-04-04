@@ -3,7 +3,7 @@ import { AbstractEntity } from './abstract-entity';
 
 @Entity('WarehouseRule')
 export class WarehouseRuleEntity extends AbstractEntity {
-    @PrimaryGeneratedColumn({ name: 'ruleId' })
+    @PrimaryGeneratedColumn({ name: 'rule_id' })
     ruleId: number;
 
     @Column({ name: 'warehouseId1' })

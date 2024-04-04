@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
-import { Repository, DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { createAddresBookDto } from '../dto/create_address_book_dto';
 import { Response } from 'src/module/response/Response';
 import { UpdateAddresBookDto } from '../dto/update_address_book_dto';
-import { InformationEntity } from 'src/entities/Information.entity';
+import { InformationEntity } from 'src/entities/information.entity';
 
 @Injectable()
 export class AddressBookService {
@@ -22,6 +22,7 @@ export class AddressBookService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
+
     async getAddressBookByCusId(accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
@@ -52,6 +53,7 @@ export class AddressBookService {
 
         return { addressbooks: transformedListAddressBook, default_book: customer.defaultBook };
     }
+
     async getAddressBookById(accId: number, bookId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
@@ -83,6 +85,7 @@ export class AddressBookService {
 
         return { addressbooks: transformedListAddressBook };
     }
+
     async getDefaultBookByCusId(accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
@@ -114,6 +117,7 @@ export class AddressBookService {
 
         return { addressbooks: transformedListAddressBook };
     }
+
     async createAddressBook(data: createAddresBookDto, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
@@ -167,6 +171,7 @@ export class AddressBookService {
             await queryRunner.release();
         }
     }
+
     async setDefaultAddressBook(bookId: number, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
@@ -186,6 +191,7 @@ export class AddressBookService {
             .execute();
         return update ? 'set successfull' : 'set error';
     }
+
     async softDelete(bookId: number, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
@@ -209,6 +215,7 @@ export class AddressBookService {
         }
         return 'success';
     }
+
     async updateAddressbook(data: UpdateAddresBookDto, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {

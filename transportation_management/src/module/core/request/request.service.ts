@@ -11,7 +11,7 @@ import { UserLoginData } from '../authentication/dto/user_login_data';
 import { RequestEntity } from '../../../entities/request.entity';
 import { RequestTypeEntity } from '../../../entities/request-type.entity';
 import { RequestStatusEntity } from '../../../entities/request-status.entity';
-import { InformationEntity } from '../../../entities/Information.entity';
+import { InformationEntity } from '../../../entities/information.entity';
 import { RequestStatus } from '../../../enum/request-status.enum';
 import { UpdateOrderCustomer } from './dto/customer_update_order.dto';
 
@@ -252,5 +252,6 @@ export class RequestService {
 
         return null;
     }
+
     async updateOrder(data: UpdateOrderCustomer, accId: number) {}
 }

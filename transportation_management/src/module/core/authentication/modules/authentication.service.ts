@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from '../dto/register-dto';
 import { loginDto } from '../dto/authentication-dto';
@@ -11,7 +11,7 @@ import { StaffEntity } from '../../../../entities/staff.entity';
 import { CustomerEntity } from '../../../../entities/customer.entity';
 import { AddressEntity } from '../../../../entities/address.entity';
 import { AccountEntity } from '../../../../entities/account.entity';
-import { InformationEntity } from 'src/entities/Information.entity';
+import { InformationEntity } from 'src/entities/information.entity';
 import { AddressBookEntity } from 'src/entities/address-book.entity';
 
 @Injectable()
@@ -32,6 +32,7 @@ export class AuthenticationService {
         private configService: ConfigService,
         private dataSource: DataSource,
     ) {}
+
     async register(registerData: RegisterDto): Promise<any> {
         const checkexistingUsername = await this.accountRepository
             .createQueryBuilder('account')
@@ -106,6 +107,7 @@ export class AuthenticationService {
             await queryRunner.release();
         }
     }
+
     async login(logindata: loginDto): Promise<any> {
         const account = await this.accountRepository.findOne({
             where: { username: logindata.username },
@@ -124,6 +126,7 @@ export class AuthenticationService {
         const token = await this.genarateToken(payload);
         return [{ token: token }, { payload: payload }];
     }
+
     async refreshToken(refreshToken: string): Promise<any> {
         try {
             const verify = await this.jwtService.verifyAsync(refreshToken, {
@@ -147,9 +150,11 @@ export class AuthenticationService {
         const saltTime = await bcrypt.genSalt(10);
         return await bcrypt.hash(password, saltTime);
     }
+
     private async checkPassword(input: string, password: string) {
         return bcrypt.compare(input, password);
     }
+
     private async genarateToken(payload: { id: number; username: string; role: string }) {
         const accessToken = await this.jwtService.signAsync(payload, {
             secret: this.configService.get<string>('SECRET_KEY'),
@@ -163,6 +168,7 @@ export class AuthenticationService {
         await this.accountRepository.update({ username: payload.username }, { refreshToken: refreshToken });
         return { accessToken, refreshToken };
     }
+
     private async getAdditionalData(account: AccountEntity): Promise<any> {
         switch (account.role.roleName) {
             case 'CUSTOMER':

@@ -9,8 +9,8 @@ export class ActivityLogEntity {
     orderId: number;
     @Column({ name: 'time', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     time: Date;
-    @Column({ name: 'curent_status' })
-    curentStatus: number;
+    @Column({ name: 'current_status' })
+    currentStatus: number;
     @Column({ name: 'staff_id', nullable: true })
     staffId: number;
     @ManyToOne(() => StaffEntity, { eager: true })

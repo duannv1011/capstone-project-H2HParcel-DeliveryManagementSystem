@@ -1,9 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { DistrictEntity } from './district.entity';
 
 @Entity('Ward')
 export class WardEntity {
-    @PrimaryGeneratedColumn({ name: 'ward_id ' })
+    @PrimaryGeneratedColumn({ name: 'ward_id' })
     wardId: number;
 
     @ManyToOne(() => DistrictEntity, { eager: true })

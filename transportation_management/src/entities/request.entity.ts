@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
-import { InformationEntity } from './Information.entity';
+import { InformationEntity } from './information.entity';
 import { OrderEntity } from './order.entity';
 
 @Entity('Request')
