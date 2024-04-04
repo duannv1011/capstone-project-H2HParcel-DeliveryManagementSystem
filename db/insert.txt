@@ -298,14 +298,14 @@ INSERT INTO "WarehouseRule" ("warehouse_id", "ward_id") VALUES
 --insert into table "OrderStatus" 
 INSERT INTO "OrderStatus" (stt_name) 
 VALUES 
-('Created'),
-('Await pickup'),
-('Picked up'),
-('Arrived pickup warehouse'),
-('On transit'),
-('Arrived deliver warehouse'),
-('On Delivery'),
-('Delivered'),
+('Created'),1
+('Await pickup'),2
+('Picked up'),3
+('Arrived pickup warehouse'),4
+('On transit'),5
+('Arrived deliver warehouse'),6
+('On Delivery'),7
+('Delivered'),8
 ('Canceled'),
 
 --insert into table RequestStatus 

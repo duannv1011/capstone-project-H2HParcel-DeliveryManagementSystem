@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { QrCodeCreateDto } from './dto/qr-code.create.dto';
 import * as moment from 'moment-timezone';
 import * as JSZip from 'jszip';
@@ -201,24 +201,32 @@ export class QrCodeService {
         await queryRunner.startTransaction();
 
         try {
-            //update order
-            order.orderStt++;
-            const orderUpdate = await queryRunner.manager.save(order);
-            //create Activity Log
-            const activityLog: ActivityLogEntity = new ActivityLogEntity();
-            activityLog.staffId = staffId;
-            activityLog.logId = 0;
-            activityLog.orderId = order.orderId;
-            activityLog.time = new Date();
-            activityLog.curentStatus = orderUpdate.orderStt;
-            await queryRunner.manager.save(activityLog);
-            await queryRunner.commitTransaction();
-            return 'success';
+            if ([3, 5].includes(statusId) && [3, 4].includes(staff.account.role.roleId)) {
+                await this.updateOrder(order, queryRunner, staffId);
+                return 'success';
+            } else if ([4, 6].includes(statusId) && staff.account.role.roleId === 2) {
+                await this.updateOrder(order, queryRunner, staffId);
+                return 'success';
+            } else {
+                return 'can not Scan this Order';
+            }
         } catch (error) {
             await queryRunner.rollbackTransaction();
             return error;
         } finally {
             await queryRunner.release();
         }
+    }
+    async updateOrder(order: OrderEntity, queryRunner: QueryRunner, staffId: number) {
+        order.orderStt++;
+        const orderUpdate = await queryRunner.manager.save(order);
+
+        const activityLog = new ActivityLogEntity();
+        activityLog.staffId = staffId;
+        activityLog.logId = 0;
+        activityLog.orderId = order.orderId;
+        activityLog.time = new Date();
+        activityLog.curentStatus = orderUpdate.orderStt;
+        await queryRunner.manager.save(activityLog);
     }
 }
