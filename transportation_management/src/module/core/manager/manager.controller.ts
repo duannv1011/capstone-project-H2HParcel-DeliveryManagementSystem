@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
     BadRequestException,
     Body,
@@ -48,6 +48,19 @@ export class ManagerController {
         const profiles = await this.profileService.findAllProfile();
 
         return new Response(200, 'success', profiles, null, 1);
+    }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'List all Staff in warehouse by role' })
+    @ApiOkResponse({ description: 'List all Staff in warehouse by role sucessfully' })
+    @Roles(Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @Get('manager/managed-staffs')
+    async getAllWarehouseStaffByRole(
+        @UserLogin() userLogin: UserLoginData,
+        @Query('pageNo') pageNo: number,
+        @Query('roleId') roleId: number,
+    ) {
+        return await this.profileService.getAllWarehouseStaffByRole(Number(userLogin.accId), pageNo, Number(roleId));
     }
 
     @ApiBearerAuth('JWT-auth')

@@ -3,22 +3,22 @@ import { RequestEntity } from './request.entity';
 
 @Entity('RequestRecord')
 export class RequestRecordEntity {
-    @PrimaryGeneratedColumn()
-    public record_id: number;
+    @PrimaryGeneratedColumn({ name: 'record_id' })
+    public recordId: number;
 
-    @Column()
-    public refer_id: number;
+    @Column({ name: 'refer_id' })
+    public referId: number;
 
     @ManyToOne(() => RequestEntity, { eager: true })
     @JoinColumn({ name: 'refer_id' })
     request: RequestEntity;
 
-    @Column()
-    public request_type: number;
+    @Column({ name: 'request_type' })
+    public requestType: number;
 
-    @Column()
-    public request_stt: number;
+    @Column({ name: 'request_stt' })
+    public requestStt: number;
 
-    @Column({ type: 'varchar', nullable: true })
+    @Column({ name: 'note', type: 'varchar', nullable: true })
     public note: string;
 }

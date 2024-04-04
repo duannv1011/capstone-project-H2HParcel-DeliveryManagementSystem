@@ -7,16 +7,17 @@ import { RoleGuard } from 'src/guards/role.guard';
 import { OrderService } from './order.service';
 import { UserLogin } from 'src/decorators/user_login.decorator';
 import { UserLoginData } from 'src/module/core/authentication/dto/user_login_data';
-import { CusCreateOrderDto } from '../dto/customer_create_order.dto';
+import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
 import { CustomerEditOrder } from '../dto/custoemr-edit-order.dto';
 import { CustomerCancelOrder } from '../dto/customer-cancel-order.dto';
 import { CaculataOrderPrice } from '../dto/caculate-order-price.dto';
+import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 
 @Controller('order')
 @ApiTags('Order-api')
 export class OrderController {
     constructor(private orderService: OrderService) {}
-    @Get('customer/getAllOrders')
+    @Get('customer-order/orders')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -25,7 +26,7 @@ export class OrderController {
     async getAllOrders(@UserLogin() userLogin: UserLoginData, @Query('pageNo') pageNo: number) {
         return this.orderService.getAllOrders(userLogin.accId, pageNo);
     }
-    @Get('customer/getOrderDetail')
+    @Get('customer-order/order-detail')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -34,7 +35,7 @@ export class OrderController {
     async getOrderDetail(@UserLogin() userLogin: UserLoginData, @Query('order_id') order_id: number) {
         return this.orderService.getDetailOrder(order_id, userLogin.accId);
     }
-    @Put('customer/createOrder')
+    @Put('customer-order/order')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -43,7 +44,7 @@ export class OrderController {
     async createOrder(@Body() data: CusCreateOrderDto, @UserLogin() userLogin: UserLoginData) {
         return this.orderService.createOrder(data, userLogin.accId);
     }
-    @Put('customer/edit-order')
+    @Put('customer-order/update-order')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -52,7 +53,7 @@ export class OrderController {
     async customeEditOrder(@Body() data: CustomerEditOrder, @UserLogin() userLogin: UserLoginData) {
         return this.orderService.customeEditOrder(data, userLogin.accId);
     }
-    @Put('customer/cancel-order')
+    @Put('customer-order/cancel-order')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -61,13 +62,22 @@ export class OrderController {
     async customeCancelOrder(@Body() data: CustomerCancelOrder, @UserLogin() userLogin: UserLoginData) {
         return this.orderService.customeCancelOrder(data, userLogin.accId);
     }
-    @Post('customer/caculateOrderPrice')
+    @Post('customer-order/calculate-order-price')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'send request to cancel Order for Customer Orders' })
     @ApiResponse({ status: 200, description: 'create new Order for Customer  successfully.' })
-    async caculateOrderPrice(@Body() data: CaculataOrderPrice, @UserLogin() userLogin: UserLoginData) {
-        return this.orderService.caculateOrderPrice(data, userLogin.accId);
+    async caculateOrderPrice(@Body() data: CaculataOrderPrice) {
+        return this.orderService.caculateOrderPrice(data);
+    }
+    @Put('customer-order/quick-update-order')
+    @Roles(Role.MANAGER, Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'asign Shipper To Order ' })
+    @ApiResponse({ status: 200, description: 'asign Shipper To Orde  successfully.' })
+    async asignShipperToOrder(@Body() data: asignShipperDto) {
+        return this.orderService.asignShipperToOrder(data);
     }
 }

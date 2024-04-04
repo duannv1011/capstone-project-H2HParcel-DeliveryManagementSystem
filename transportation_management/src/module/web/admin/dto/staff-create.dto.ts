@@ -17,13 +17,13 @@ export class CreateStaffDto {
     password: string;
     @IsString()
     @IsNotEmpty({ message: 'null value for staff role' })
-    @ApiProperty({ example: '3', description: 'role_id of Staff Account' })
-    role_id: number;
+    @ApiProperty({ example: '3', description: 'roleId of Staff Account' })
+    roleId: number;
 
     @ApiProperty({ example: 'teststaffName', description: 'fullname of Staff' })
     @IsNotEmpty({ message: 'null value for staff name' })
     @IsString()
-    fullname: string;
+    fullName: string;
 
     @ApiProperty({ example: 'testStaffEmail@gmail.com', description: 'email of Staff' })
     @IsEmail()
@@ -36,6 +36,6 @@ export class CreateStaffDto {
 
     @IsString()
     @IsNotEmpty({ message: 'null value for staff warehouse' })
-    @ApiProperty({ example: '1', description: 'warehouse_id of Staff' })
-    warehouse_id: number;
+    @ApiProperty({ example: '1', description: 'warehouseId of Staff' })
+    warehouseId: number;
 }

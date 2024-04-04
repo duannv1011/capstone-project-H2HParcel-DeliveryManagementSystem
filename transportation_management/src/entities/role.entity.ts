@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('Role')
 export class RoleEntity {
-    @PrimaryGeneratedColumn()
-    public role_id: number;
+    @PrimaryGeneratedColumn({ name: 'role_id' })
+    public roleId: number;
 
-    @Column({ type: 'varchar' })
-    public role_name: string;
+    @Column({ name: 'roleName', type: 'varchar' })
+    public roleName: string;
 }

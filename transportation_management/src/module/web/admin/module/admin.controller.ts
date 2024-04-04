@@ -18,7 +18,7 @@ export class AdminController {
         private configService: ConfigService,
     ) {}
 
-    @Get('getAllAccount')
+    @Get('admin/accounts')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -28,7 +28,7 @@ export class AdminController {
         const pagesize = this.configService.get<string>('PAGE_SIZE');
         return this.adminService.findAllAccount(Number(pageNo), Number(pagesize));
     }
-    @Get('getAllRoleStaff')
+    @Get('admin/staff-roles')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -38,7 +38,7 @@ export class AdminController {
         return this.adminService.getAllRoleStaff();
     }
 
-    @Get('getAllStaff')
+    @Get('admin/staffs')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -47,17 +47,17 @@ export class AdminController {
     async getAllStaff(@Query('pageNo') pageNo: string): Promise<any> {
         return this.adminService.getAllStaff(Number(pageNo));
     }
-    @Get('getAllStaffByRole')
+    @Get('admin/staffs/by-role')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'get All Staffs By ROle' })
+    @ApiOperation({ summary: 'get All Staffs By Role' })
     @ApiResponse({ status: 200, description: 'get All Staffs with Role successfully.' })
     async getAllStaffByRole(@Query('pageNo') pageNo: string, @Query('role_id') role_id: number): Promise<any> {
         return this.adminService.getAllStaffByRole(Number(pageNo), role_id);
     }
 
-    @Put('updateStaff')
+    @Put('admin/update-staff')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -66,7 +66,7 @@ export class AdminController {
     async updateStaff(@Body() data: updateStaffDto): Promise<any> {
         return await this.adminService.adminUpdateStaff(data);
     }
-    @Patch('setManager')
+    @Patch('admin/staff/setManager')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -75,7 +75,7 @@ export class AdminController {
     async setManager(@Body() data: setStaffToManagerDto): Promise<any> {
         return await this.adminService.adminsetManager(data);
     }
-    @Post('createStaff')
+    @Post('admin/create-staff')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')

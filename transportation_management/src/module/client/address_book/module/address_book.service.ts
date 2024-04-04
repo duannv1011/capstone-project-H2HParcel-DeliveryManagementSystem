@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
-import { AddressBookEntity } from 'src/entities/addressBook.entity';
+import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { Repository, DataSource } from 'typeorm';
 import { createAddresBookDto } from '../dto/create_address_book_dto';
@@ -22,12 +22,12 @@ export class AddressBookService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
-    async getAddressBookByCusId(acc_id: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+    async getAddressBookByCusId(accId: number) {
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
-        const cus_id = customer.cus_id;
+        const cusId = customer.cusId;
         const listAddressBook = await this.addressBookRepository
             .createQueryBuilder('addressbook')
             .leftJoinAndSelect('addressbook.infor', 'infor')
@@ -35,29 +35,29 @@ export class AddressBookService {
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
-            .where('addressbook.cus_id = :cus_id', { cus_id: cus_id })
+            .where('addressbook.cus_id = :cusId', { cusId: cusId })
             .andWhere('addressbook.is_deleted = :is_deleted', { is_deleted: false })
-            .orderBy('addressbook.book_id', 'ASC')
+            .orderBy('addressbook.bookId', 'ASC')
             .getMany();
         const transformedListAddressBook = listAddressBook.map((item) => ({
-            book_id: item.book_id,
+            bookId: item.bookId,
             name: item.infor.name,
             phone: item.infor.phone,
             house: item.infor.address.house,
-            city: item.infor.address.city.city_name,
-            district: item.infor.address.district.district_name,
-            ward: item.infor.address.ward.ward_name,
-            infor_id: item.infor.infor_id,
+            city: item.infor.address.city.cityName,
+            district: item.infor.address.district.districtName,
+            ward: item.infor.address.ward.wardName,
+            inforId: item.infor.inforId,
         }));
 
-        return { addressbooks: transformedListAddressBook, default_book: customer.default_book };
+        return { addressbooks: transformedListAddressBook, default_book: customer.defaultBook };
     }
-    async getAddressBookById(acc_id: number, book_id: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+    async getAddressBookById(accId: number, bookId: number) {
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
-        const cus_id = customer.cus_id;
+        const cusId = customer.cusId;
         const AddressBook = await this.addressBookRepository
             .createQueryBuilder('addressbook')
             .leftJoinAndSelect('addressbook.infor', 'infor')
@@ -65,30 +65,30 @@ export class AddressBookService {
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
-            .where('addressbook.cus_id = :cus_id', { cus_id: cus_id })
+            .where('addressbook.cus_id = :cusId', { cusId: cusId })
             .andWhere('addressbook.is_deleted = :is_deleted', { is_deleted: false })
-            .andWhere('addressbook.book_id = :book_id', { book_id: book_id })
+            .andWhere('addressbook.book_id = :bookId', { bookId: bookId })
             .orderBy('addressbook.book_id', 'ASC')
             .getMany();
         const transformedListAddressBook = AddressBook.map((item) => ({
-            book_id: item.book_id,
+            bookId: item.bookId,
             name: item.infor.name,
             phone: item.infor.phone,
             house: item.infor.address.house,
-            city: item.infor.address.city.city_name,
-            district: item.infor.address.district.district_name,
-            ward: item.infor.address.ward.ward_name,
-            infor_id: item.infor.infor_id,
+            city: item.infor.address.city.cityName,
+            district: item.infor.address.district.districtName,
+            ward: item.infor.address.ward.wardName,
+            inforId: item.infor.inforId,
         }));
 
         return { addressbooks: transformedListAddressBook };
     }
-    async getDefaultBookByCusId(acc_id: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+    async getDefaultBookByCusId(accId: number) {
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
-        const cus_id = customer.cus_id;
+        const cusId = customer.cusId;
         const listAddressBook = await this.addressBookRepository
             .createQueryBuilder('addressbook')
             .leftJoinAndSelect('addressbook.infor', 'infor')
@@ -96,26 +96,26 @@ export class AddressBookService {
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
-            .where('addressbook.cus_id = :cus_id', { cus_id: cus_id })
+            .where('addressbook.cus_id = :cusId', { cusId: cusId })
             .andWhere('addressbook.is_deleted = :is_deleted', { is_deleted: false })
-            .andWhere('addressbook.book_id = :book_id', { book_id: customer.default_book })
+            .andWhere('addressbook.book_id = :bookId', { bookId: customer.defaultBook })
             .orderBy('addressbook.book_id', 'ASC')
             .getMany();
         const transformedListAddressBook = listAddressBook.map((item) => ({
-            book_id: item.book_id,
+            bookId: item.bookId,
             name: item.infor.name,
             phone: item.infor.phone,
             house: item.infor.address.house,
-            city: item.infor.address.city.city_name,
-            district: item.infor.address.district.district_name,
-            ward: item.infor.address.ward.ward_name,
-            infor_id: item.infor.infor_id,
+            city: item.infor.address.city.cityName,
+            district: item.infor.address.district.districtName,
+            ward: item.infor.address.ward.wardName,
+            inforId: item.infor.inforId,
         }));
 
         return { addressbooks: transformedListAddressBook };
     }
     async createAddressBook(data: createAddresBookDto, accId: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: accId } });
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
@@ -127,9 +127,9 @@ export class AddressBookService {
             const address = await queryRunner.manager
                 .save(AddressEntity, {
                     house: data.house,
-                    city_id: data.city_id,
-                    district_id: data.district_id,
-                    ward_id: data.ward_id,
+                    cityId: data.cityId,
+                    districtId: data.districtId,
+                    wardId: data.wardId,
                 })
                 .catch((error) => {
                     console.error('Error save address:', error);
@@ -159,7 +159,7 @@ export class AddressBookService {
                 });
 
             await queryRunner.commitTransaction();
-            return new Response(200, 'success', { book_id: addressBook.book_id });
+            return new Response(200, 'success', { bookId: addressBook.bookId });
         } catch (error) {
             await queryRunner.rollbackTransaction();
             return error;
@@ -167,55 +167,55 @@ export class AddressBookService {
             await queryRunner.release();
         }
     }
-    async setDefaultAddressBook(book_id: number, acc_id: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+    async setDefaultAddressBook(bookId: number, accId: number) {
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
         await this.addressBookRepository
             .findOne({
-                where: { customer: customer, book_id: book_id, is_deleted: false },
+                where: { customer: customer, bookId: bookId, isDeleted: false },
             })
             .catch((err) => {
                 return err.message;
             });
         const update = await this.customerRepository
             .createQueryBuilder()
-            .update(CustomerEntity, { default_book: book_id })
-            .where('acc_id=:acc_id', { acc_id: acc_id })
+            .update(CustomerEntity, { defaultBook: bookId })
+            .where('acc_id=:accId', { accId: accId })
             .execute();
         return update ? 'set successfull' : 'set error';
     }
-    async softDelete(book_id: number, acc_id: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+    async softDelete(bookId: number, accId: number) {
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
         const adressBook = await this.addressBookRepository.findOne({
-            where: { cus_id: customer.cus_id, book_id: book_id, is_deleted: false },
+            where: { cusId: customer.cusId, bookId: bookId, isDeleted: false },
         });
-        console.log(book_id);
+        console.log(bookId);
         if (!adressBook) {
             return new Response(404, 'addressBook in this customer not found ', null);
         }
-        adressBook.is_deleted = true;
+        adressBook.isDeleted = true;
         await this.addressBookRepository.save(adressBook);
-        if (book_id === customer.default_book) {
+        if (bookId === customer.defaultBook) {
             await this.customerRepository
                 .createQueryBuilder()
-                .update(CustomerEntity, { default_book: null })
-                .where('acc_id=:acc_id', { acc_id: acc_id })
+                .update(CustomerEntity, { defaultBook: null })
+                .where('acc_id=:accId', { accId: accId })
                 .execute();
         }
         return 'success';
     }
-    async updateAddressbook(data: UpdateAddresBookDto, acc_id: number) {
-        const customer = await this.customerRepository.findOne({ where: { acc_id: acc_id } });
+    async updateAddressbook(data: UpdateAddresBookDto, accId: number) {
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         if (!customer) {
             return new Response(404, 'Customer not found ', null);
         }
         const adressBook = await this.addressBookRepository.findOne({
-            where: { cus_id: customer.cus_id, book_id: data.book_id, is_deleted: false },
+            where: { cusId: customer.cusId, bookId: data.bookId, isDeleted: false },
         });
         if (!adressBook) {
             return new Response(404, 'addressBook in this customer not found ', null);
@@ -230,18 +230,18 @@ export class AddressBookService {
                 .update()
                 .set({
                     house: data.house,
-                    city_id: data.city_id,
-                    district_id: data.district_id,
-                    ward_id: data.ward_id,
+                    cityId: data.cityId,
+                    districtId: data.districtId,
+                    wardId: data.wardId,
                 })
-                .where('address_id = :addressId', { addressId: adressBook.infor.address.address_id })
+                .where('address_id = :addressId', { addressId: adressBook.infor.address.addressId })
                 .execute();
             //update information
             await this.informationRepository
                 .createQueryBuilder()
                 .update()
                 .set({ name: data.name, phone: data.phone })
-                .where('infor_id=:infor_id', { infor_id: adressBook.infor.infor_id })
+                .where('infor_id=:inforId', { inforId: adressBook.infor.inforId })
                 .execute();
             await queryRunner.commitTransaction();
         } catch (error) {
@@ -255,11 +255,11 @@ export class AddressBookService {
             .update()
             .set({
                 house: data.house,
-                city_id: data.city_id,
-                district_id: data.district_id,
-                ward_id: data.ward_id,
+                cityId: data.cityId,
+                districtId: data.districtId,
+                wardId: data.wardId,
             })
-            .where('address_id = :addressId', { addressId: adressBook.infor.infor_id })
+            .where('addressId = :addressId', { addressId: adressBook.infor.inforId })
             .execute();
 
         return 'success';

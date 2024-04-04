@@ -1,12 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('PackageType')
 export class PackageTypeEntity {
-    @PrimaryGeneratedColumn()
-    public pk_id: number;
+    @PrimaryGeneratedColumn({ name: 'pk_id' })
+    public pkId: number;
 
-    @Column()
-    public pk_name: string;
+    @Column({ name: 'pk_name' })
+    public pkName: string;
 
-    @Column({ nullable: true })
-    public pk_price: string;
+    @Column({ name: 'pk_price', nullable: true })
+    public pkPrice: string;
 }

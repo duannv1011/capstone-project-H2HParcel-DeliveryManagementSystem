@@ -5,16 +5,16 @@ export class UpdateWarehouseDto {
     @IsString()
     @ApiProperty({ example: '1', description: 'The warehouse_id' })
     @IsNotEmpty({ message: 'Null value error' })
-    warehouse_id: number;
+    warehouseId: number;
 
     @IsString()
     @ApiProperty({ example: 'warehouse_name', description: 'The warehouse_name' })
     @IsNotEmpty({ message: 'Null value error' })
-    warehouse_name: string;
+    warehouseName: string;
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error: city' })
-    address_id: number;
+    addressId: number;
 
     @IsString()
     @ApiProperty({ example: 'hourse', description: 'The hourse' })
@@ -24,15 +24,15 @@ export class UpdateWarehouseDto {
     @IsNumber()
     @ApiProperty({ example: '1', description: 'The city' })
     @IsNotEmpty({ message: 'Null value error: city' })
-    city_id: number;
+    cityId: number;
 
     @IsNumber()
     @ApiProperty({ example: '4', description: 'The district' })
     @IsNotEmpty({ message: 'Null value error: district' })
-    district_id: number;
+    districtId: number;
 
     @IsNumber()
     @ApiProperty({ example: '49', description: 'The ward' })
     @IsNotEmpty({ message: 'Null value error: ward' })
-    ward_id: number;
+    wardId: number;
 }

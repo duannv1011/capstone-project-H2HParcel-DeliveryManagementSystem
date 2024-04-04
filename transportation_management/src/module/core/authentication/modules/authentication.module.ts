@@ -11,7 +11,7 @@ import { CustomerEntity } from '../../../../entities/customer.entity';
 import { AccountEntity } from '../../../../entities/account.entity';
 import { RoleEntity } from '../../../../entities/role.entity';
 import { InformationEntity } from 'src/entities/Information.entity';
-import { AddressBookEntity } from 'src/entities/addressBook.entity';
+import { AddressBookEntity } from 'src/entities/address-book.entity';
 
 @Module({
     imports: [

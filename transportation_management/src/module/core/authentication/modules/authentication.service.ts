@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { RegisterDto } from '../dto/register_dto';
-import { loginDto } from '../dto/authentication_dto';
+import { RegisterDto } from '../dto/register-dto';
+import { loginDto } from '../dto/authentication-dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CustomerService } from '../../../client/customer/modules/customer.service';
@@ -12,7 +12,7 @@ import { CustomerEntity } from '../../../../entities/customer.entity';
 import { AddressEntity } from '../../../../entities/address.entity';
 import { AccountEntity } from '../../../../entities/account.entity';
 import { InformationEntity } from 'src/entities/Information.entity';
-import { AddressBookEntity } from 'src/entities/addressBook.entity';
+import { AddressBookEntity } from 'src/entities/address-book.entity';
 
 @Injectable()
 export class AuthenticationService {
@@ -65,10 +65,10 @@ export class AuthenticationService {
             // create account
             const accountInsertResult = await queryRunner.manager.save(AccountEntity, {
                 ...registerData,
-                refresh_token: 'refresh_token_string',
+                refreshToken: 'refreshToken_string',
                 password: hashedPassword,
             });
-            const accountId = accountInsertResult.acc_id; // Assuming 'id' is the auto-incremented column name
+            const accountId = accountInsertResult.accId; // Assuming 'id' is the auto-incremented column name
             // create address
             const addressDtoData = registerData.address;
             const addressdata = await queryRunner.manager.save(AddressEntity, {
@@ -77,27 +77,28 @@ export class AuthenticationService {
             console.log('address' + addressdata);
             //create information
             const information = new InformationEntity();
-            information.name = registerData.customer.fullname;
+            information.name = registerData.customer.fullName;
             information.phone = registerData.customer.phone;
             information.address = addressdata;
             const informationResult = await queryRunner.manager.save(InformationEntity, information);
             // create customer
             const customerDtodata = registerData.customer;
-            customerDtodata.address_id = addressdata.address_id;
-            customerDtodata.acc_id = accountId;
+            console.log(customerDtodata);
+            customerDtodata.addressId = addressdata.addressId;
+            customerDtodata.accId = accountId;
             customerDtodata.status = 1;
             const customerdata = await queryRunner.manager.save(CustomerEntity, customerDtodata);
             //create AdressBook
             const addressBook = new AddressBookEntity();
             addressBook.customer = customerdata;
-            addressBook.is_deleted = false;
+            addressBook.isDeleted = false;
             addressBook.infor = informationResult;
             const addressbookdata = await queryRunner.manager.save(AddressBookEntity, addressBook);
             await queryRunner.commitTransaction();
-            //update default_book of Customer
-            customerdata.default_book = addressbookdata.book_id;
+            //update defaultBook of Customer
+            customerdata.defaultBook = addressbookdata.bookId;
             await queryRunner.manager.save(CustomerEntity, customerdata);
-            return accountInsertResult;
+            return 'login success';
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;
@@ -117,20 +118,20 @@ export class AuthenticationService {
             throw new HttpException('wrong user or passsword1 ', HttpStatus.UNAUTHORIZED);
         }
         // genarate token and refresh token
-        const payload = { id: account.acc_id, username: account.username, role: account.role.role_name };
+        const payload = { id: account.accId, username: account.username, role: account.role.roleName };
         //get
-        //const data_result = await this.getAdditionalData(account);
+        //const dataTesult = await this.getAdditionalData(account);
         const token = await this.genarateToken(payload);
         return [{ token: token }, { payload: payload }];
     }
-    async refreshToken(refresh_token: string): Promise<any> {
+    async refreshToken(refreshToken: string): Promise<any> {
         try {
-            const verify = await this.jwtService.verifyAsync(refresh_token, {
+            const verify = await this.jwtService.verifyAsync(refreshToken, {
                 secret: this.configService.get<string>('SECRET_KEY'),
             });
             const checkexisttoken = await this.accountRepository.findOneBy({
                 username: verify.username,
-                refresh_token,
+                refreshToken,
             });
             if (checkexisttoken) {
                 return this.genarateToken({ id: verify.id, username: verify.username, role: verify.role });
@@ -150,22 +151,23 @@ export class AuthenticationService {
         return bcrypt.compare(input, password);
     }
     private async genarateToken(payload: { id: number; username: string; role: string }) {
-        const access_token = await this.jwtService.signAsync(payload, {
+        const accessToken = await this.jwtService.signAsync(payload, {
             secret: this.configService.get<string>('SECRET_KEY'),
             expiresIn: this.configService.get<string>('EXPRIRESIN_TOKEN'),
         });
-        const refresh_token = await this.jwtService.signAsync(payload, {
+
+        const refreshToken = await this.jwtService.signAsync(payload, {
             secret: this.configService.get<string>('SECRET_KEY'),
             expiresIn: this.configService.get<string>('EXPRIRESIN_REFRESH_TOKEN'),
         });
-        await this.accountRepository.update({ username: payload.username }, { refresh_token: refresh_token });
-        return { access_token, refresh_token };
+        await this.accountRepository.update({ username: payload.username }, { refreshToken: refreshToken });
+        return { accessToken, refreshToken };
     }
     private async getAdditionalData(account: AccountEntity): Promise<any> {
-        switch (account.role.role_name) {
+        switch (account.role.roleName) {
             case 'CUSTOMER':
                 const customer = await this.customerRepository.findOne({
-                    where: { acc_id: account.acc_id },
+                    where: { accId: account.accId },
                 });
                 if (!customer) {
                     return { message: 'user isvalid', status: 404 };
@@ -176,7 +178,7 @@ export class AuthenticationService {
             case 'MANAGER':
             case 'ADMIN':
                 const staff = await this.staffRepository.findOne({
-                    where: { acc_id: account.acc_id },
+                    where: { accId: account.accId },
                 });
                 if (!staff) {
                     return { message: 'user isvalid', status: 404 };

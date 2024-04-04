@@ -20,6 +20,12 @@ import * as moment from 'moment-timezone';
 import { DATE_FORMAT, TIMEZONE } from '../../../shared/contants';
 import { AssignCodeDto } from './dto/assign-code.dto';
 import { AuthGuard } from '../../../guards/auth.guard';
+import { UserLogin } from 'src/decorators/user_login.decorator';
+import { UserLoginData } from '../authentication/dto/user_login_data';
+import { ScanQrDto } from './dto/scan-qr-code.dto';
+import { Roles } from 'src/decorators/role.decorator';
+import { Role } from 'src/enum/roles.enum';
+import { RoleGuard } from 'src/guards/role.guard';
 
 @ApiTags('qr-code')
 @Controller('qr-code')
@@ -90,6 +96,19 @@ export class QrCodeController {
     @Post('assign')
     async assignCodeToOrder(@Body() request: AssignCodeDto): Promise<Response> {
         const result = await this.qrCodeService.assignCodeToOrder(request);
+
+        return new Response(201, 'success', result, null, 1);
+    }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'Scan QR successfully' })
+    @ApiOperation({ summary: 'Scan QR to update Status Order' })
+    @Roles(Role.SHIPPER, Role.STAFF, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @UsePipes(ValidationPipe)
+    @ApiUnauthorizedResponse()
+    @Post('qr/staff/scan-qr')
+    async scanQr(@Body() request: ScanQrDto, @UserLogin() user: UserLoginData): Promise<Response> {
+        const result = await this.qrCodeService.scanQR(request, Number(user.accId));
 
         return new Response(201, 'success', result, null, 1);
     }

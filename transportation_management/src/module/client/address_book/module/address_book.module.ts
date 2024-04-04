@@ -6,7 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
-import { AddressBookEntity } from 'src/entities/addressBook.entity';
+import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { InformationEntity } from 'src/entities/Information.entity';
 
 @Module({

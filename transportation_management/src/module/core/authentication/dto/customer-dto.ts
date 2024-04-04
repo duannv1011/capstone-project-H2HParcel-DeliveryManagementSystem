@@ -4,8 +4,8 @@ import { IsString, IsNotEmpty, Matches, IsEmail, IsNumber } from 'class-validato
 export class CustomerDto {
     @IsString()
     @IsNotEmpty({ message: 'Null value error for Fullname' })
-    @ApiProperty({ example: 'NGUYEN VAN D', description: 'fullname' })
-    fullname: string;
+    @ApiProperty({ example: 'NGUYEN VAN D', description: 'fullName' })
+    fullName: string;
 
     @IsString()
     @IsNotEmpty({ message: 'Null value error for Phone' })
@@ -19,12 +19,12 @@ export class CustomerDto {
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for address_id' })
-    address_id: number;
+    addressId: number;
 
     @IsNumber()
     status: number = 1;
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for account_id' })
-    acc_id: number;
+    accId: number;
 }

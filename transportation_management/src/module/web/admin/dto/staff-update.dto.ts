@@ -4,8 +4,8 @@ import { IsEmail, IsNotEmpty, IsNumber, IsString, Matches } from 'class-validato
 export class updateStaffDto {
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for staff' })
-    @ApiProperty({ example: '1', description: 'staff_id of Staff' })
-    staff_id: number;
+    @ApiProperty({ example: '1', description: 'staffId of Staff' })
+    staffId: number;
 
     @ApiProperty({ example: 'teststaffName', description: 'fullname of Staff' })
     @IsString()
@@ -21,8 +21,8 @@ export class updateStaffDto {
     phone: string;
 
     @IsString()
-    @ApiProperty({ example: '096143152', description: 'warehouse_id of Staff' })
-    warehouse_id: number;
+    @ApiProperty({ example: '096143152', description: 'warehouseId of Staff' })
+    warehouseId: number;
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for status' })

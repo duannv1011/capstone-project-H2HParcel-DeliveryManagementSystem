@@ -42,7 +42,7 @@ export class CustomerService {
             .leftJoin('address.district', 'district')
             .leftJoin('address.ward', 'ward')
             .where('account.isActive = :isActive', { isActive: true })
-            .orderBy('customer.cus_id', 'ASC')
+            .orderBy('customer.cusId', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -67,7 +67,7 @@ export class CustomerService {
                 'customer.email',
                 'customer.phone',
                 'customer.default_book',
-                'customer.address_id',
+                'customer.addressId',
                 'address',
                 'city',
                 'district',
@@ -77,22 +77,22 @@ export class CustomerService {
             .leftJoin('address.city', 'city')
             .leftJoin('address.district', 'district')
             .leftJoin('address.ward', 'ward')
-            .where('customer.acc_id = :accId', { accId: jwtPayload.id })
+            .where('customer.accId = :accId', { accId: jwtPayload.id })
             .getOne();
         const dataView = new DetailCustommerDto();
-        dataView.fullname = customer.fullname;
+        dataView.fullname = customer.fullName;
         dataView.email = customer.email;
         dataView.phone = customer.phone;
         dataView.house = customer.address.house;
-        dataView.city = customer.address.city.city_name;
-        dataView.district = customer.address.district.district_name;
-        dataView.ward = customer.address.ward.ward_name;
+        dataView.city = customer.address.city.cityName;
+        dataView.district = customer.address.district.districtName;
+        dataView.ward = customer.address.ward.wardName;
         return dataView;
     }
 
     async updateProfile(data: updateCusProfileDto, token: string) {
         const JwtPayload = decode(token) as JwtPayload;
-        const getCustomerByAccId = await this.customerRepository.findOne({ where: { acc_id: JwtPayload.id } });
+        const getCustomerByAccId = await this.customerRepository.findOne({ where: { accId: JwtPayload.id } });
         if (!getCustomerByAccId) {
             return {
                 success: false,
@@ -101,7 +101,7 @@ export class CustomerService {
             };
         }
         const getCustomerByEmail = await this.customerRepository.findOne({
-            where: { email: data.email, acc_id: Not(JwtPayload.id) },
+            where: { email: data.email, accId: Not(JwtPayload.id) },
         });
         if (getCustomerByEmail) {
             return {
@@ -115,17 +115,17 @@ export class CustomerService {
         await queryRunner.startTransaction();
         try {
             // update address
-            data.address_id = getCustomerByAccId.address_id;
+            data.addressId = getCustomerByAccId.addressId;
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(AddressEntity)
                 .set({
                     house: data.house,
-                    city_id: data.city_id,
-                    district_id: data.district_id,
-                    ward_id: data.ward_id,
+                    cityId: data.cityId,
+                    districtId: data.districtId,
+                    wardId: data.wardId,
                 })
-                .where('address_id = :address_id', { address_id: data.address_id })
+                .where('addressId = :addressId', { addressId: data.addressId })
                 .execute()
                 .catch((error) => {
                     console.error('Error updating address:', error);
@@ -137,10 +137,10 @@ export class CustomerService {
                 .update(CustomerEntity)
                 .set({
                     email: data.email,
-                    fullname: data.fullname,
+                    fullName: data.fullName,
                     phone: data.phone,
                 })
-                .where('cus_id = :cus_id', { cus_id: getCustomerByAccId.cus_id })
+                .where('cus_id = :cusId', { cusId: getCustomerByAccId.cusId })
                 .execute()
                 .catch((error) => {
                     console.error('Error updating customer:', error);
@@ -158,8 +158,8 @@ export class CustomerService {
     private combineAddress(parts: (string | null | undefined)[]): string {
         return parts.filter(Boolean).join(',');
     }
-    async updateCustomerStatus(cus_id: number, status: number): Promise<any> {
-        const customer = await this.customerRepository.findOneBy({ cus_id });
+    async updateCustomerStatus(cusId: number, status: number): Promise<any> {
+        const customer = await this.customerRepository.findOneBy({ cusId });
         if (!customer) {
             return {
                 success: false,

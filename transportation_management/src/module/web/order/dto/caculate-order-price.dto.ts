@@ -5,15 +5,15 @@ export class CaculataOrderPrice {
     @ApiProperty({ example: 1, description: 'pk_id' })
     @IsString()
     @IsNotEmpty({ message: 'null value for pk_id ' })
-    pk_id: number;
+    pkId: number;
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for pickup_ward_id' })
     @ApiProperty({ example: '1', description: 'pickup_ward_id' })
-    pickup_ward_id: number;
+    pickupWardId: number;
 
     @IsNumber()
     @IsNotEmpty({ message: 'Null value error for deliver_ward_id' })
     @ApiProperty({ example: '1', description: 'deliver_ward_id' })
-    deliver_ward_id: number;
+    deliverWardId: number;
 }

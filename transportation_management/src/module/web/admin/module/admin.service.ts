@@ -32,8 +32,8 @@ export class AdminService {
     async findAllAccount(pageNo: number, pageSize: number): Promise<any> {
         const [list, count] = await this.accountRepository
             .createQueryBuilder('account')
-            .select(['account.acc_id', 'account.username', 'account.role', 'account.refresh_token'])
-            .orderBy('account.acc_id', 'ASC')
+            .select(['account.accId', 'account.username', 'account.role', 'account.refresh_token'])
+            .orderBy('account.accId', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -50,7 +50,7 @@ export class AdminService {
         };
     }
     async getAllRoleStaff(): Promise<RoleEntity[]> {
-        return this.roleRepository.find({ where: { role_id: Not(In([1, 4, 5])) } });
+        return this.roleRepository.find({ where: { roleId: Not(In([1, 4, 5])) } });
     }
     async getAllStaff(pageNo: number): Promise<any> {
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
@@ -58,23 +58,23 @@ export class AdminService {
         const [list, count] = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
-                'staff.staff_id',
+                'staff.staffId',
                 'staff.fullname',
                 'staff.email',
                 'staff.phone',
                 'staff.warehouse',
                 'staff.account',
                 'staff.status',
-                'warehouse.warehouse_id',
-                'account.acc_id',
+                'warehouse.warehouseId',
+                'account.accId',
                 'role',
             ])
             .leftJoin('staff.warehouse', 'warehouse')
             .leftJoin('staff.account', 'account')
             .leftJoin('account.role', 'role')
-            .where('role.role_id != :role_id', { role_id: 5 })
-            .orderBy('warehouse.warehouse_id', 'ASC')
-            .addOrderBy('staff.staff_id', 'ASC')
+            .where('role.role_id != :roleId', { roleId: 5 })
+            .orderBy('warehouse.warehouseId', 'ASC')
+            .addOrderBy('staff.staffId', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -90,29 +90,29 @@ export class AdminService {
             totalpage,
         };
     }
-    async getAllStaffByRole(pageNo: number, role_id: number): Promise<any> {
+    async getAllStaffByRole(pageNo: number, roleId: number): Promise<any> {
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
         //const [list, count] = await this.staffRepository.findAndCount();
         const [list, count] = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
-                'staff.staff_id',
+                'staff.staffId',
                 'staff.fullname',
                 'staff.email',
                 'staff.phone',
                 'staff.warehouse',
                 'staff.account',
                 'staff.status',
-                'warehouse.warehouse_id',
-                'account.acc_id',
+                'warehouse.warehouseId',
+                'account.accId',
                 'role',
             ])
             .leftJoin('staff.warehouse', 'warehouse')
             .leftJoin('staff.account', 'account')
             .leftJoin('account.role', 'role')
-            .where('role.role_id = :role_id', { role_id: role_id })
-            .orderBy('warehouse.warehouse_id', 'ASC')
-            .addOrderBy('staff.staff_id', 'ASC')
+            .where('role.role_id = :roleId', { roleId: roleId })
+            .orderBy('warehouse.warehouseId', 'ASC')
+            .addOrderBy('staff.staffId', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -128,19 +128,19 @@ export class AdminService {
             totalpage,
         };
     }
-    async checkEmailIsEsit(email: string, staff_id: number): Promise<boolean> {
+    async checkEmailIsEsit(email: string, staffId: number): Promise<boolean> {
         if (email == null) {
             return false;
         }
         const checkcus = await this.customerRepository.findOne({ where: { email: email } });
         let checkstaff = null;
-        if (staff_id === null) {
+        if (staffId === null) {
             checkstaff = await this.staffRepository.findOne({
                 where: { email: email },
             });
         } else {
             checkstaff = await this.staffRepository.findOne({
-                where: { email: email, staff_id: Not(staff_id) },
+                where: { email: email, staffId: Not(staffId) },
             });
         }
 
@@ -152,13 +152,13 @@ export class AdminService {
     async adminUpdateStaff(data: updateStaffDto): Promise<any> {
         const staff = await this.staffRepository.findOne({
             where: {
-                staff_id: data.staff_id,
+                staffId: data.staffId,
             },
         });
-        if (!staff || staff.staff_id === 1) {
+        if (!staff || staff.staffId === 1) {
             return { status: 404, msg: 'not found!' };
         }
-        const checkemail = await this.checkEmailIsEsit(data.email, data.staff_id);
+        const checkemail = await this.checkEmailIsEsit(data.email, data.staffId);
         if (checkemail) {
             return { status: 404, msg: 'email is exist!' };
         }
@@ -166,7 +166,7 @@ export class AdminService {
         staff.fullname = data.fullname;
         staff.email = data.email;
         staff.phone = data.phone;
-        staff.warehouse_id = data.warehouse_id ? data.warehouse_id : staff.warehouse_id;
+        staff.warehouseId = data.warehouseId ? data.warehouseId : staff.warehouseId;
         staff.status = data.status ? data.status : staff.status;
         await this.staffRepository.save(staff);
         return {
@@ -186,7 +186,7 @@ export class AdminService {
         if (checkemail) {
             return { status: 409, msg: 'email is exist!' };
         }
-        if (data.role_id === 1 || data.role_id === 5 || data.role_id === 4) {
+        if (data.roleId === 1 || data.roleId === 5 || data.roleId === 4) {
             return { status: 409, msg: 'Role not  ilegal' };
         }
         const hashedPassword = await this.authenticationService.hashpassword(data.password);
@@ -202,14 +202,14 @@ export class AdminService {
                 refresh_token: 'refresh_token_string',
                 password: hashedPassword,
             });
-            const accountId = accountInsertResult.acc_id;
+            const accountId = accountInsertResult.accId;
             //create staff
             const staff = new StaffEntity();
-            staff.acc_id = accountId;
-            staff.fullname = data.fullname;
+            staff.accId = accountId;
+            staff.fullname = data.fullName;
             staff.email = data.email;
             staff.phone = data.phone;
-            staff.warehouse_id = data.warehouse_id;
+            staff.warehouseId = data.warehouseId;
             staff.status = 1;
             await await queryRunner.manager.save(staff);
             await queryRunner.commitTransaction();
@@ -227,10 +227,10 @@ export class AdminService {
     async adminsetManager(data: setStaffToManagerDto): Promise<any> {
         const staff = await this.staffRepository.findOne({
             where: {
-                staff_id: data.staff_id,
+                staffId: data.staffId,
             },
         });
-        if (!staff || staff.staff_id === 1) {
+        if (!staff || staff.staffId === 1) {
             return { status: 404, msg: 'not found!' };
         }
         const queryRunner = this.dataSource.createQueryRunner();
@@ -241,15 +241,15 @@ export class AdminService {
             await queryRunner.manager
                 .createQueryBuilder()
                 .update(AccountEntity)
-                .set({ role_id: 4 })
-                .where('acc_id = :acc_id', { acc_id: staff.acc_id })
+                .set({ roleId: 4 })
+                .where('acc_id = :accId', { accId: staff.accId })
                 .execute()
                 .catch((error) => {
                     console.error('Error updating address:', error);
                     throw error;
                 });
             //update staff
-            staff.warehouse_id = data.warehouse_id;
+            staff.warehouseId = data.warehouseId;
             await queryRunner.manager.save(staff);
             await queryRunner.commitTransaction();
             return {

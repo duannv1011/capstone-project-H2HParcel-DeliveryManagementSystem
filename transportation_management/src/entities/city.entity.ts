@@ -2,9 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('City')
 export class CityEntity {
-    @PrimaryGeneratedColumn()
-    public city_id: number;
+    @PrimaryGeneratedColumn({ name: 'city_id' })
+    public cityId: number;
 
-    @Column()
-    public city_name: string;
+    @Column({ name: 'city_name' })
+    public cityName: string;
 }

@@ -30,15 +30,15 @@ export class StaffProfileUpdateDto {
     @IsNumber()
     @ApiProperty({ example: '1', description: 'city' })
     @IsOptional()
-    city_id?: number;
+    cityId?: number;
 
     @IsNumber()
     @ApiProperty({ example: '1', description: 'district' })
     @IsOptional()
-    district_id?: number;
+    districtId?: number;
 
     @IsNumber()
     @ApiProperty({ example: '1', description: 'ward' })
     @IsOptional()
-    ward_id?: number;
+    wardId?: number;
 }

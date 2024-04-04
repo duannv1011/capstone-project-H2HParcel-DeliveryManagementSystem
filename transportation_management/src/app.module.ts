@@ -41,6 +41,7 @@ import { AddressModule } from './module/core/address/address.module';
 import { OrderModule } from './module/web/order/module/order.module';
 import { ManagercrudModule } from './module/web/managercrud/module/managercrud.module';
 import { RequestModule } from './module/core/request/request.module';
+import { ShipperModule } from './module/client/shipper/shipper.module';
 
 @Module({
     imports: [
@@ -65,6 +66,7 @@ import { RequestModule } from './module/core/request/request.module';
         OrderModule,
         ManagercrudModule,
         RequestModule,
+        ShipperModule,
     ],
     controllers: [
         AppController,

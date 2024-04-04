@@ -8,47 +8,47 @@ import { PackageTypeEntity } from './package-type.entity';
 @Entity('Order')
 export class OrderEntity extends AbstractEntity {
     @PrimaryGeneratedColumn({ name: 'order_id' })
-    public order_id: number;
+    public orderId: number;
 
     @Column({ name: 'cus_id' })
-    public cus_id: number;
+    public cusId: number;
 
     @Column({ name: 'pickup_infor_id' })
-    public pickup_infor_id: number;
+    public pickupInforId: number;
 
     @Column({ name: 'pickup_shipper', nullable: true })
-    public pickup_shipper: number;
+    public pickupShipper: number;
 
     @Column({ name: 'deliver_infor_id' })
-    public deliver_infor_id: number;
+    public deliverInforId: number;
 
     @Column({ name: 'deliver_shipper', nullable: true })
-    public deliver_shipper: number;
+    public deliverShipper: number;
 
     @Column({ name: 'order_stt' })
-    public order_stt: number;
+    public orderStt: number;
 
     @Column({ name: 'pk_id' })
-    public pk_id: number;
+    public pkId: number;
 
     @Column({ name: 'estimated_price' })
-    public estimated_price: number;
+    public estimatedPrice: number;
 
     @ManyToOne(() => InformationEntity, { eager: true })
     @JoinColumn({ name: 'pickup_infor_id' })
-    pickup_information: InformationEntity;
+    pickupInformation: InformationEntity;
 
     @ManyToOne(() => StaffEntity, { eager: true })
     @JoinColumn({ name: 'pickup_shipper' })
-    pickup_shipper_staff: StaffEntity;
+    pickupShipperStaff: StaffEntity;
 
     @ManyToOne(() => StaffEntity, { eager: true })
     @JoinColumn({ name: 'deliver_shipper' })
-    deliver_shipper_staff: StaffEntity;
+    deliverShipperStaff: StaffEntity;
 
     @ManyToOne(() => InformationEntity, { eager: true })
     @JoinColumn({ name: 'deliver_infor_id' })
-    deliver_information: InformationEntity;
+    deliverInformation: InformationEntity;
 
     @ManyToOne(() => OrderStatusEntity, { eager: true })
     @JoinColumn({ name: 'order_stt' })
@@ -56,5 +56,5 @@ export class OrderEntity extends AbstractEntity {
 
     @ManyToOne(() => PackageTypeEntity, { eager: true })
     @JoinColumn({ name: 'pk_id' })
-    package_type: PackageTypeEntity;
+    packageType: PackageTypeEntity;
 }

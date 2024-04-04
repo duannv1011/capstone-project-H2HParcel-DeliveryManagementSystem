@@ -77,7 +77,7 @@ export class StaffController {
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View all order by warehouse of staff' })
     @ApiOperation({ summary: 'View all order by warehouse of staff' })
-    @Roles(Role.STAFF)
+    @Roles(Role.STAFF, Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('order/all')
