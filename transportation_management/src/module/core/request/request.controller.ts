@@ -27,7 +27,7 @@ import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
 import { RoleGuard } from '../../../guards/role.guard';
 import { RequestUpdateDto } from './dto/request.update.dto';
-import { UpdateOrderCustomer } from './dto/staff-reslove-order-update';
+import { StaffUpdateRequestStastus } from './dto/staff-reslove-order-update';
 import { UserLogin } from 'src/decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
 import { createTransitRequestDto } from './dto/staff-create-transit.dto';
@@ -98,7 +98,7 @@ export class RequestController {
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'staff reslove request for order of Customer' })
     @ApiResponse({ status: 200, description: 'update Order for Customer  successfully.' })
-    async resloveOrder(@Body() data: UpdateOrderCustomer, @UserLogin() userLogin: UserLoginData) {
+    async resloveOrder(@Body() data: StaffUpdateRequestStastus, @UserLogin() userLogin: UserLoginData) {
         return this.requestService.resloveOrder(data, Number(userLogin.accId));
     }
     @Post('request-create/transit')

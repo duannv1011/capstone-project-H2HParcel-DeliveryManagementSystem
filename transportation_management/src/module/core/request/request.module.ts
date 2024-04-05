@@ -9,6 +9,7 @@ import { RequestTypeEntity } from '../../../entities/request-type.entity';
 import { RequestStatusEntity } from '../../../entities/request-status.entity';
 import { RequestRecordEntity } from '../../../entities/request-record.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
+import { OrderEntity } from 'src/entities/order.entity';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { StaffEntity } from '../../../entities/staff.entity';
         TypeOrmModule.forFeature([
             RequestRecordEntity,
             RequestEntity,
+            OrderEntity,
             RequestTypeEntity,
             RequestStatusEntity,
             StaffEntity,

@@ -13,9 +13,11 @@ import { RequestTypeEntity } from '../../../entities/request-type.entity';
 import { RequestStatusEntity } from '../../../entities/request-status.entity';
 import { InformationEntity } from '../../../entities/information.entity';
 import { RequestStatus } from '../../../enum/request-status.enum';
-import { UpdateOrderCustomer } from './dto/staff-reslove-order-update';
+import { StaffUpdateRequestStastus } from './dto/staff-reslove-order-update';
 import { createTransitRequestDto } from './dto/staff-create-transit.dto';
 import { TransitEntity } from 'src/entities/transit.entity';
+import { OrderEntity } from 'src/entities/order.entity';
+import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 
 @Injectable()
 export class RequestService {
@@ -27,6 +29,8 @@ export class RequestService {
         private requestRepository: Repository<RequestEntity>,
         @InjectRepository(StaffEntity)
         private staffRepository: Repository<StaffEntity>,
+        @InjectRepository(OrderEntity)
+        private orderRepository: Repository<OrderEntity>,
     ) {}
 
     pageSize = Number(process.env.PAGESIZE);
@@ -255,7 +259,61 @@ export class RequestService {
         return null;
     }
 
-    async resloveOrder(data: UpdateOrderCustomer, accId: number) {}
+    async resloveOrder(data: StaffUpdateRequestStastus, accId: number) {
+        const staff = await this.staffRepository.findOne({ where: { accId: accId } });
+        const reqest = await this.requestRepository.findOneBy({ recordId: data.recordId });
+        const order = await this.orderRepository.findOneBy({ orderId: reqest.orderId });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        const reqRc = reqest.requesrRecord;
+        reqRc.requestStt = data.requestStatus;
+        if (data.requestStatus === 3) {
+            return await this.requestRecordRepository.save(reqRc);
+        } else {
+            try {
+                if (data.requestType === 1) {
+                    //accept edit
+                    //update order
+                    const information = reqest.deliverInfor;
+                    order.deliverInforId = information;
+                    await queryRunner.manager.save(order);
+                    // update RequestStatus to aporve
+                    await queryRunner.manager.save(reqRc);
+                    await queryRunner.commitTransaction();
+                    return ' aproved update successfull';
+                }
+                if (data.requestType === 2) {
+                    //accept cancel
+                    //update order
+                    order.deliverInforId = order.pickupInforId;
+                    await queryRunner.manager.save(order);
+                    // update RequestStatus to aporve
+                    await queryRunner.manager.save(reqRc);
+                    // crreate log update
+                    const activityLog = new ActivityLogEntity();
+                    activityLog.logId = 0;
+                    activityLog.orderId = order.orderId;
+                    activityLog.time = new Date();
+                    activityLog.staffId = staff.staffId;
+                    //log cancell status
+                    activityLog.currentStatus = 9;
+                    queryRunner.manager.save(ActivityLogEntity, activityLog);
+                    //then update log update order
+                    activityLog.currentStatus = 6;
+                    queryRunner.manager.save(ActivityLogEntity, activityLog);
+                    await queryRunner.commitTransaction();
+                    return 'aproved Cancel successfull';
+                }
+            } catch (error) {
+                Logger.error(error);
+                await queryRunner.rollbackTransaction();
+                throw new InternalServerErrorException();
+            } finally {
+                await queryRunner.release();
+            }
+        }
+    }
 
     async createTransitRequest(data: createTransitRequestDto, accId: number) {
         const staff = await this.staffRepository.findOneBy({ accId: accId });
