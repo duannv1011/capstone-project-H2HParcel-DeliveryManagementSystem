@@ -5,12 +5,15 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { Response } from 'src/module/response/Response';
 import { DataSource, Repository } from 'typeorm';
 import { updateActiveDto } from '../dto/changeActive_dto';
+import { StaffEntity } from 'src/entities/staff.entity';
 
 @Injectable()
 export class WarehourseService {
     constructor(
         @InjectRepository(WarehouseEntity)
         private warehouseRepository: Repository<WarehouseEntity>,
+        @InjectRepository(StaffEntity)
+        private staffRepository: Repository<StaffEntity>,
         @InjectRepository(AddressEntity)
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
@@ -39,6 +42,23 @@ export class WarehourseService {
             pageSize,
             totalpage,
         };
+    }
+    async getAllWarehouseInstealStqaffWh(pageNo: number, pageSize: number, accid: number) {
+        const staff = await this.staffRepository.findOneBy({ accId: accid });
+        const warehouses = await this.warehouseRepository
+            .createQueryBuilder('wh')
+            .select(['wh.warehouseId', 'wh.warehouse_name', 'a.house', 'c.city_name', 'd.district_name', 'w.ward_name'])
+            .leftJoinAndSelect('wh.address', 'a')
+            .leftJoinAndSelect('a.city', 'c')
+            .leftJoinAndSelect('a.district', 'd')
+            .leftJoinAndSelect('a.ward', 'w')
+            .where('wh.isActive = :isActive', { isActive: true })
+            .where('wh.warehouse_id != :warehouseId', { warehouseId: staff.warehouseId })
+            .orderBy('wh.warehouseId', 'ASC')
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .getManyAndCount();
+        return warehouses ? warehouses : 'not found';
     }
     async getDetailWarehouse(warehouseId: number): Promise<any> {
         const wh = await this.warehouseRepository.findOneBy({ warehouseId: warehouseId });

@@ -147,6 +147,7 @@ CREATE TABLE "ActivityLog" (
 --request stt1,2
 CREATE TABLE "Request" (
   "request_id" SERIAL  PRIMARY KEY,
+  "record_id" integer,
   "order_id" integer,
   "pickup_infor" integer,-- new infor to update order
   "deliver_infor" integer,-- new infor to update order
@@ -155,6 +156,7 @@ CREATE TABLE "Request" (
 --request stt3
 CREATE TABLE "Transit" (
   "transit_id" SERIAL  PRIMARY KEY,
+  "record_id" integer,
   "warehouse_from" integer,
   "warehouse_to" integer,
   "staff_id" integer,
@@ -162,7 +164,6 @@ CREATE TABLE "Transit" (
 --if request type ==3 refer_id =transit_id, if request_type =1or 2,refer_id= request_id
 CREATE TABLE "RequestRecord" (
   "record_id" SERIAL PRIMARY KEY,
-  "refer_id" integer,
   "request_type" integer,
   "request_stt" integer
   "note" varchar

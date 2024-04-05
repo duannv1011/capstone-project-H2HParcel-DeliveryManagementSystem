@@ -9,6 +9,8 @@ import { Role } from 'src/enum/roles.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { ConfigService } from '@nestjs/config';
+import { UserLogin } from 'src/decorators/user_login.decorator';
+import { UserLoginData } from 'src/module/core/authentication/dto/user_login_data';
 
 @Controller('warehourse')
 @ApiTags('warehourse-crud-api')
@@ -26,6 +28,23 @@ export class WarehourseController {
     async getAllWarehouse(@Query('pageNo') pageNo: string): Promise<any> {
         const pagesize = this.configService.get<string>('PAGE_SIZE');
         return this.warehouseService.getAllWarehouse(Number(pageNo), Number(pagesize));
+    }
+    @Get('staff/warehouses')
+    @Roles(Role.STAFF, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'get All Warehouse' })
+    @ApiResponse({ status: 200, description: 'get All Warehouse successfully.' })
+    async getAllWarehouseInstealStqaffWh(
+        @Query('pageNo') pageNo: string,
+        @UserLogin() uer: UserLoginData,
+    ): Promise<any> {
+        const pagesize = this.configService.get<string>('PAGE_SIZE');
+        return this.warehouseService.getAllWarehouseInstealStqaffWh(
+            Number(pageNo),
+            Number(pagesize),
+            Number(uer.accId),
+        );
     }
     @Get('getDetailWarehouse')
     @Roles(Role.ADMIN)

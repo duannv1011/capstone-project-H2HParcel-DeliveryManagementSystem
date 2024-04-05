@@ -5,10 +5,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AddressEntity, WarehouseEntity]),
+        TypeOrmModule.forFeature([AddressEntity, WarehouseEntity, StaffEntity]),
         JwtModule.register({
             global: true,
             secret: process.env.SECRET_KEY,
