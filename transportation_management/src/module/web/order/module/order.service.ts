@@ -226,7 +226,7 @@ export class OrderService {
             const activityLog = new ActivityLogEntity();
             activityLog.staffId = null;
             activityLog.logId = 0;
-            activityLog.orderId = orderCreated.orderId;
+            activityLog.orderId = order.orderId;
             activityLog.time = new Date();
             activityLog.currentStatus = orderCreated.orderStt;
             await queryRunner.manager.save(activityLog);
@@ -251,9 +251,9 @@ export class OrderService {
         if (oStt > 4 || oStt < 1) {
             return { orderStatus: oStt, error: 'canot update this order' };
         }
-        const checkIsCancel = await this.requesRecodtRepository
-            .createQueryBuilder('rc')
-            .leftJoinAndSelect('rc.request', 'r')
+        const checkIsCancel = await this.requestRepository
+            .createQueryBuilder('r')
+            .leftJoinAndSelect('r.requesrRecord', 'rc')
             .leftJoinAndSelect('r.order', 'o')
             .leftJoinAndSelect('o.status', 's')
             .where('rc.request_type !=:requestType', { requestType: 1 })
@@ -300,9 +300,9 @@ export class OrderService {
             // console.log(puinforid);
 
             // create new information (deliyver information)
-            const checkRequestLigal = await this.requesRecodtRepository
-                .createQueryBuilder('rc')
-                .leftJoinAndSelect('rc.request', 'r')
+            const checkRequestLigal = await this.requestRepository
+                .createQueryBuilder('r')
+                .leftJoinAndSelect('r.requesrRecord', 'rc')
                 .leftJoinAndSelect('r.order', 'o')
                 .leftJoinAndSelect('o.status', 's')
                 .leftJoinAndSelect('r.deliverInformation', 'di')
@@ -329,26 +329,25 @@ export class OrderService {
                 deliverIf.address = address2Insert;
                 const deliverinforInsert = await queryRunner.manager.save(InformationEntity, deliverIf);
                 const dlvInforId = deliverinforInsert.inforId;
-                //create  Request
-                const request = new RequestEntity();
-                request.requestId = 0;
-                request.orderId = order.orderId;
-                request.pickupInfor = order.pickupInforId;
-                request.deliverInfor = dlvInforId;
-                const requestInsertreult = await queryRunner.manager.save(RequestEntity, request);
                 //create RequestRecord
                 const requestRecord = new RequestRecordEntity();
                 requestRecord.recordId = 0;
-                requestRecord.referId = requestInsertreult.requestId;
-                // const reqsetStautus = await this.requestStatusRepository.findOneBy({ rqsName: 'Processing' });
                 requestRecord.requestType = 1;
                 requestRecord.requestStt = 1;
                 requestRecord.note = data.note;
-                await queryRunner.manager.save(RequestRecordEntity, requestRecord);
+                const requestRcInsertreult = await queryRunner.manager.save(RequestRecordEntity, requestRecord);
+                //create  Request
+                const request = new RequestEntity();
+                request.requestId = 0;
+                request.recordId = requestRcInsertreult.recordId;
+                request.orderId = order.orderId;
+                request.pickupInfor = order.pickupInforId;
+                request.deliverInfor = dlvInforId;
+                await queryRunner.manager.save(RequestEntity, request);
             } else {
                 //update deliver address
                 const address = await queryRunner.manager.findOneBy(AddressEntity, {
-                    addressId: checkRequestLigal.request.deliverInformation.address.addressId,
+                    addressId: checkRequestLigal.deliverInformation.address.addressId,
                 });
                 address.house = data.deliverHouse;
                 address.cityId = data.deliverCityId;
@@ -358,14 +357,14 @@ export class OrderService {
                 await queryRunner.manager.save(AddressEntity, address);
                 //update deliver information
                 const deliverIf = await queryRunner.manager.findOneBy(InformationEntity, {
-                    inforId: checkRequestLigal.request.deliverInformation.inforId,
+                    inforId: checkRequestLigal.deliverInformation.inforId,
                 });
                 deliverIf.name = data.deliverName;
                 deliverIf.phone = data.deliverPhone;
                 await queryRunner.manager.save(InformationEntity, deliverIf);
                 //update request record
                 const requestRecord = await queryRunner.manager.findOneBy(RequestRecordEntity, {
-                    referId: checkRequestLigal.request.requestId,
+                    recordId: checkRequestLigal.recordId,
                 });
                 requestRecord.note = data.note;
                 await queryRunner.manager.save(RequestRecordEntity, requestRecord);
@@ -408,29 +407,30 @@ export class OrderService {
             if (checkIsCancel) {
                 return { error: 'this order is processing cancel or transiting!Canot Cancle this order' };
             }
+            const request = await this.requestRepository.findOneBy({ orderId: data.orderId });
             const checkRequest = await this.requesRecodtRepository.findOne({
-                where: [{ request: { orderId: data.orderId } }, { requestType: 1 }],
+                where: { recordId: request.recordId, requestType: 1 },
             });
 
             if (checkRequest) {
                 //update request record to cacancel
                 await this.requesRecodtRepository.update(checkRequest.recordId, { requestType: 2, requestStt: 1 });
             } else {
+                //create RequestRecord
+                const requestRecord = new RequestRecordEntity();
+                requestRecord.recordId = 0;
+                requestRecord.requestType = 2;
+                requestRecord.requestStt = 1;
+                requestRecord.note = data.note;
+                const requestRecordInsertreult = await queryRunner.manager.save(RequestRecordEntity, requestRecord);
                 //create Request
                 const request = new RequestEntity();
                 request.requestId = 0;
                 request.orderId = order.orderId;
                 request.pickupInfor = null;
                 request.deliverInfor = null;
-                const requestInsertreult = await queryRunner.manager.save(RequestEntity, request);
-                //create RequestRecord
-                const requestRecord = new RequestRecordEntity();
-                requestRecord.recordId = 0;
-                requestRecord.referId = requestInsertreult.requestId;
-                // const reqsetStautus = await this.requestStatusRepository.findOneBy({ rqsName: 'Processing' });
-                requestRecord.requestType = 2;
-                requestRecord.requestStt = 1;
-                await queryRunner.manager.save(RequestRecordEntity, requestRecord);
+                request.recordId = requestRecordInsertreult.recordId;
+                await queryRunner.manager.save(RequestEntity, request);
             }
             await queryRunner.commitTransaction();
             return 'send Cancel request successfully';

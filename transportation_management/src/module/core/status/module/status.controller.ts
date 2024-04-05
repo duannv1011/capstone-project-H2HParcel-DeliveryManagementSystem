@@ -26,4 +26,8 @@ export class StatusController {
     async getAllRequestType() {
         return await this.statusService.getAllRequestType();
     }
+    @Get('package-type')
+    async getAllPackageType() {
+        return await this.statusService.getAllPackageType();
+    }
 }

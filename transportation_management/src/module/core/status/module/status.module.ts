@@ -8,10 +8,11 @@ import { AuthenticationModule } from '../../authentication/modules/authenticatio
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
 import { RequestStatusEntity } from 'src/entities/request-status.entity';
 import { RequestTypeEntity } from 'src/entities/request-type.entity';
+import { PackageTypeEntity } from 'src/entities/package-type.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([OrderStatusEntity, RequestStatusEntity, RequestTypeEntity]),
+        TypeOrmModule.forFeature([OrderStatusEntity, RequestStatusEntity, PackageTypeEntity, RequestTypeEntity]),
         ConfigModule,
         AuthenticationModule,
         JwtModule.register({

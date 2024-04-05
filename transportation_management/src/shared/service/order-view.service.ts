@@ -258,6 +258,8 @@ export class OrderViewService {
                         : '',
                 )
                 .deliverStaffName(deliverStaff ? deliverStaff.fullname : '')
+                .pickUpdateWarehouseId(entity.pickupInformation.address.ward.warehouseId)
+                .deliverUpdateWarehouseId(entity.deliverInformation.address.ward.warehouseId)
                 .price(entity.estimatedPrice)
                 .build();
         }
@@ -287,6 +289,8 @@ export class OrderViewService {
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
                 .price(entity.estimatedPrice)
+                .pickUpdateWarehouseId(entity.pickupInformation.address.ward.warehouseId)
+                .deliverUpdateWarehouseId(entity.deliverInformation.address.ward.warehouseId)
                 .build();
         }
 
@@ -315,6 +319,8 @@ export class OrderViewService {
                 )
                 .deliverStaffName(deliverStaff ? deliverStaff.fullname : '')
                 .price(entity.estimatedPrice)
+                .pickUpdateWarehouseId(entity.pickupInformation.address.ward.warehouseId)
+                .deliverUpdateWarehouseId(entity.deliverInformation.address.ward.warehouseId) //
                 .build();
         }
 

@@ -144,7 +144,7 @@ CREATE TABLE "ActivityLog" (
   "curent_status" integer
   "staff" integer
 );
---request1,2
+--request stt1,2
 CREATE TABLE "Request" (
   "request_id" SERIAL  PRIMARY KEY,
   "order_id" integer,
@@ -152,6 +152,7 @@ CREATE TABLE "Request" (
   "deliver_infor" integer,-- new infor to update order
 );
 -- request special
+--request stt3
 CREATE TABLE "Transit" (
   "transit_id" SERIAL  PRIMARY KEY,
   "warehouse_from" integer,

@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    Param,
     ParseIntPipe,
     Post,
     Put,
@@ -10,7 +11,15 @@ import {
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiOkResponse,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { RequestService } from './request.service';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { Response } from '../../response/Response';
@@ -18,9 +27,10 @@ import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
 import { RoleGuard } from '../../../guards/role.guard';
 import { RequestUpdateDto } from './dto/request.update.dto';
-import { UpdateOrderCustomer } from './dto/customer_update_order.dto';
+import { UpdateOrderCustomer } from './dto/staff-reslove-order-update';
 import { UserLogin } from 'src/decorators/user_login.decorator';
 import { UserLoginData } from '../authentication/dto/user_login_data';
+import { createTransitRequestDto } from './dto/staff-create-transit.dto';
 
 @ApiTags('request')
 @Controller('request')
@@ -81,14 +91,32 @@ export class RequestController {
 
         return new Response(200, 'true', requestCancel, null, 1);
     }
- 
-    @Put('updateOrder')
-    @Roles(Role.CUSTOMER)
+
+    @Put('staff/request/order-update')
+    @Roles(Role.STAFF, Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'update Order for Customer' })
+    @ApiOperation({ summary: 'staff reslove request for order of Customer' })
     @ApiResponse({ status: 200, description: 'update Order for Customer  successfully.' })
-    async updateOrder(@Body() data: UpdateOrderCustomer, @UserLogin() userLogin: UserLoginData) {
-        return this.requestService.updateOrder(data, Number(userLogin.accId));
+    async resloveOrder(@Body() data: UpdateOrderCustomer, @UserLogin() userLogin: UserLoginData) {
+        return this.requestService.resloveOrder(data, Number(userLogin.accId));
+    }
+    @Post('request-create/transit')
+    @Roles(Role.MANAGER, Role.STAFF)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'create transit reqest' })
+    @ApiResponse({ status: 200, description: 'update Order for Customer  successfully.' })
+    async createTransitRequest(@Body() data: createTransitRequestDto, @UserLogin() userLogin: UserLoginData) {
+        return this.requestService.createTransitRequest(data, Number(userLogin.accId));
+    }
+    @Post('transit-update/request-status')
+    @Roles(Role.SHIPPER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'update transit status ' })
+    @ApiResponse({ status: 200, description: 'update successfully.' })
+    async transitUpdateStatus(@Param('request_id') request_id: number) {
+        return this.requestService.transitUpdateStatus(request_id);
     }
 }

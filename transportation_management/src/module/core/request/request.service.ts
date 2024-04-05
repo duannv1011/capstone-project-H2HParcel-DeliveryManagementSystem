@@ -13,7 +13,9 @@ import { RequestTypeEntity } from '../../../entities/request-type.entity';
 import { RequestStatusEntity } from '../../../entities/request-status.entity';
 import { InformationEntity } from '../../../entities/information.entity';
 import { RequestStatus } from '../../../enum/request-status.enum';
-import { UpdateOrderCustomer } from './dto/customer_update_order.dto';
+import { UpdateOrderCustomer } from './dto/staff-reslove-order-update';
+import { createTransitRequestDto } from './dto/staff-create-transit.dto';
+import { TransitEntity } from 'src/entities/transit.entity';
 
 @Injectable()
 export class RequestService {
@@ -160,9 +162,9 @@ export class RequestService {
                     requestRecord.note = request.note;
                 }
                 await queryRunner.manager.save(requestRecord);
-
+                // error here
                 const requestEntity = await this.requestRepository.findOne({
-                    where: { requestId: requestRecord.referId },
+                    where: { requestId: request.recordId },
                 });
 
                 if (requestEntity) {
@@ -253,5 +255,45 @@ export class RequestService {
         return null;
     }
 
-    async updateOrder(data: UpdateOrderCustomer, accId: number) {}
+    async resloveOrder(data: UpdateOrderCustomer, accId: number) {}
+
+    async createTransitRequest(data: createTransitRequestDto, accId: number) {
+        const staff = await this.staffRepository.findOneBy({ accId: accId });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            //create requestRecord
+            const requestRecord = new RequestRecordEntity();
+            requestRecord.recordId = 0;
+            requestRecord.requestStt = 2;
+            requestRecord.requestType = 3;
+            requestRecord.note = data.note;
+            const requestRecordCreated = await queryRunner.manager.save(requestRecord);
+            //create Transit
+            const transit = new TransitEntity();
+            transit.transitId = 0;
+            transit.recordId = requestRecordCreated.recordId;
+            transit.staffId = data.transitShiper;
+            transit.warehouseFrom = staff.warehouseId;
+            transit.warehouseTo = data.warehouseTo;
+            await queryRunner.manager.save(transit);
+            await queryRunner.commitTransaction();
+            return `${staff.fullname} is assigned to transition to ${transit.warehouseTo}`;
+        } catch (error) {
+            Logger.log(error);
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            await queryRunner.release();
+        }
+    }
+    async transitUpdateStatus(request_id: number) {
+        const request = await this.requestRepository.findOneBy({ requestId: request_id });
+        const rqRecord = await this.requestRecordRepository.findOneBy({ recordId: request.recordId });
+        if (rqRecord.requestStt && rqRecord.requestStt < 2) {
+            rqRecord.requestStt++;
+            await this.requestRecordRepository.update(request.recordId, rqRecord);
+        }
+    }
 }

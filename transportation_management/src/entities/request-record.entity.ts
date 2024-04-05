@@ -1,17 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { RequestEntity } from './request.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('RequestRecord')
 export class RequestRecordEntity {
     @PrimaryGeneratedColumn({ name: 'record_id' })
     public recordId: number;
-
-    @Column({ name: 'refer_id' })
-    public referId: number;
-
-    @ManyToOne(() => RequestEntity, { eager: true })
-    @JoinColumn({ name: 'refer_id' })
-    request: RequestEntity;
 
     @Column({ name: 'request_type' })
     public requestType: number;

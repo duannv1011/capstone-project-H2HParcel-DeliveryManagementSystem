@@ -1,9 +1,18 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { RequestRecordEntity } from './request-record.entity';
+import { AbstractEntity } from './abstract-entity';
 
 @Entity('Transit')
-export class TransitEntity {
+export class TransitEntity extends AbstractEntity {
     @PrimaryGeneratedColumn({ name: 'transit_id' })
     public transitId: number;
+
+    @Column({ name: 'record_id' })
+    public recordId: number;
+
+    @ManyToOne(() => RequestRecordEntity, { eager: true })
+    @JoinColumn({ name: 'record_id' })
+    requesrRecord: RequestRecordEntity;
 
     @Column({ name: 'warehouse_from' })
     public warehouseFrom: number;

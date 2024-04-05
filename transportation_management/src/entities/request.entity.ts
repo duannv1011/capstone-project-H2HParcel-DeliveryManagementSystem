@@ -2,11 +2,19 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn
 import { AbstractEntity } from './abstract-entity';
 import { InformationEntity } from './information.entity';
 import { OrderEntity } from './order.entity';
+import { RequestRecordEntity } from './request-record.entity';
 
 @Entity('Request')
 export class RequestEntity extends AbstractEntity {
     @PrimaryGeneratedColumn({ name: 'request_id' })
     public requestId: number;
+
+    @Column({ name: 'record_id' })
+    public recordId: number;
+
+    @ManyToOne(() => RequestRecordEntity, { eager: true })
+    @JoinColumn({ name: 'record_id' })
+    requesrRecord: RequestRecordEntity;
 
     @Column({ name: 'order_id', nullable: false })
     public orderId: number;

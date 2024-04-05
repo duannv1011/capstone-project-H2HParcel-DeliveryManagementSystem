@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
+import { PackageTypeEntity } from 'src/entities/package-type.entity';
 import { RequestStatusEntity } from 'src/entities/request-status.entity';
 import { RequestTypeEntity } from 'src/entities/request-type.entity';
 import { Repository } from 'typeorm';
@@ -13,6 +14,8 @@ export class StatusService {
         private requestStatusRepository: Repository<RequestStatusEntity>,
         @InjectRepository(RequestTypeEntity)
         private requestTypeRepository: Repository<RequestTypeEntity>,
+        @InjectRepository(PackageTypeEntity)
+        private packageTypeRepository: Repository<PackageTypeEntity>,
     ) {}
 
     async getAllCustomerStatus(): Promise<any> {
@@ -39,5 +42,8 @@ export class StatusService {
     }
     async getAllRequestType(): Promise<any> {
         return this.requestTypeRepository.find();
+    }
+    async getAllPackageType(): Promise<any> {
+        return this.packageTypeRepository.find();
     }
 }

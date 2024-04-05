@@ -20,6 +20,8 @@ export interface Order {
     deliverAddress: string;
     pickupStaffName: string;
     deliverStaffName: string;
+    pickUpdateWarehouseId: number;
+    deliverUpdateWarehouseId: number;
     price: number;
     packageType: string;
 }
