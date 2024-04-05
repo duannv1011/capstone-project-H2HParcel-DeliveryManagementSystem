@@ -267,26 +267,37 @@ export class RequestService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         const reqRc = reqest.requesrRecord;
+        if (order.orderStt > 4) {
+            return 'The order has left the warehouse.';
+        }
+
+        if (data.requestStatus === 1 || reqRc.requestStt > 1) {
+            return 'iligal value for requestStatus';
+        }
         reqRc.requestStt = data.requestStatus;
         if (data.requestStatus === 3) {
-            return await this.requestRecordRepository.save(reqRc);
+            const cancel = await this.requestRecordRepository.save(reqRc);
+            return cancel ? 'denied Success' : 'error';
         } else {
             try {
-                if (data.requestType === 1) {
+                if (reqRc.requestType === 1) {
                     //accept edit
                     //update order
-                    const information = reqest.deliverInfor;
-                    order.deliverInforId = information;
+                    const information = reqest.deliverInformation;
+                    order.deliverInformation = information;
+                    //
                     await queryRunner.manager.save(order);
                     // update RequestStatus to aporve
                     await queryRunner.manager.save(reqRc);
                     await queryRunner.commitTransaction();
                     return ' aproved update successfull';
                 }
-                if (data.requestType === 2) {
+                if (reqRc.requestType === 2) {
                     //accept cancel
                     //update order
-                    order.deliverInforId = order.pickupInforId;
+                    order.deliverInformation = order.pickupInformation;
+                    const newPrice = order.estimatedPrice * 0.4;
+                    order.estimatedPrice = newPrice;
                     await queryRunner.manager.save(order);
                     // update RequestStatus to aporve
                     await queryRunner.manager.save(reqRc);
@@ -298,10 +309,12 @@ export class RequestService {
                     activityLog.staffId = staff.staffId;
                     //log cancell status
                     activityLog.currentStatus = 9;
-                    queryRunner.manager.save(ActivityLogEntity, activityLog);
+                    await queryRunner.manager.save(ActivityLogEntity, activityLog);
                     //then update log update order
-                    activityLog.currentStatus = 6;
-                    queryRunner.manager.save(ActivityLogEntity, activityLog);
+                    const activityLog2: ActivityLogEntity = Object.assign(activityLog);
+                    activityLog2.logId = 0;
+                    activityLog2.currentStatus = 6;
+                    await queryRunner.manager.save(ActivityLogEntity, activityLog2);
                     await queryRunner.commitTransaction();
                     return 'aproved Cancel successfull';
                 }

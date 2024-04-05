@@ -10,8 +10,4 @@ export class StaffUpdateRequestStastus {
     @IsNumber()
     @IsNotEmpty()
     requestStatus: number;
-    @ApiProperty({ example: 1, description: 'requestType' })
-    @IsNumber()
-    @IsNotEmpty()
-    requestType: number;
 }

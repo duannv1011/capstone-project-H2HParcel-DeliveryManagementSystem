@@ -92,7 +92,7 @@ export class RequestController {
         return new Response(200, 'true', requestCancel, null, 1);
     }
 
-    @Put('staff/request/order-update')
+    @Put('request/staff/order-update')
     @Roles(Role.STAFF, Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
