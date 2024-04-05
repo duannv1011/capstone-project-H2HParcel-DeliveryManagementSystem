@@ -33,18 +33,10 @@ export class WarehourseController {
     @Roles(Role.STAFF, Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'get All Warehouse' })
+    @ApiOperation({ summary: 'get All Warehouse except staff warehouse' })
     @ApiResponse({ status: 200, description: 'get All Warehouse successfully.' })
-    async getAllWarehouseInstealStqaffWh(
-        @Query('pageNo') pageNo: string,
-        @UserLogin() uer: UserLoginData,
-    ): Promise<any> {
-        const pagesize = this.configService.get<string>('PAGE_SIZE');
-        return this.warehouseService.getAllWarehouseInstealStqaffWh(
-            Number(pageNo),
-            Number(pagesize),
-            Number(uer.accId),
-        );
+    async getAllWarehouseInstealStqaffWh(@UserLogin() uer: UserLoginData): Promise<any> {
+        return this.warehouseService.getAllWarehouseInstealStqaffWh(Number(uer.accId));
     }
     @Get('getDetailWarehouse')
     @Roles(Role.ADMIN)

@@ -43,8 +43,9 @@ export class WarehourseService {
             totalpage,
         };
     }
-    async getAllWarehouseInstealStqaffWh(pageNo: number, pageSize: number, accid: number) {
+    async getAllWarehouseInstealStqaffWh(accid: number) {
         const staff = await this.staffRepository.findOneBy({ accId: accid });
+        console.log(staff.warehouseId);
         const warehouses = await this.warehouseRepository
             .createQueryBuilder('wh')
             .select(['wh.warehouseId', 'wh.warehouse_name', 'a.house', 'c.city_name', 'd.district_name', 'w.ward_name'])
@@ -53,10 +54,9 @@ export class WarehourseService {
             .leftJoinAndSelect('a.district', 'd')
             .leftJoinAndSelect('a.ward', 'w')
             .where('wh.isActive = :isActive', { isActive: true })
-            .where('wh.warehouse_id != :warehouseId', { warehouseId: staff.warehouseId })
+            .andWhere('wh.warehouse_id != :warehouseId1', { warehouseId1: staff.warehouseId })
+            .andWhere('wh.warehouse_id != :warehouseId2', { warehouseId2: 1 })
             .orderBy('wh.warehouseId', 'ASC')
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize)
             .getManyAndCount();
         return warehouses ? warehouses : 'not found';
     }
