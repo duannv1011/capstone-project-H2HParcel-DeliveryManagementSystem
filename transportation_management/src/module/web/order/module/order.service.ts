@@ -20,6 +20,7 @@ import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
 import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
 import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
+import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 
 @Injectable()
 export class OrderService {
@@ -220,7 +221,15 @@ export class OrderService {
             order.orderStt = 1;
             order.pkId = data.pkId;
             order.estimatedPrice = data.estimatedPrice;
-            await queryRunner.manager.save(OrderEntity, order);
+            const orderCreated = await queryRunner.manager.save(OrderEntity, order);
+            //create ActivityLog
+            const activityLog = new ActivityLogEntity();
+            activityLog.staffId = null;
+            activityLog.logId = 0;
+            activityLog.orderId = orderCreated.orderId;
+            activityLog.time = new Date();
+            activityLog.currentStatus = orderCreated.orderStt;
+            await queryRunner.manager.save(activityLog);
             await queryRunner.commitTransaction();
             return 'create order successfully';
         } catch (error) {
