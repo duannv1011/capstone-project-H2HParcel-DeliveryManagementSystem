@@ -23,5 +23,6 @@ export interface Order {
     pickUpdateWarehouseId: number;
     deliverUpdateWarehouseId: number;
     price: number;
-    packageType: string;
+    packageTypeId: number;
+    packageTypeName: string;
 }

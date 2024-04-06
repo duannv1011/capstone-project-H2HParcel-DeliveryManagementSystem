@@ -249,7 +249,8 @@ export class OrderViewService {
                         : '',
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
-                .packageType(packageType ? packageType.pkName : '')
+                .packageTypeId(packageType ? packageType.pkId : null)
+                .packageTypeName(packageType ? packageType.pkName : '')
                 .receiverName(deliverUser ? deliverUser.name : '')
                 .deliverPhoneNumber(deliverUser ? deliverUser.phone : '')
                 .deliverAddress(

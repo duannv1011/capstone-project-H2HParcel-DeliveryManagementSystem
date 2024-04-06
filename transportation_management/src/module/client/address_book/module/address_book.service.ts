@@ -79,6 +79,7 @@ export class AddressBookService {
             house: item.infor.address.house,
             city: item.infor.address.city.cityName,
             district: item.infor.address.district.districtName,
+            wardId: item.infor.address.wardId,
             ward: item.infor.address.ward.wardName,
             inforId: item.infor.inforId,
         }));
@@ -111,6 +112,7 @@ export class AddressBookService {
             house: item.infor.address.house,
             city: item.infor.address.city.cityName,
             district: item.infor.address.district.districtName,
+            wardId: item.infor.address.wardId,
             ward: item.infor.address.ward.wardName,
             inforId: item.infor.inforId,
         }));

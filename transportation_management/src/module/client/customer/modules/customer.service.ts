@@ -63,7 +63,7 @@ export class CustomerService {
         const customer = await this.customerRepository
             .createQueryBuilder('customer')
             .select([
-                'customer.fullname',
+                'customer.fullName',
                 'customer.email',
                 'customer.phone',
                 'customer.default_book',
