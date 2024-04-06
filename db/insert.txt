@@ -750,3 +750,22 @@ INSERT INTO RequestType (rt_name) VALUES
 ('Edit order'),
 ('Cancel order'),
 ('Make transit');
+--insert into table "ActivityLogStatus" 
+INSERT INTO "ActivityLogStatus" ("status_name")
+VALUES 
+  ('ORDER CREATED'),
+  ('AWAIT PICKUP'),
+  ('PICKED UP'),
+  ('ARRIVED PICKUP WAREHOUSE'),
+  ('ON TRANSIT'),
+  ('ARRIVED DELIVER WAREHOUSE'),
+  ('ON DELIVERY'),
+  ('DELIVERED SUCCESSFULLY'),
+  ('UPDATE REQUEST CREATED'),
+  ('UPDATE REQUEST APPROVED'),
+  ('UPDATE REQUEST DENIED'),
+  ('CANCEL REQUEST CREATED'),
+  ('CANCEL REQUEST APPROVED'),
+  ('CANCEL REQUEST DENIED'),
+  ('ORDER CANCELED'),
+  ('RETURNING ORDER');

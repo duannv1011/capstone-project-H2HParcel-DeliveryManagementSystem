@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { RequestEntity } from './request.entity';
+import { TransitEntity } from './transit.entity';
 
 @Entity('RequestRecord')
 export class RequestRecordEntity {
@@ -13,4 +15,9 @@ export class RequestRecordEntity {
 
     @Column({ name: 'note', type: 'varchar', nullable: true })
     public note: string;
+
+    @OneToMany(() => RequestEntity, (request) => request.requesrRecord)
+    requests: RequestEntity[];
+    @OneToMany(() => TransitEntity, (transit) => transit.requesrRecord)
+    transits: TransitEntity[];
 }

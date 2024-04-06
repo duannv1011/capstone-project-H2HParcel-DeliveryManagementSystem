@@ -1,9 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
 import { InformationEntity } from './information.entity';
 import { OrderEntity } from './order.entity';
 import { RequestRecordEntity } from './request-record.entity';
-import { TransitEntity } from './transit.entity';
 
 @Entity('Request')
 export class RequestEntity extends AbstractEntity {
@@ -20,10 +19,6 @@ export class RequestEntity extends AbstractEntity {
     @Column({ name: 'order_id', nullable: false })
     public orderId: number;
 
-    @OneToMany(() => RequestEntity, (request) => request.requesrRecord)
-    requests: RequestEntity[];
-    @OneToMany(() => TransitEntity, (transit) => transit.requesrRecord)
-    transits: TransitEntity[];
     @Column({ name: 'pickup_infor', nullable: true })
     pickupInfor: number;
 
