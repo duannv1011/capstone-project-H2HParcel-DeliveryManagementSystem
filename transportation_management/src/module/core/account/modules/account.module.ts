@@ -9,10 +9,11 @@ import { AccountEntity } from '../../../../entities/account.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
+import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AccountEntity, StaffEntity, CustomerEntity, QRCodeEntity]),
+        TypeOrmModule.forFeature([AccountEntity, WarehouseRuleEntity, StaffEntity, CustomerEntity, QRCodeEntity]),
         ConfigModule,
         AuthenticationModule,
         JwtModule.register({

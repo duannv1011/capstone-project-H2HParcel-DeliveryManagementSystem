@@ -451,12 +451,15 @@ export class OrderService {
         }
         const pickupWard = Number(getPickupWarehouse.warehouseId);
         const deliverWard = Number(getPickupWarehouse.warehouseId);
-        const distance = await this.warehouseRuleRepository.findOne({
+        const warehouseRule = await this.warehouseRuleRepository.findOne({
             where: { warehouseId1: pickupWard, warehouseId2: deliverWard },
         });
-        const mutiplier = await this.checkMutipelPrice(Number(distance.distance));
+        const distance = Number(
+            warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
+        );
+        const mutiplier = await this.checkMutipelPrice(Number(distance));
         const price = Number(pkdata.pkPrice);
-        return pkdata.pkId === 4 ? null : { price: mutiplier * price };
+        return pkdata.pkId === 4 ? null : { price: mutiplier * price, distance: distance };
     }
 
     async checkMutipelPrice(distance: number) {

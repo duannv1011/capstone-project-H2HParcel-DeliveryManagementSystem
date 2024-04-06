@@ -99,6 +99,7 @@ export class QrCodeController {
 
         return new Response(201, 'success', result, null, 1);
     }
+
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Scan QR successfully' })
     @ApiOperation({ summary: 'Scan QR to update Status Order' })
