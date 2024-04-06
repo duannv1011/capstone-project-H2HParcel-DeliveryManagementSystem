@@ -410,7 +410,7 @@ export class ReportService {
             .getRawMany();
 
         if (districts) {
-            const districtMap: District = _.groupBy(districts, 'district_district_name');
+            const districtMap = _.groupBy(districts, 'district_district_name');
             const dayPickupMap = _.groupBy(districts, 'pickupOrder_date_update_at');
             const dayDeliverMap = _.groupBy(districts, 'deliverOrder_date_update_at');
 
