@@ -10,6 +10,7 @@ import { RequestStatusEntity } from '../../../entities/request-status.entity';
 import { RequestRecordEntity } from '../../../entities/request-record.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { OrderEntity } from 'src/entities/order.entity';
+import { TransitEntity } from 'src/entities/transit.entity';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { OrderEntity } from 'src/entities/order.entity';
             RequestRecordEntity,
             RequestEntity,
             OrderEntity,
+            TransitEntity,
             RequestTypeEntity,
             RequestStatusEntity,
             StaffEntity,

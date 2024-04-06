@@ -268,7 +268,9 @@ export class ReportService {
 
             const customers: Customer[] = [];
             for (const [key, value] of Object.entries(customerMap)) {
-                customers.push({ wardName: key, totalCustomer: value });
+                if (typeof value === 'number') {
+                    customers.push({ wardName: key, totalCustomer: value });
+                }
             }
             const countByDays = [];
             for (const [key, value] of Object.entries(dayMap)) {
@@ -408,7 +410,7 @@ export class ReportService {
             .getRawMany();
 
         if (districts) {
-            const districtMap = _.groupBy(districts, 'district_district_name');
+            const districtMap: District = _.groupBy(districts, 'district_district_name');
             const dayPickupMap = _.groupBy(districts, 'pickupOrder_date_update_at');
             const dayDeliverMap = _.groupBy(districts, 'deliverOrder_date_update_at');
 
@@ -426,7 +428,9 @@ export class ReportService {
                 const pickupTotal = _.countBy(value, 'customer_cus_id');
                 let totalPickupInDay = 0;
                 for (const [, value] of Object.entries(pickupTotal)) {
-                    totalPickupInDay = value;
+                    if (typeof value === 'number') {
+                        totalPickupInDay = value;
+                    }
                 }
 
                 countByPickupDays.push({ day: new Date(key).getDay(), totalCustomer: totalPickupInDay });
@@ -437,7 +441,9 @@ export class ReportService {
                 const deliverTotal = _.countBy(value, 'customer_cus_id');
                 let totalDeliverInDay = 0;
                 for (const [, value] of Object.entries(deliverTotal)) {
-                    totalDeliverInDay = value;
+                    if (typeof value === 'number') {
+                        totalDeliverInDay = value;
+                    }
                 }
                 countByPickupDays.push({ day: new Date(key).getDay(), totalCustomer: totalDeliverInDay });
             }
@@ -451,7 +457,9 @@ export class ReportService {
 
                 let totalCustomer = 0;
                 for (const [, value] of Object.entries(total)) {
-                    totalCustomer = value;
+                    if (typeof value === 'number') {
+                        totalCustomer = value;
+                    }
                 }
 
                 reportChart.push({
@@ -461,7 +469,9 @@ export class ReportService {
             }
             let totalCustomer = 0;
             for (const [, value] of Object.entries(_.countBy(districtList, 'totalCustomer'))) {
-                totalCustomer = value;
+                if (typeof value === 'number') {
+                    totalCustomer = value;
+                }
             }
             const paging: Paging = new Paging(pageNo, this.pageSize, districtList.length);
 
