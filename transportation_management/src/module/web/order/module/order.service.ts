@@ -52,7 +52,7 @@ export class OrderService {
         @InjectRepository(AddressEntity)
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
-    ) {}
+    ) { }
 
     async getAllOrders(accId: number, pageNo: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
@@ -139,23 +139,23 @@ export class OrderService {
         console.log(dataQuery);
         const order = dataQuery
             ? {
-                  orderId: dataQuery.orderId,
-                  pickName: dataQuery.pickupInformation.name,
-                  pickPhone: dataQuery.pickupInformation.phone,
-                  pickCity: dataQuery.pickupInformation.address.city.cityName,
-                  pickDistrict: dataQuery.pickupInformation.address.district.districtName,
-                  pickWard: dataQuery.pickupInformation.address.ward.wardName,
-                  pickShiper: dataQuery.pickupShipperStaff ? dataQuery.pickupShipperStaff.fullname : null,
-                  deliverName: dataQuery.deliverInformation.name,
-                  deliverPhone: dataQuery.deliverInformation.phone,
-                  deliverCity: dataQuery.deliverInformation.address.city.cityName,
-                  deliverDistrict: dataQuery.deliverInformation.address.district.districtName,
-                  deliverWard: dataQuery.deliverInformation.address.ward.wardName,
-                  deliverShiper: dataQuery.deliverShipperStaff ? dataQuery.deliverShipper.fullname : null,
-                  status: dataQuery.status.sttName,
-                  pakeType: dataQuery.packageType.pkName,
-                  price: dataQuery.estimatedPrice,
-              }
+                orderId: dataQuery.orderId,
+                pickName: dataQuery.pickupInformation.name,
+                pickPhone: dataQuery.pickupInformation.phone,
+                pickCity: dataQuery.pickupInformation.address.city.cityName,
+                pickDistrict: dataQuery.pickupInformation.address.district.districtName,
+                pickWard: dataQuery.pickupInformation.address.ward.wardName,
+                pickShiper: dataQuery.pickupShipperStaff ? dataQuery.pickupShipperStaff.fullname : null,
+                deliverName: dataQuery.deliverInformation.name,
+                deliverPhone: dataQuery.deliverInformation.phone,
+                deliverCity: dataQuery.deliverInformation.address.city.cityName,
+                deliverDistrict: dataQuery.deliverInformation.address.district.districtName,
+                deliverWard: dataQuery.deliverInformation.address.ward.wardName,
+                deliverShiper: dataQuery.deliverShipperStaff ? dataQuery.deliverShipper.fullname : null,
+                status: dataQuery.status.sttName,
+                pakeType: dataQuery.packageType.pkName,
+                price: dataQuery.estimatedPrice,
+            }
             : null;
         return order ? order : 'query error or not found';
     }
@@ -443,32 +443,40 @@ export class OrderService {
     }
 
     async caculateOrderPrice(data: CaculataOrderPrice) {
+        console.log(data);
         const pkdata = await this.packageTypeRepository.findOneBy({ pkId: data.pkId });
         const getPickupWarehouse = await this.wardRepository.findOneBy({ wardId: data.pickupWardId });
         const getDeliverWarehouse = await this.wardRepository.findOneBy({ wardId: data.deliverWardId });
         if (!getPickupWarehouse || !getDeliverWarehouse) {
             return { error: 'warehouse not found' };
         }
-        const pickupWard = Number(getPickupWarehouse.warehouseId);
-        const deliverWard = Number(getPickupWarehouse.warehouseId);
+        const pickupWarehouse = Number(getPickupWarehouse.warehouseId);
+        const deliverWarehouse = Number(getDeliverWarehouse.warehouseId);
         const warehouseRule = await this.warehouseRuleRepository.findOne({
-            where: { warehouseId1: pickupWard, warehouseId2: deliverWard },
+            where: { warehouseId1: pickupWarehouse, warehouseId2: deliverWarehouse },
         });
         const distance = Number(
             warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
         );
-        const mutiplier = await this.checkMutipelPrice(Number(distance));
+        console.log(distance);
         const price = Number(pkdata.pkPrice);
+        if (distance === 0) {
+            return pkdata.pkId === 4 ? null : { price: price, distance: distance };
+        }
+        const mutiplier = await this.checkMutipelPrice(Number(distance));
         return pkdata.pkId === 4 ? null : { price: mutiplier * price, distance: distance };
     }
 
     async checkMutipelPrice(distance: number) {
+        const num = distance.toFixed();
         const priceMultiplier = await this.priceMutiPlierRepository
             .createQueryBuilder('p')
-            .where('p.maxDistance >= :distance', { distance })
-            .andWhere('p.minDistance < :distance', { distance })
+            .where('p.max_distance >= :num', { num })
+            .andWhere('p.min_distance < :num', { num })
             .orderBy('p.minDistance', 'DESC')
             .getOne();
+        console.log(priceMultiplier);
+        console.log(distance);
         return Number(priceMultiplier.multiplier);
     }
 
