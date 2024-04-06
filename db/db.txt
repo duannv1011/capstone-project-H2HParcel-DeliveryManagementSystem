@@ -96,7 +96,8 @@ CREATE TABLE "WarehouseRule" (
 
 CREATE TABLE "PriceMultiplier" (
   "id" SERIAL  PRIMARY KEY,
-  "maxDistance" integer,
+  "min_distance" integer,
+  "max_distance" integer,
   "multiplier" decimal(10,5)
 );
 
@@ -143,6 +144,10 @@ CREATE TABLE "ActivityLog" (
   "time" timestamp,
   "curent_status" integer
   "staff" integer
+);
+CREATE TABLE "ActivityLogStatus" (
+  "status_id" SERIAL  PRIMARY KEY,
+  "status_name" varchar
 );
 --request stt1,2
 CREATE TABLE "Request" (

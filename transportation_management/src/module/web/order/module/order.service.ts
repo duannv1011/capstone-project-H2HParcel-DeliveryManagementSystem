@@ -464,10 +464,10 @@ export class OrderService {
 
     async checkMutipelPrice(distance: number) {
         const priceMultiplier = await this.priceMutiPlierRepository
-            .createQueryBuilder('price_multiplier')
-            .where('price_multiplier.maxDistance >= :distance', { distance })
-            .andWhere('price_multiplier.minDistance < :distance', { distance })
-            .orderBy('price_multiplier.minDistance', 'DESC')
+            .createQueryBuilder('p')
+            .where('p.maxDistance >= :distance', { distance })
+            .andWhere('p.minDistance < :distance', { distance })
+            .orderBy('p.minDistance', 'DESC')
             .getOne();
         return Number(priceMultiplier.multiplier);
     }

@@ -5,9 +5,12 @@ export class PriceMultiplierEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ name: 'min_distance' })
+    minDistance: number;
+
     @Column({ name: 'max_distance' })
     maxDistance: number;
 
-    @Column()
+    @Column({ type: 'decimal', precision: 10, scale: 2 })
     multiplier: number;
 }
