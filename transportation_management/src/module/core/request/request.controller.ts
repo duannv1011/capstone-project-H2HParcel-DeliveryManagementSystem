@@ -49,6 +49,16 @@ export class RequestController {
 
         return new Response(200, 'true', request.records, request.paging, 1);
     }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get all request of warehouse successfully' })
+    @ApiOperation({ summary: 'get all request of warehouse ' })
+    @Roles(Role.STAFF, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('staff/requests-staff')
+    async getAllReqeustByWarehouseId(@Query('pageNo') pageNo: number, @UserLogin() user: UserLoginData) {
+        return await this.requestService.getAllReqeustByWarehouseId(pageNo, Number(user.accId));
+    }
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View request record detail' })

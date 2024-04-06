@@ -231,6 +231,7 @@ export class ProfileService {
                 .email(entity.email)
                 .phone(entity.phone)
                 .statusName(entity.statusName)
+                .warehouseId(entity.warehouseId)
                 .warehouseName(warehouseName)
                 .address(address)
                 .build();

@@ -25,6 +25,8 @@ export class RequestService {
         private dataSource: DataSource,
         @InjectRepository(RequestRecordEntity)
         private requestRecordRepository: Repository<RequestRecordEntity>,
+        @InjectRepository(TransitEntity)
+        private transitRecordRepository: Repository<TransitEntity>,
         @InjectRepository(RequestEntity)
         private requestRepository: Repository<RequestEntity>,
         @InjectRepository(StaffEntity)
@@ -87,6 +89,26 @@ export class RequestService {
             Logger.log(error);
             throw new InternalServerErrorException();
         }
+    }
+    async getAllReqeustByWarehouseId(pageNo: number, accId: number) {
+        const pageSize = Number(process.env.PAGE_SIZE);
+        const staff = await this.staffRepository.findOneBy({ accId: accId });
+        const [lists, count] = await this.requestRecordRepository
+            .createQueryBuilder('record')
+            .leftJoinAndSelect('record.requests', 'request') // Join RequestEntity
+            .leftJoinAndSelect('record.transits', 'transit')
+            .leftJoin('request.order', 'order')
+            .leftJoin('order.pickupInformation', 'pickupInformation')
+            .leftJoin('pickupInformation.address', 'address')
+            .leftJoin('address.ward', 'ward')
+            .where('ward.warehouse_id = : warehouseId', { warehouseId: staff.warehouseId })
+            .orWhere('transit.warehouse_to = : warehouseTo', { warehouseTo: staff.warehouseId })
+            .orWhere('transit.warehouse_from = : warehouseFrom', { warehouseFrom: staff.warehouseId })
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .getManyAndCount();
+        const paging = new Paging(pageNo, pageSize, count);
+        return { data: lists, pages: paging };
     }
 
     /**

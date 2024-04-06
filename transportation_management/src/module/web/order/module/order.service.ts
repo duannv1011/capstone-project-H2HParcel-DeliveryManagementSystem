@@ -152,6 +152,7 @@ export class OrderService {
                   deliverDistrict: dataQuery.deliverInformation.address.district.districtName,
                   deliverWard: dataQuery.deliverInformation.address.ward.wardName,
                   deliverShiper: dataQuery.deliverShipperStaff ? dataQuery.deliverShipper.fullname : null,
+                  statusId: dataQuery.statusId,
                   status: dataQuery.status.sttName,
                   pakeType: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,

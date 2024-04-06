@@ -8,6 +8,7 @@ export interface Staff {
     email: string;
     phone: string;
     statusName: string;
+    warehouseId: number;
     warehouseName: string;
     address: Address;
 }
