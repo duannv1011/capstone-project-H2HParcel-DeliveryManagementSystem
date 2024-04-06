@@ -203,11 +203,11 @@ export class QrCodeService {
 
         try {
             if ([3, 5].includes(statusId) && [3, 4].includes(staff.account.role.roleId)) {
-                await this.updateOrder(order, queryRunner, staffId);
-                return 'success';
+                const orderUpdate = await this.updateOrder(order, queryRunner, staffId);
+                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${orderUpdate.status.sttName}` };
             } else if ([4, 6].includes(statusId) && staff.account.role.roleId === 2) {
-                await this.updateOrder(order, queryRunner, staffId);
-                return 'success';
+                const orderUpdate = await this.updateOrder(order, queryRunner, staffId);
+                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${orderUpdate.status.sttName}` };
             } else {
                 return 'can not Scan this Order';
             }
@@ -230,5 +230,6 @@ export class QrCodeService {
         activityLog.time = new Date();
         activityLog.currentStatus = orderUpdate.orderStt;
         await queryRunner.manager.save(activityLog);
+        return orderUpdate;
     }
 }

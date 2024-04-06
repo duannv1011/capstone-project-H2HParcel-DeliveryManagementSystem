@@ -6,10 +6,10 @@ export class WarehouseRuleEntity extends AbstractEntity {
     @PrimaryGeneratedColumn({ name: 'rule_id' })
     ruleId: number;
 
-    @Column({ name: 'warehouseId1' })
+    @Column({ name: 'warehouse_id_1' })
     warehouseId1: number;
 
-    @Column({ name: 'warehouseId2' })
+    @Column({ name: 'warehouse_id_2' })
     warehouseId2: number;
 
     @Column({ name: 'distance' })
