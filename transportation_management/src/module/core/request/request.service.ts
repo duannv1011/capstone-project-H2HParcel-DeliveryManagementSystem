@@ -18,6 +18,7 @@ import { createTransitRequestDto } from './dto/staff-create-transit.dto';
 import { TransitEntity } from 'src/entities/transit.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { request } from 'http';
 
 @Injectable()
 export class RequestService {
@@ -97,13 +98,15 @@ export class RequestService {
             .createQueryBuilder('record')
             .leftJoinAndSelect('record.requests', 'request') // Join RequestEntity
             .leftJoinAndSelect('record.transits', 'transit')
+            .leftJoinAndSelect('transit.staff', 's')
             .leftJoinAndSelect('transit.warehoueFromTable', 'whf')
             .leftJoinAndSelect('transit.warehoueToTable', 'wht')
-            .leftJoinAndSelect('request.requestTypeTable', 'rqt')
-            .leftJoinAndSelect('request.requestStatus', 'rqs')
+            .leftJoinAndSelect('record.requestTypeTable', 'rqt')
+            .leftJoinAndSelect('record.requestStatus', 'rqs')
             .leftJoinAndSelect('request.order', 'order')
             .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
-            .leftJoinAndSelect('pickupInformation.address', 'address')
+            .leftJoinAndSelect('request.deliverInformation', 'requestdeli')
+            .leftJoinAndSelect('requestdeli.address', 'address')
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
@@ -115,24 +118,32 @@ export class RequestService {
             .getManyAndCount();
         const response = lists.map((item) => ({
             recordId: item.recordId ? item.recordId : '',
-            requestType: item.requestTypeTable.requestTypeName,
-            requesStatus: item.requestStatus.rqs_name,
-            warehoueFrom: item.transits ? item.transits.warehoueFromTable.warehouseName : '',
-            warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
-            staff: item.transits ? item.transits.staff.fullname : '',
-            note: item.note,
-            orderId: item.requests ? item.requests.orderId : '',
-            editData: item.requests
+            requestType: item.requestTypeTable ? item.requestTypeTable.requestTypeName : '',
+            requesStatus: item.requestStatus ? item.requestStatus.rqs_name : '',
+            transitdata: item.transits
                 ? {
-                      inforId: item.requests.pickupInformation.inforId,
-                      name: item.requests.pickupInformation.name,
-                      phone: item.requests.pickupInformation.phone,
-                      house: item.requests.pickupInformation.address.house,
-                      city: item.requests.pickupInformation.address.city.cityName,
-                      district: item.requests.pickupInformation.address.district.districtName,
-                      ward: item.requests.pickupInformation.address.ward.wardName,
+                      warehoueFromId: item.transits ? item.transits.warehoueFromTable.warehouseId : '',
+                      warehoueFrom: item.transits ? item.transits.warehoueFromTable.warehouseName : '',
+                      warehoueToId: item.transits ? item.transits.warehoueToTable.warehouseId : '',
+                      warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
+                      staff: item.transits ? item.transits.staff.fullname : '',
+                      note: item.note,
                   }
                 : '',
+
+            requestdata: item.requests
+                ? {
+                      orderId: item.requests ? item.requests.orderId : '',
+                      inforId: item.requests.deliverInformation.inforId,
+                      name: item.requests.deliverInformation.name,
+                      phone: item.requests.deliverInformation.phone,
+                      house: item.requests.deliverInformation.address.house,
+                      city: item.requests.deliverInformation.address.city.cityName,
+                      district: item.requests.deliverInformation.address.district.districtName,
+                      ward: item.requests.deliverInformation.address.ward.wardName,
+                  }
+                : '',
+            date_created: item.date_create_at ? item.date_create_at : '',
         }));
         const paging = new Paging(pageNo, pageSize, count);
         return { data: response, pages: paging };

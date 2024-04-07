@@ -1,11 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { RequestEntity } from './request.entity';
 import { TransitEntity } from './transit.entity';
 import { RequestTypeEntity } from './request-type.entity';
 import { RequestStatusEntity } from './request-status.entity';
+import { AbstractEntity } from './abstract-entity';
 
 @Entity('RequestRecord')
-export class RequestRecordEntity {
+export class RequestRecordEntity extends AbstractEntity {
     @PrimaryGeneratedColumn({ name: 'record_id' })
     public recordId: number;
 
@@ -26,9 +27,9 @@ export class RequestRecordEntity {
     @Column({ name: 'note', type: 'varchar', nullable: true })
     public note: string;
 
-    @OneToMany(() => RequestEntity, (request) => request.requesrRecord)
+    @OneToOne(() => RequestEntity, (request) => request.requesrRecord)
     requests: RequestEntity;
 
-    @OneToMany(() => TransitEntity, (transit) => transit.requesrRecord)
+    @OneToOne(() => TransitEntity, (transit) => transit.requesrRecord)
     transits: TransitEntity;
 }
