@@ -18,8 +18,6 @@ import { createTransitRequestDto } from './dto/staff-create-transit.dto';
 import { TransitEntity } from 'src/entities/transit.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
-import { request } from 'http';
-
 @Injectable()
 export class RequestService {
     constructor(
@@ -118,7 +116,9 @@ export class RequestService {
             .getManyAndCount();
         const response = lists.map((item) => ({
             recordId: item.recordId ? item.recordId : '',
+            requestTypeId: item.requestTypeTable ? item.requestTypeTable.requestTypeId : '',
             requestType: item.requestTypeTable ? item.requestTypeTable.requestTypeName : '',
+            requesStatusId: item.requestStatus ? item.requestStatus.rqs_id : '',
             requesStatus: item.requestStatus ? item.requestStatus.rqs_name : '',
             transitdata: item.transits
                 ? {
@@ -126,8 +126,8 @@ export class RequestService {
                       warehoueFrom: item.transits ? item.transits.warehoueFromTable.warehouseName : '',
                       warehoueToId: item.transits ? item.transits.warehoueToTable.warehouseId : '',
                       warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
+                      staffId: item.transits ? item.transits.staff.staffId : '',
                       staff: item.transits ? item.transits.staff.fullname : '',
-                      note: item.note,
                   }
                 : '',
 
@@ -143,6 +143,7 @@ export class RequestService {
                       ward: item.requests.deliverInformation.address.ward.wardName,
                   }
                 : '',
+            note: item.note,
             date_created: item.date_create_at ? item.date_create_at : '',
         }));
         const paging = new Paging(pageNo, pageSize, count);

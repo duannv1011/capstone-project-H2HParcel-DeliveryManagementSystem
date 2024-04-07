@@ -389,7 +389,7 @@ export class OrderService {
             return 'order not found';
         }
         const oStt = Number(order.status.sttId);
-        if (oStt > 7) {
+        if (oStt > 4) {
             return { orderStatus: oStt, error: 'canot Cancel this order' };
         }
 
@@ -397,26 +397,21 @@ export class OrderService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            const checkIsCancel = await this.requesRecodtRepository
+            const checkHaveRequest = await this.requesRecodtRepository
                 .createQueryBuilder('rc')
-                .leftJoinAndSelect('rc.request', 'r')
+                .leftJoinAndSelect('rc.requests', 'r')
                 .leftJoinAndSelect('r.order', 'o')
                 .leftJoinAndSelect('o.status', 's')
-                .where('r.order_id =:order_id', { orderId: order.orderId })
-                .andWhere('rc.request_type !=:requestType', { requestType: 1 })
+                .where('r.order_id =:orderId', { orderId: order.orderId })
                 .getOne();
-            if (checkIsCancel) {
-                return { error: 'this order is processing cancel or transiting!Canot Cancle this order' };
+            if (checkHaveRequest && checkHaveRequest.requestType === 2) {
+                return { error: 'this order is processing cancel or was cancel!Canot re Cancel again this order' };
             }
-            const request = await this.requestRepository.findOneBy({ orderId: data.orderId });
-            const checkRequest = await this.requesRecodtRepository.findOne({
-                where: { recordId: request.recordId, requestType: 1 },
-            });
 
-            if (checkRequest) {
+            if (checkHaveRequest && checkHaveRequest.requestType === 1) {
                 //update request record to cacancel
-                await this.requesRecodtRepository.update(checkRequest.recordId, { requestType: 2, requestStt: 1 });
-            } else {
+                await this.requesRecodtRepository.update(checkHaveRequest.recordId, { requestType: 2, requestStt: 1 });
+            } else if (!checkHaveRequest) {
                 //create RequestRecord
                 const requestRecord = new RequestRecordEntity();
                 requestRecord.recordId = 0;
@@ -428,9 +423,10 @@ export class OrderService {
                 const request = new RequestEntity();
                 request.requestId = 0;
                 request.orderId = order.orderId;
-                request.pickupInfor = null;
-                request.deliverInfor = null;
+                request.pickupInfor = order.pickupInforId;
+                request.deliverInfor = order.deliverInforId;
                 request.recordId = requestRecordInsertreult.recordId;
+                request.requesrRecord = requestRecordInsertreult;
                 await queryRunner.manager.save(RequestEntity, request);
             }
             await queryRunner.commitTransaction();
