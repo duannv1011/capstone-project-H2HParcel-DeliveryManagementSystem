@@ -162,7 +162,7 @@ CREATE TABLE "Request" (
 CREATE TABLE "Transit" (
   "transit_id" SERIAL  PRIMARY KEY,
   "record_id" integer,
-  	integer,
+  "warehouse_From"	integer,
   "warehouse_to" integer,
   "staff_id" integer,
 );
