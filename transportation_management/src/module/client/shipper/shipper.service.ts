@@ -126,7 +126,7 @@ export class ShipperService {
             .leftJoinAndSelect('s.account', 'a')
             .leftJoinAndSelect('a.role', 'r')
             .where('s.warehouse_id =:warehouseId', { warehouseId: staff.warehouseId })
-            .where('r.role_id =:roleId', { roleId: 2 })
+            .andWhere('r.role_id =:roleId', { roleId: 2 })
             .getMany();
         const response = shippers.map((s) => ({
             staffId: s.staffId,
