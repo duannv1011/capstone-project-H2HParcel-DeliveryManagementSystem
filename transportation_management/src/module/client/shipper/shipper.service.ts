@@ -50,7 +50,7 @@ export class ShipperService {
                     }).orWhere('o.deliverShipper = :shipperId', { shipperId: shipperId });
                 }),
             )
-            .orderBy('o.orderId', 'ASC')
+            .orderBy('o.orderId', 'DESC')
             .getManyAndCount();
         const response = orders.map((o) => ({
             orderId: o.orderId,
