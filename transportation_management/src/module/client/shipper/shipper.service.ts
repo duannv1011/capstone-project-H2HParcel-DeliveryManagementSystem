@@ -99,7 +99,7 @@ export class ShipperService {
         const order = dataQuery
             ? {
                   orderId: dataQuery.orderId,
-                  statusId: dataQuery.status.statusId,
+                  statusId: dataQuery.orderStt,
                   status: dataQuery.status.sttName,
                   senderName: dataQuery.pickupInformation.name,
                   pickupPhoneNumber: dataQuery.pickupInformation.phone,
