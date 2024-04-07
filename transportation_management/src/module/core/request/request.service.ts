@@ -127,7 +127,6 @@ export class RequestService {
                       warehoueToId: item.transits ? item.transits.warehoueToTable.warehouseId : '',
                       warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
                       staff: item.transits ? item.transits.staff.fullname : '',
-                      note: item.note,
                   }
                 : '',
 
@@ -143,6 +142,7 @@ export class RequestService {
                       ward: item.requests.deliverInformation.address.ward.wardName,
                   }
                 : '',
+            note: item.note,
             date_created: item.date_create_at ? item.date_create_at : '',
         }));
         const paging = new Paging(pageNo, pageSize, count);
