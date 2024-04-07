@@ -1,6 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { RequestRecordEntity } from './request-record.entity';
 import { AbstractEntity } from './abstract-entity';
+import { WarehouseEntity } from './warehouse.entity';
+import { StaffEntity } from './staff.entity';
 
 @Entity('Transit')
 export class TransitEntity extends AbstractEntity {
@@ -17,9 +19,21 @@ export class TransitEntity extends AbstractEntity {
     @Column({ name: 'warehouse_from' })
     public warehouseFrom: number;
 
+    @ManyToOne(() => WarehouseEntity, { eager: true })
+    @JoinColumn({ name: 'warehouse_from' })
+    warehoueFromTable: WarehouseEntity;
+
     @Column({ name: 'warehouse_to' })
     public warehouseTo: number;
 
+    @ManyToOne(() => WarehouseEntity, { eager: true })
+    @JoinColumn({ name: 'warehouse_to' })
+    warehoueToTable: WarehouseEntity;
+
     @Column({ name: 'staff_id' })
     public staffId: number;
+
+    @ManyToOne(() => StaffEntity, { eager: true })
+    @JoinColumn({ name: 'staff_id' })
+    staff: StaffEntity;
 }

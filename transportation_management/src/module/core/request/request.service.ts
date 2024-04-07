@@ -97,9 +97,15 @@ export class RequestService {
             .createQueryBuilder('record')
             .leftJoinAndSelect('record.requests', 'request') // Join RequestEntity
             .leftJoinAndSelect('record.transits', 'transit')
+            .leftJoinAndSelect('transit.warehoueFromTable', 'whf')
+            .leftJoinAndSelect('transit.warehoueToTable', 'wht')
+            .leftJoinAndSelect('request.requestTypeTable', 'rqt')
+            .leftJoinAndSelect('request.requestStatus', 'rqs')
             .leftJoinAndSelect('request.order', 'order')
             .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
             .leftJoinAndSelect('pickupInformation.address', 'address')
+            .leftJoinAndSelect('address.city', 'city')
+            .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
             .orWhere('ward.warehouse_id = :warehouseId', { warehouseId: staff.warehouseId })
             .orWhere('transit.warehouse_to = :warehouseTo', { warehouseTo: staff.warehouseId })
@@ -107,8 +113,29 @@ export class RequestService {
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
+        const response = lists.map((item) => ({
+            recordId: item.recordId ? item.recordId : '',
+            requestType: item.requestTypeTable.requestTypeName,
+            requesStatus: item.requestStatus.rqs_name,
+            warehoueFrom: item.transits ? item.transits.warehoueFromTable.warehouseName : '',
+            warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
+            staff: item.transits ? item.transits.staff.fullname : '',
+            note: item.note,
+            orderId: item.requests ? item.requests.orderId : '',
+            editData: item.requests
+                ? {
+                      inforId: item.requests.pickupInformation.inforId,
+                      name: item.requests.pickupInformation.name,
+                      phone: item.requests.pickupInformation.phone,
+                      house: item.requests.pickupInformation.address.house,
+                      city: item.requests.pickupInformation.address.city.cityName,
+                      district: item.requests.pickupInformation.address.district.districtName,
+                      ward: item.requests.pickupInformation.address.ward.wardName,
+                  }
+                : '',
+        }));
         const paging = new Paging(pageNo, pageSize, count);
-        return { data: lists, pages: paging };
+        return { data: response, pages: paging };
     }
 
     /**

@@ -748,7 +748,7 @@ export class ReportService {
     }
 
     private async calculationAdminRevenueTotal() {
-        return await this.orderRepository.sum('estimatedPrice');
+        return await this.orderRepository.sum('estimatedPrice', { orderStt: 8 });
     }
 
     private async calculationRevenuePickup(warehouseIdList: number[], from?: string, to?: string): Promise<number> {
