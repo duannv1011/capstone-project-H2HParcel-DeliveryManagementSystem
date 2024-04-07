@@ -58,7 +58,6 @@ export class ReportController {
     @ApiOperation({ summary: 'Admin report order detail' })
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
-    @UseGuards(AuthGuard)
     @ApiQuery({ name: 'from', required: false, type: String })
     @ApiQuery({ name: 'to', required: false, type: String })
     @ApiUnauthorizedResponse()

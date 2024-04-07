@@ -10,7 +10,7 @@ import {
 import { UserLoginData } from '../../core/authentication/dto/user_login_data';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Between, Brackets, Repository } from 'typeorm';
 import { WarehouseEntity } from '../../../entities/warehouse.entity';
 import * as moment from 'moment-timezone';
 import { OrderEntity } from '../../../entities/order.entity';
@@ -25,6 +25,7 @@ import { CustomerEntity } from '../../../entities/customer.entity';
 import { OrderStatus } from '../../../enum/order-status.enum';
 import { ReportWarehouse, ReportWarehouseResponse, Warehouse } from './response/report-warehouse.reponse';
 import { District, ReportDistrict, ReportDistrictResponse } from './response/report-district.reponse';
+import { InformationEntity } from '../../../entities/information.entity';
 
 @Injectable()
 export class ReportService {
@@ -39,23 +40,126 @@ export class ReportService {
         private wardRepository: Repository<WardEntity>,
         @InjectRepository(DistrictEntity)
         private districtRepository: Repository<DistrictEntity>,
+        @InjectRepository(CustomerEntity)
+        private customerRepository: Repository<CustomerEntity>,
     ) {}
 
     pageSize = Number(process.env.PAGE_SIZE);
 
     async getReportAdmin(from?: string, to?: string): Promise<ReportDashboardResponse> {
         try {
-            const revenueTotal = await this.calculationAdminRevenueTotal();
-            const orderTotal = await this.calculationOrderTotal(null, from, to);
-            const staffTotal = await this.calculationStaffTotal();
+            from = from ? from : this.getCurrentMonth().from;
+            to = to ? to : this.getCurrentMonth().to;
+
+            const revenueTotal: number = await this.calculationAdminRevenueTotal(from, to);
+            const orderTotal: number = await this.calculationOrderTotal(null, from, to);
+            const staffTotal: number = await this.calculationStaffTotal(null);
+            const customerTotal: number = await this.calculationCustomerTotal(from, to);
+            const warehouseTotal: number = await this.calculationWarehouseTotal(from, to);
+            const areaTotal: number = await this.calculationAreaTotal(from, to);
 
             return {
-                reportDashboard: this.toAdminReportDashboard(revenueTotal, orderTotal, staffTotal),
+                reportDashboard: this.toAdminReportDashboard(
+                    revenueTotal,
+                    orderTotal,
+                    staffTotal,
+                    customerTotal,
+                    warehouseTotal,
+                    areaTotal,
+                ),
             };
         } catch (error) {
             Logger.error(error);
             throw new InternalServerErrorException();
         }
+    }
+
+    private async calculationCustomerTotal(from?: string, to?: string): Promise<number> {
+        return await this.customerRepository
+            .createQueryBuilder('customer')
+            .innerJoinAndSelect(OrderEntity, 'orders', 'customer.cus_id = orders.cus_id')
+            .where('orders.date_update_at between :from and :to', { from: from, to: to })
+            .getCount();
+    }
+
+    private async calculationWarehouseTotal(from?: string, to?: string): Promise<number> {
+        const warehouses: any = await this.warehouseRepository
+            .createQueryBuilder('warehouse')
+            .innerJoinAndSelect(AddressEntity, 'address', 'warehouse.address_id = address.address_id')
+            .innerJoinAndSelect(InformationEntity, 'information', 'address.address_id = information.address_id')
+            .innerJoinAndMapMany(
+                'warehouse.pickupOrders',
+                OrderEntity,
+                'pickupOrders',
+                'information.infor_id = pickupOrders.pickup_infor_id',
+            )
+            .innerJoinAndMapMany(
+                'warehouse.deliverOrders',
+                OrderEntity,
+                'deliverOrders',
+                'information.infor_id = deliverOrders.deliver_infor_id',
+            )
+            .where('warehouse.is_active = :isActive', { isActive: true })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('pickupOrders.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    }).orWhere('deliverOrders.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    });
+                }),
+            )
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('pickupOrders.date_update_at between :from and :to', {
+                        from: from,
+                        to: to,
+                    }).orWhere('deliverOrders.date_update_at between :from and :to', {
+                        from: from,
+                        to: to,
+                    });
+                }),
+            )
+            .getRawMany();
+
+        return warehouses.length;
+    }
+
+    private async calculationAreaTotal(from?: string, to?: string): Promise<number> {
+        const districts: any = await this.districtRepository
+            .createQueryBuilder('district')
+            .innerJoinAndSelect(AddressEntity, 'address', 'address.district_id = district.district_id')
+            .innerJoinAndMapMany(
+                'district.customer',
+                CustomerEntity,
+                'customer',
+                'customer.address_id = address.address_id',
+            )
+            .innerJoinAndSelect(OrderEntity, 'pickupOrder', 'customer.cus_id = pickupOrder.pickup_shipper')
+            .innerJoinAndSelect(OrderEntity, 'deliverOrder', 'customer.cus_id = deliverOrder.deliver_shipper')
+            .where(
+                new Brackets((qb) => {
+                    qb.where('pickupOrder.date_update_at between :from and :to', {
+                        from: from,
+                        to: to,
+                    }).orWhere('deliverOrder.date_update_at between :from and :to', {
+                        from: from,
+                        to: to,
+                    });
+                }),
+            )
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('pickupOrder.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    }).orWhere('deliverOrder.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    });
+                }),
+            )
+            .getRawMany();
+
+        return districts.length;
     }
 
     async getReportManager(userLogin: UserLoginData, from?: string, to?: string): Promise<ReportDashboardResponse> {
@@ -96,20 +200,31 @@ export class ReportService {
             if (warehouseIdList.length > 0) {
                 const warehouses: any = await this.warehouseRepository
                     .createQueryBuilder('warehouse')
+                    .innerJoinAndSelect(AddressEntity, 'address', 'warehouse.address_id = address.address_id')
+                    .innerJoinAndSelect(InformationEntity, 'information', 'address.address_id = information.address_id')
                     .innerJoinAndMapMany(
                         'warehouse.pickupOrders',
                         OrderEntity,
                         'pickupOrders',
-                        'warehouse.address_id = pickupOrders.pickup_infor_id',
+                        'information.infor_id = pickupOrders.pickup_infor_id',
                     )
                     .innerJoinAndMapMany(
                         'warehouse.deliverOrders',
                         OrderEntity,
                         'deliverOrders',
-                        'warehouse.address_id = deliverOrders.deliver_infor_id',
+                        'information.infor_id = deliverOrders.deliver_infor_id',
                     )
                     .where('warehouse.warehouse_id IN (:...warehouseIdList)', { warehouseIdList: warehouseIdList })
                     .andWhere('warehouse.is_active = :isActive', { isActive: true })
+                    .andWhere(
+                        new Brackets((qb) => {
+                            qb.where('pickupOrders.order_stt = :orderStatus', {
+                                orderStatus: OrderStatus.DELIVERED,
+                            }).orWhere('deliverOrders.order_stt = :orderStatus', {
+                                orderStatus: OrderStatus.DELIVERED,
+                            });
+                        }),
+                    )
                     .orderBy('warehouse.warehouse_id', 'ASC')
                     .skip((pageNo - 1) * this.pageSize)
                     .take(this.pageSize)
@@ -142,25 +257,36 @@ export class ReportService {
     }
 
     async getReportAdminOrderDetail(pageNo: number, from?: string, to?: string): Promise<ReportOrderDetailResponse> {
-        from = from ? from : this.getCurrentMonth().from;
-        to = to ? to : this.getCurrentMonth().to;
-
         try {
+            from = from ? from : this.getCurrentMonth().from;
+            to = to ? to : this.getCurrentMonth().to;
+
             const warehouses: any = await this.warehouseRepository
                 .createQueryBuilder('warehouse')
+                .innerJoinAndSelect(AddressEntity, 'address', 'warehouse.address_id = address.address_id')
+                .innerJoinAndSelect(InformationEntity, 'information', 'address.address_id = information.address_id')
                 .innerJoinAndMapMany(
                     'warehouse.pickupOrders',
                     OrderEntity,
                     'pickupOrders',
-                    'warehouse.address_id = pickupOrders.pickup_infor_id',
+                    'information.infor_id = pickupOrders.pickup_infor_id',
                 )
                 .innerJoinAndMapMany(
                     'warehouse.deliverOrders',
                     OrderEntity,
                     'deliverOrders',
-                    'warehouse.address_id = deliverOrders.deliver_infor_id',
+                    'information.infor_id = deliverOrders.deliver_infor_id',
                 )
                 .where('warehouse.is_active = :isActive', { isActive: true })
+                .andWhere(
+                    new Brackets((qb) => {
+                        qb.where('pickupOrders.order_stt = :orderStatus', {
+                            orderStatus: OrderStatus.DELIVERED,
+                        }).orWhere('deliverOrders.order_stt = :orderStatus', {
+                            orderStatus: OrderStatus.DELIVERED,
+                        });
+                    }),
+                )
                 .orderBy('warehouse.warehouse_id', 'ASC')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
@@ -197,6 +323,7 @@ export class ReportService {
                 .createQueryBuilder('staffs')
                 .innerJoinAndSelect(WarehouseEntity, 'warehouse', 'warehouse.warehouse_id = staffs.warehouse_id')
                 .where('warehouse.warehouse_id IN (:...warehouseIdList)', { warehouseIdList: warehouseIdList })
+                .andWhere('warehouse.is_active = :isActive', { isActive: true })
                 .orderBy('staffs.staff_id', 'ASC')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
@@ -205,7 +332,11 @@ export class ReportService {
             const paging: Paging = new Paging(pageNo, this.pageSize, staffs.length);
             const reports: ReportStaff[] = [];
             for (const element of staffs) {
-                reports.push(await this.toReportStaffResponse(element, from, to));
+                const staffRes = await this.toReportStaffResponse(element, from, to);
+                Logger.error(staffRes);
+                if (staffRes) {
+                    reports.push(staffRes);
+                }
             }
 
             return { reports: reports, paging: paging };
@@ -223,6 +354,7 @@ export class ReportService {
             const staffs: any = await this.staffRepository
                 .createQueryBuilder('staffs')
                 .innerJoinAndSelect(WarehouseEntity, 'warehouse', 'warehouse.warehouse_id = staffs.warehouse_id')
+                .where('warehouse.is_active = :isActive', { isActive: true })
                 .orderBy('staffs.staff_id', 'ASC')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
@@ -232,7 +364,11 @@ export class ReportService {
             const reports: ReportStaff[] = [];
             if (staffs) {
                 for (const element of staffs) {
-                    reports.push(await this.toReportStaffResponse(element, from, to));
+                    const staffRes = await this.toReportStaffResponse(element, from, to);
+
+                    if (staffRes) {
+                        reports.push(staffRes);
+                    }
                 }
             }
 
@@ -296,18 +432,19 @@ export class ReportService {
 
         const warehouses: any = await this.warehouseRepository
             .createQueryBuilder('warehouse')
-            .innerJoinAndSelect(StaffEntity, 'staff', 'warehouse.warehouse_id = staff.warehouse_id')
+            .innerJoinAndSelect(AddressEntity, 'address', 'warehouse.address_id = address.address_id')
+            .innerJoinAndSelect(InformationEntity, 'information', 'address.address_id = information.address_id')
             .innerJoinAndMapMany(
                 'warehouse.pickupOrder',
                 OrderEntity,
                 'pickupOrder',
-                'staff.staff_id = pickupOrder.pickup_shipper',
+                'information.infor_id = pickupOrder.pickup_infor_id',
             )
             .innerJoinAndMapMany(
                 'warehouse.deliverOrder',
                 OrderEntity,
                 'deliverOrder',
-                'staff.staff_id = deliverOrder.deliver_shipper',
+                'information.infor_id = deliverOrder.deliver_infor_id',
             )
             .andWhere(
                 new Brackets((qb) => {
@@ -317,6 +454,15 @@ export class ReportService {
                     }).orWhere('deliverOrder.date_update_at between :from and :to', {
                         from: from,
                         to: to,
+                    });
+                }),
+            )
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('pickupOrder.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    }).orWhere('deliverOrder.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
                     });
                 }),
             )
@@ -404,6 +550,15 @@ export class ReportService {
                     });
                 }),
             )
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('pickupOrder.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    }).orWhere('deliverOrder.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    });
+                }),
+            )
             .orderBy('district.district_id', 'ASC')
             .skip((pageNo - 1) * this.pageSize)
             .take(this.pageSize)
@@ -449,7 +604,6 @@ export class ReportService {
             }
             const orderList = [...countByDeliverDays, ...countByPickupDays];
             const orderMap = _.groupBy(orderList, 'day');
-            console.log(orderMap);
 
             const reportChart = [];
             for (const [key, value] of Object.entries(orderMap)) {
@@ -517,6 +671,7 @@ export class ReportService {
 
     private async toReportStaffResponse(staff: any, from?: string, to?: string): Promise<ReportStaff> {
         const staffOrder = await this.calculationStaffOrder(staff.staffs_staff_id, from, to);
+
         if (staffOrder) {
             return Builder<ReportStaff>()
                 .staffId(staff.staffs_staff_id)
@@ -527,7 +682,7 @@ export class ReportService {
                 .build();
         }
 
-        return Builder<ReportStaff>().build();
+        return null;
     }
 
     private async calculationStaffOrder(staffId: number, from?: string, to?: string): Promise<any> {
@@ -547,6 +702,15 @@ export class ReportService {
                     }).orWhere('deliver.date_update_at between :from and :to', {
                         from: from,
                         to: to,
+                    });
+                }),
+            )
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('pickup.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
+                    }).orWhere('deliver.order_stt = :orderStatus', {
+                        orderStatus: OrderStatus.DELIVERED,
                     });
                 }),
             )
@@ -570,6 +734,8 @@ export class ReportService {
 
             return { totalOrder: totalOrder, totalRevenue: pickupRevenue + deliverRevenue };
         }
+
+        return null;
     }
 
     private async toReportOrderDetailResponse(
@@ -593,21 +759,21 @@ export class ReportService {
         if (warehouseIdList) {
             const order: any = await this.warehouseRepository
                 .createQueryBuilder('warehouse')
-                .innerJoinAndSelect(StaffEntity, 'staff', 'warehouse.warehouse_id = staff.warehouse_id')
+                .innerJoinAndSelect(AddressEntity, 'address', 'warehouse.address_id = address.address_id')
+                .innerJoinAndSelect(InformationEntity, 'information', 'address.address_id = information.address_id')
                 .innerJoinAndMapMany(
                     'warehouse.pickupOrder',
                     OrderEntity,
                     'pickupOrder',
-                    'staff.staff_id = pickupOrder.pickup_shipper',
+                    'information.infor_id = pickupOrder.pickup_infor_id',
                 )
                 .innerJoinAndMapMany(
                     'warehouse.deliverOrder',
                     OrderEntity,
                     'deliverOrder',
-                    'staff.staff_id = deliverOrder.deliver_shipper',
+                    'information.infor_id = deliverOrder.deliver_infor_id',
                 )
                 .where('warehouse.warehouse_id IN (:...warehouseIdList)', { warehouseIdList: warehouseIdList })
-                .andWhere('pickupOrder.date_update_at between :from and :to', { from: from, to: to })
                 .andWhere(
                     new Brackets((qb) => {
                         qb.where('pickupOrder.date_update_at between :from and :to', {
@@ -616,6 +782,15 @@ export class ReportService {
                         }).orWhere('deliverOrder.date_update_at between :from and :to', {
                             from: from,
                             to: to,
+                        });
+                    }),
+                )
+                .andWhere(
+                    new Brackets((qb) => {
+                        qb.where('pickupOrder.order_stt = :orderStatus', {
+                            orderStatus: OrderStatus.DELIVERED,
+                        }).orWhere('deliverOrder.order_stt = :orderStatus', {
+                            orderStatus: OrderStatus.DELIVERED,
                         });
                     }),
                 )
@@ -648,18 +823,19 @@ export class ReportService {
             // Admin
             const order: any = await this.warehouseRepository
                 .createQueryBuilder('warehouse')
-                .innerJoinAndSelect(StaffEntity, 'staff', 'warehouse.warehouse_id = staff.warehouse_id')
+                .innerJoinAndSelect(AddressEntity, 'address', 'warehouse.address_id = address.address_id')
+                .innerJoinAndSelect(InformationEntity, 'information', 'address.address_id = information.address_id')
                 .innerJoinAndMapMany(
                     'warehouse.pickupOrder',
                     OrderEntity,
                     'pickupOrder',
-                    'staff.staff_id = pickupOrder.pickup_shipper',
+                    'information.infor_id = pickupOrder.pickup_infor_id',
                 )
                 .innerJoinAndMapMany(
                     'warehouse.deliverOrder',
                     OrderEntity,
                     'deliverOrder',
-                    'staff.staff_id = deliverOrder.deliver_shipper',
+                    'information.infor_id = deliverOrder.deliver_infor_id',
                 )
                 .where('pickupOrder.date_update_at between :from and :to', { from: from, to: to })
                 .andWhere(
@@ -670,6 +846,15 @@ export class ReportService {
                         }).orWhere('deliverOrder.date_update_at between :from and :to', {
                             from: from,
                             to: to,
+                        });
+                    }),
+                )
+                .andWhere(
+                    new Brackets((qb) => {
+                        qb.where('pickupOrder.order_stt = :orderStatus', {
+                            orderStatus: OrderStatus.DELIVERED,
+                        }).orWhere('deliverOrder.order_stt = :orderStatus', {
+                            orderStatus: OrderStatus.DELIVERED,
                         });
                     }),
                 )
@@ -747,8 +932,13 @@ export class ReportService {
         }
     }
 
-    private async calculationAdminRevenueTotal() {
-        return await this.orderRepository.sum('estimatedPrice', { orderStt: 8 });
+    private async calculationAdminRevenueTotal(from?: string, to?: string) {
+        const result = await this.orderRepository.sum('estimatedPrice', {
+            orderStt: OrderStatus.DELIVERED,
+            date_update_at: Between(moment(from).toDate(), moment(to).toDate()),
+        });
+
+        return result ? result : 0;
     }
 
     private async calculationRevenuePickup(warehouseIdList: number[], from?: string, to?: string): Promise<number> {
@@ -761,6 +951,7 @@ export class ReportService {
             .innerJoinAndMapMany('warehouse.orders', OrderEntity, 'orders', 'staff.staff_id = orders.pickup_shipper')
             .where('warehouse.warehouse_id IN (:...warehouseIdList)', { warehouseIdList: warehouseIdList })
             .andWhere('orders.date_update_at between :from and :to', { from: from, to: to })
+            .andWhere('orders.order_stt = :orderStatus', { orderStatus: OrderStatus.DELIVERED })
             .andWhere('warehouse.isActive = :isActive', { isActive: true })
             .getOne();
 
@@ -785,6 +976,7 @@ export class ReportService {
             .innerJoinAndMapMany('warehouse.orders', OrderEntity, 'orders', 'staff.staff_id = orders.deliver_shipper')
             .where('warehouse.warehouse_id IN (:...warehouseIdList)', { warehouseIdList: warehouseIdList })
             .andWhere('orders.date_update_at between :from and :to', { from: from, to: to })
+            .andWhere('orders.order_stt = :orderStatus', { orderStatus: OrderStatus.DELIVERED })
             .andWhere('warehouse.isActive = :isActive', { isActive: true })
             .getOne();
 
@@ -832,6 +1024,39 @@ export class ReportService {
                                 });
                             }),
                         )
+                        .andWhere('order.order_stt = :orderStatus', { orderStatus: OrderStatus.DELIVERED })
+                        .andWhere('order.date_update_at between :from and :to', { from: from, to: to })
+                        .getCount();
+                }
+            }
+        } else {
+            const warehouse: any = await this.warehouseRepository
+                .createQueryBuilder('warehouse')
+                .innerJoinAndMapMany(
+                    'warehouse.staffs',
+                    StaffEntity,
+                    'staffs',
+                    'warehouse.warehouse_id = staffs.warehouse_id',
+                )
+                .andWhere('warehouse.isActive = :isActive', { isActive: true })
+                .getOne();
+
+            if (warehouse) {
+                if (warehouse.staffs) {
+                    const staffIds = warehouse.staffs.map((element) => element.staffId);
+
+                    orderTotal += await this.orderRepository
+                        .createQueryBuilder('order')
+                        .where(
+                            new Brackets((qb) => {
+                                qb.where('order.pickup_shipper IN (:...staffIds)', {
+                                    staffIds: staffIds,
+                                }).orWhere('order.deliver_shipper IN (:...staffIds)', {
+                                    staffIds: staffIds,
+                                });
+                            }),
+                        )
+                        .andWhere('order.order_stt = :orderStatus', { orderStatus: OrderStatus.DELIVERED })
                         .andWhere('order.date_update_at between :from and :to', { from: from, to: to })
                         .getCount();
                 }
@@ -849,22 +1074,34 @@ export class ReportService {
                 .createQueryBuilder('staffs')
                 .innerJoinAndSelect(WarehouseEntity, 'warehouse', 'warehouse.warehouse_id = staffs.warehouse_id')
                 .where('warehouse.warehouse_id IN (:...warehouseIdList)', { warehouseIdList: warehouseIdList })
+                .andWhere('warehouse.is_active = :isActive', { isActive: true })
                 .getCount();
         } else {
-            staffTotal += await this.staffRepository.count();
+            staffTotal += await this.staffRepository
+                .createQueryBuilder('staffs')
+                .innerJoinAndSelect(WarehouseEntity, 'warehouse', 'warehouse.warehouse_id = staffs.warehouse_id')
+                .andWhere('warehouse.is_active = :isActive', { isActive: true })
+                .getCount();
         }
 
         return staffTotal;
     }
 
-    private toAdminReportDashboard(revenueTotal: number, orderTotal: number, staffTotal: number): ReportDashboard {
+    private toAdminReportDashboard(
+        revenueTotal: number,
+        orderTotal: number,
+        staffTotal: number,
+        customerTotal: number,
+        warehouseTotal: number,
+        areaTotal: number,
+    ): ReportDashboard {
         return Builder<ReportDashboard>()
             .revenueTotal(revenueTotal)
-            .customerTotal(0)
+            .customerTotal(customerTotal)
             .orderTotal(orderTotal)
             .staffTotal(staffTotal)
-            .warehouseTotal(0)
-            .areaTotal(0)
+            .warehouseTotal(warehouseTotal)
+            .areaTotal(areaTotal)
             .build();
     }
 
