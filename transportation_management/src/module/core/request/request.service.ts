@@ -128,6 +128,7 @@ export class RequestService {
                       warehoueFrom: item.transits ? item.transits.warehoueFromTable.warehouseName : '',
                       warehoueToId: item.transits ? item.transits.warehoueToTable.warehouseId : '',
                       warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
+                      staffId: item.transits ? item.transits.staff.staffId : '',
                       staff: item.transits ? item.transits.staff.fullname : '',
                   }
                 : '',
