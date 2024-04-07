@@ -118,7 +118,9 @@ export class RequestService {
             .getManyAndCount();
         const response = lists.map((item) => ({
             recordId: item.recordId ? item.recordId : '',
+            requestTypeId: item.requestTypeTable ? item.requestTypeTable.requestTypeId : '',
             requestType: item.requestTypeTable ? item.requestTypeTable.requestTypeName : '',
+            requesStatusId: item.requestStatus ? item.requestStatus.rqs_id : '',
             requesStatus: item.requestStatus ? item.requestStatus.rqs_name : '',
             transitdata: item.transits
                 ? {
