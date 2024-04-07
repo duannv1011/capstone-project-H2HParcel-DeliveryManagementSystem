@@ -11,6 +11,7 @@ export interface OrderDetailResponse {
 
 export interface Order {
     orderId: number;
+    statusId: number;
     status: string;
     senderName: string;
     receiverName: string;

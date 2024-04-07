@@ -66,7 +66,7 @@ export class ShipperService {
             pickUpdateWarehouseId: o.pickupInformation.address.ward.warehouseId,
             deliverUpdateWarehouseId: o.deliverInformation.address.ward.warehouseId,
             packageTypeId: o.packageType.pkId,
-            pakeType: o.packageType.pkName,
+            packageTypeName: o.packageType.pkName,
             price: o.estimatedPrice,
         }));
 
@@ -99,6 +99,7 @@ export class ShipperService {
         const order = dataQuery
             ? {
                   orderId: dataQuery.orderId,
+                  statusId: dataQuery.statusId,
                   status: dataQuery.status.sttName,
                   senderName: dataQuery.pickupInformation.name,
                   pickupPhoneNumber: dataQuery.pickupInformation.phone,
@@ -111,7 +112,7 @@ export class ShipperService {
                   pickUpdateWarehouseId: dataQuery.pickupInformation.address.ward.warehouseId,
                   deliverUpdateWarehouseId: dataQuery.deliverInformation.address.ward.warehouseId,
                   packageTypeId: dataQuery.packageType.pkId,
-                  pakeType: dataQuery.packageType.pkName,
+                  packageTypeName: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,
               }
             : null;

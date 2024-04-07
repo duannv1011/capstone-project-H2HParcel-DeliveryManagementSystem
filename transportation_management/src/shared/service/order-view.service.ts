@@ -240,6 +240,7 @@ export class OrderViewService {
         if (entity) {
             return Builder<Order>()
                 .orderId(entity.orderId)
+                .statusId(entity.status.sttId)
                 .status(entity.status.sttName)
                 .senderName(pickupUser ? pickupUser.name : '')
                 .pickupPhoneNumber(pickupUser ? pickupUser.phone : '')
