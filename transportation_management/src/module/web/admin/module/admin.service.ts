@@ -11,6 +11,8 @@ import { CreateStaffDto } from '../dto/staff-create.dto';
 import { AuthenticationService } from 'src/module/core/authentication/modules/authentication.service';
 import { RoleEntity } from 'src/entities/role.entity';
 import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
+import { PackageTypeEntity } from 'src/entities/package-type.entity';
+import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
 
 @Injectable()
 export class AdminService {
@@ -25,6 +27,8 @@ export class AdminService {
         private addressRepository: Repository<AddressEntity>,
         @InjectRepository(RoleEntity)
         private roleRepository: Repository<RoleEntity>,
+        @InjectRepository(PackageTypeEntity)
+        private packageTypeRepository: Repository<PackageTypeEntity>,
         private dataSource: DataSource,
         private configService: ConfigService,
         private authenticationService: AuthenticationService,
@@ -262,5 +266,18 @@ export class AdminService {
         } finally {
             await queryRunner.release();
         }
+    }
+    async getAllPackagetype() {
+        return await this.packageTypeRepository.find();
+    }
+    async updatePageTypeById(data: UpdatePakageType) {
+        const pkt = await this.packageTypeRepository.findOneBy({ pkId: data.pkId });
+        pkt.pkName = data.pkName;
+        pkt.pkPrice = data.pkPrice;
+        await this.packageTypeRepository.save(pkt);
+        return {
+            status: 200,
+            msg: 'update success',
+        };
     }
 }

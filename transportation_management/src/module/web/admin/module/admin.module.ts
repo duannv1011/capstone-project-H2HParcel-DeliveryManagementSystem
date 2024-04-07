@@ -18,6 +18,7 @@ import { QrCodeService } from 'src/module/core/qr-code/qr-code.service';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
 import { InformationEntity } from 'src/entities/information.entity';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
+import { PackageTypeEntity } from 'src/entities/package-type.entity';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { OrderStatusEntity } from 'src/entities/order-status.entity';
             AddressEntity,
             WarehouseEntity,
             OrderEntity,
+            PackageTypeEntity,
             RoleEntity,
             QRCodeEntity,
             InformationEntity,

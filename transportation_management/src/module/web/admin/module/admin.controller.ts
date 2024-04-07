@@ -9,6 +9,7 @@ import { AdminService } from './admin.service';
 import { CreateStaffDto } from '../dto/staff-create.dto';
 import { updateStaffDto } from '../dto/staff-update.dto';
 import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
+import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
 
 @Controller('admin')
 @ApiTags('SUPER ADMIN')
@@ -83,5 +84,23 @@ export class AdminController {
     @ApiResponse({ status: 200, description: 'admin create staff successfully.' })
     async createStaff(@Body() data: CreateStaffDto): Promise<any> {
         return await this.adminService.adminCreateStaff(data);
+    }
+    @Post('admin/packages-tpye')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'admin get All packageType ' })
+    @ApiResponse({ status: 200, description: 'get successfully.' })
+    async getAllPackagetype(): Promise<any> {
+        return await this.adminService.getAllPackagetype();
+    }
+    @Post('admin/packages-tpye/update')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'admin get All packageType ' })
+    @ApiResponse({ status: 200, description: 'get successfully.' })
+    async updatePageTypeById(@Body() data: UpdatePakageType): Promise<any> {
+        return await this.adminService.updatePageTypeById(data);
     }
 }

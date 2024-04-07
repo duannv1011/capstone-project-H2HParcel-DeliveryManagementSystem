@@ -410,11 +410,21 @@ export class OrderService {
         if (!getPickupWarehouse || !getDeliverWarehouse) {
             return { error: 'warehouse not found' };
         }
+
         const pickupWarehouse = Number(getPickupWarehouse.warehouseId);
         const deliverWarehouse = Number(getDeliverWarehouse.warehouseId);
-        const warehouseRule = await this.warehouseRuleRepository.findOne({
-            where: { warehouseId1: pickupWarehouse, warehouseId2: deliverWarehouse },
-        });
+        const warehouseRule = await this.warehouseRuleRepository
+            .createQueryBuilder('w')
+            .where((qb) => {
+                qb.andWhere('(w.warehouse_id_1 = :warehouseId1 AND w.warehouse_id_2 = :warehouseId2)', {
+                    warehouseId1: pickupWarehouse,
+                    warehouseId2: deliverWarehouse,
+                }).orWhere('(w.warehouse_id_1 = :warehouseId2 AND w.warehouse_id_2 = :warehouseId1)', {
+                    warehouseId1: pickupWarehouse,
+                    warehouseId2: deliverWarehouse,
+                });
+            })
+            .getOne();
         const distance = Number(
             warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
         );

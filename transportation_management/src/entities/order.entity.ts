@@ -31,7 +31,7 @@ export class OrderEntity extends AbstractEntity {
     @Column({ name: 'pk_id' })
     public pkId: number;
 
-    @Column({ name: 'estimated_price' })
+    @Column({ name: 'estimated_price', nullable: true })
     public estimatedPrice: number;
 
     @ManyToOne(() => InformationEntity, { eager: true })

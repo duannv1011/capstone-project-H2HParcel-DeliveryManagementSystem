@@ -50,23 +50,22 @@ export class ShipperService {
                     }).orWhere('o.deliverShipper = :shipperId', { shipperId: shipperId });
                 }),
             )
-            .orderBy('o.orderId', 'ASC')
+            .orderBy('o.orderId', 'DESC')
             .getManyAndCount();
         const response = orders.map((o) => ({
             orderId: o.orderId,
-            pickName: o.pickupInformation.name,
-            pickPhone: o.pickupInformation.phone,
-            pickCity: o.pickupInformation.address.city.cityName,
-            pickDistrict: o.pickupInformation.address.district.districtName,
-            pickWard: o.pickupInformation.address.ward.wardName,
-            pickShiper: o.pickupShipperStaff ? o.pickupShipperStaff.fullname : '',
-            deliverName: o.deliverInformation.name,
-            deliverPhone: o.deliverInformation.phone,
-            deliverCity: o.deliverInformation.address.city.cityName,
-            deliverDistrict: o.deliverInformation.address.district.districtName,
-            deliverWard: o.deliverInformation.address.ward.wardName,
-            deliverShiper: o.deliverShipperStaff ? o.deliverShipperStaff.fullname : '',
             status: o.status.sttName,
+            senderName: o.pickupInformation.name,
+            pickupPhoneNumber: o.pickupInformation.phone,
+            pickupAddress: `${o.pickupInformation.address.house}-${o.pickupInformation.address.ward.wardName}-${o.pickupInformation.address.district.districtName}-${o.pickupInformation.address.city.cityName}`,
+            pickupStaffName: o.pickupShipperStaff ? o.pickupShipperStaff.fullname : '',
+            receiverName: o.deliverInformation.name,
+            deliverPhoneNumber: o.deliverInformation.phone,
+            deliverAddress: `${o.deliverInformation.address.house}-${o.deliverInformation.address.ward.wardName}-${o.deliverInformation.address.district.districtName}-${o.deliverInformation.address.city.cityName}`,
+            deliverStaffName: o.deliverShipperStaff ? o.deliverShipperStaff.fullname : '',
+            pickUpdateWarehouseId: o.pickupInformation.address.ward.warehouseId,
+            deliverUpdateWarehouseId: o.deliverInformation.address.ward.warehouseId,
+            packageTypeId: o.packageType.pkId,
             pakeType: o.packageType.pkName,
             price: o.estimatedPrice,
         }));
@@ -100,19 +99,18 @@ export class ShipperService {
         const order = dataQuery
             ? {
                   orderId: dataQuery.orderId,
-                  pickName: dataQuery.pickupInformation.name,
-                  pickPhone: dataQuery.pickupInformation.phone,
-                  pickCity: dataQuery.pickupInformation.address.city.cityName,
-                  pickDistrict: dataQuery.pickupInformation.address.district.districtName,
-                  pickWard: dataQuery.pickupInformation.address.ward.wardName,
-                  pickShiper: dataQuery.pickupShipperStaff ? dataQuery.pickupShipperStaff.fullname : null,
-                  deliverName: dataQuery.deliverInformation.name,
-                  deliverPhone: dataQuery.deliverInformation.phone,
-                  deliverCity: dataQuery.deliverInformation.address.city.cityName,
-                  deliverDistrict: dataQuery.deliverInformation.address.district.districtName,
-                  deliverWard: dataQuery.deliverInformation.address.ward.wardName,
-                  deliverShiper: dataQuery.deliverShipperStaff ? dataQuery.deliverShipper.fullname : null,
                   status: dataQuery.status.sttName,
+                  senderName: dataQuery.pickupInformation.name,
+                  pickupPhoneNumber: dataQuery.pickupInformation.phone,
+                  pickupAddress: `${dataQuery.pickupInformation.address.house}-${dataQuery.pickupInformation.address.ward.wardName}-${dataQuery.pickupInformation.address.district.districtName}-${dataQuery.pickupInformation.address.city.cityName}`,
+                  pickupStaffName: dataQuery.pickupShipperStaff ? dataQuery.pickupShipperStaff.fullname : '',
+                  receiverName: dataQuery.deliverInformation.name,
+                  deliverPhoneNumber: dataQuery.deliverInformation.phone,
+                  deliverAddress: `${dataQuery.deliverInformation.address.house}-${dataQuery.deliverInformation.address.ward.wardName}-${dataQuery.deliverInformation.address.district.districtName}-${dataQuery.deliverInformation.address.city.cityName}`,
+                  deliverStaffName: dataQuery.deliverShipperStaff ? dataQuery.deliverShipperStaff.fullname : '',
+                  pickUpdateWarehouseId: dataQuery.pickupInformation.address.ward.warehouseId,
+                  deliverUpdateWarehouseId: dataQuery.deliverInformation.address.ward.warehouseId,
+                  packageTypeId: dataQuery.packageType.pkId,
                   pakeType: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,
               }
@@ -126,7 +124,7 @@ export class ShipperService {
             .leftJoinAndSelect('s.account', 'a')
             .leftJoinAndSelect('a.role', 'r')
             .where('s.warehouse_id =:warehouseId', { warehouseId: staff.warehouseId })
-            .where('r.role_id =:roleId', { roleId: 2 })
+            .andWhere('r.role_id =:roleId', { roleId: 2 })
             .getMany();
         const response = shippers.map((s) => ({
             staffId: s.staffId,
