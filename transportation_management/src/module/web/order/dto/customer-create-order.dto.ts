@@ -12,77 +12,77 @@ export class CusCreateOrderDto {
     //@IsNotEmpty({ message: 'null value for pickup_infor_id ' })
     pickupInforId: number;
 
-    @ApiProperty({ example: 'Duan Nguyen', description: 'pickup_name' })
-    @IsString()
-    @IsNotEmpty({ message: 'null value for pickup_name ' })
-    pickupName: string;
-
-    @ApiProperty({ example: '0209151875', description: 'pickup_phone' })
-    @IsString()
-    @Matches(/^[0-9]+$/, { message: 'Invalid phone number format. Please enter only numeric characters.' })
-    @IsNotEmpty({ message: 'null value for pickup_phone ' })
-    pickupPhone: string;
-
-    @IsString()
-    @IsNotEmpty({ message: 'Null value error for pickup_house' })
-    @ApiProperty({ example: 'so nha 1 ngo X duong y', description: 'pickup_house' })
-    pickupHouse: string;
-
-    @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for pickup_city_id' })
-    @ApiProperty({ example: '1', description: 'pickup_city_id' })
-    pickupCityId: number;
-
-    @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for pickup_district_id' })
-    @ApiProperty({ example: '1', description: 'pickup_district_id' })
-    pickupDistrictId: number;
-
-    @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for pickup_ward_id' })
-    @ApiProperty({ example: '1', description: 'pickup_ward_id' })
-    pickupWardId: number;
-
-    // @ApiProperty({ example: 10, description: 'deliver_infor_id' })
+    // @ApiProperty({ example: 'Duan Nguyen', description: 'pickup_name' })
     // @IsString()
-    // @IsNotEmpty({ message: 'null value for deliver_infor_id ' })
-    // deliver_infor_id: number;
+    // @IsNotEmpty({ message: 'null value for pickup_name ' })
+    // pickupName: string;
 
-    @ApiProperty({ example: 'Long ', description: 'deliver_name' })
+    // @ApiProperty({ example: '0209151875', description: 'pickup_phone' })
+    // @IsString()
+    // @Matches(/^[0-9]+$/, { message: 'Invalid phone number format. Please enter only numeric characters.' })
+    // @IsNotEmpty({ message: 'null value for pickup_phone ' })
+    // pickupPhone: string;
+
+    // @IsString()
+    // @IsNotEmpty({ message: 'Null value error for pickup_house' })
+    // @ApiProperty({ example: 'so nha 1 ngo X duong y', description: 'pickup_house' })
+    // pickupHouse: string;
+
+    // @IsNumber()
+    // @IsNotEmpty({ message: 'Null value error for pickup_city_id' })
+    // @ApiProperty({ example: '1', description: 'pickup_city_id' })
+    // pickupCityId: number;
+
+    // @IsNumber()
+    // @IsNotEmpty({ message: 'Null value error for pickup_district_id' })
+    // @ApiProperty({ example: '1', description: 'pickup_district_id' })
+    // pickupDistrictId: number;
+
+    // @IsNumber()
+    // @IsNotEmpty({ message: 'Null value error for pickup_ward_id' })
+    // @ApiProperty({ example: '1', description: 'pickup_ward_id' })
+    // pickupWardId: number;
+
+    @ApiProperty({ example: 10, description: 'deliver_infor_id' })
     @IsString()
-    @IsNotEmpty({ message: 'null value for deliver_name ' })
-    deliverNme: string;
+    //@IsNotEmpty({ message: 'null value for deliver_infor_id ' })
+    deliver_infor_id: number;
 
-    @ApiProperty({ example: '0209151875', description: 'deliver_phone' })
-    @IsString()
-    @Matches(/^[0-9]+$/, { message: 'Invalid phone number format. Please enter only numeric characters.' })
-    @IsNotEmpty({ message: 'null value for deliver_phone ' })
-    deliverPhone: string;
+    // @ApiProperty({ example: 'Long ', description: 'deliver_name' })
+    // @IsString()
+    // @IsNotEmpty({ message: 'null value for deliver_name ' })
+    // deliverNme: string;
 
-    @IsString()
-    @IsNotEmpty({ message: 'Null value error for deliver_house' })
-    @ApiProperty({ example: 'so nha 1 ngo X duong y', description: 'deliver_house' })
-    deliverHouse: string;
+    // @ApiProperty({ example: '0209151875', description: 'deliver_phone' })
+    // @IsString()
+    // @Matches(/^[0-9]+$/, { message: 'Invalid phone number format. Please enter only numeric characters.' })
+    // @IsNotEmpty({ message: 'null value for deliver_phone ' })
+    // deliverPhone: string;
 
-    @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for deliver_city_id' })
-    @ApiProperty({ example: '1', description: 'deliver_city_id' })
-    deliverCityId: number;
+    // @IsString()
+    // @IsNotEmpty({ message: 'Null value error for deliver_house' })
+    // @ApiProperty({ example: 'so nha 1 ngo X duong y', description: 'deliver_house' })
+    // deliverHouse: string;
 
-    @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for deliver_district_id' })
-    @ApiProperty({ example: '1', description: 'deliver_district_id' })
-    deliverDistrictId: number;
+    // @IsNumber()
+    // @IsNotEmpty({ message: 'Null value error for deliver_city_id' })
+    // @ApiProperty({ example: '1', description: 'deliver_city_id' })
+    // deliverCityId: number;
 
-    @IsNumber()
-    @IsNotEmpty({ message: 'Null value error for deliver_ward_id' })
-    @ApiProperty({ example: '1', description: 'deliver_ward_id' })
-    deliverWardId: number;
+    // @IsNumber()
+    // @IsNotEmpty({ message: 'Null value error for deliver_district_id' })
+    // @ApiProperty({ example: '1', description: 'deliver_district_id' })
+    // deliverDistrictId: number;
 
-    @ApiProperty({ example: 1, description: 'order_stt', default: 1 })
-    @IsString()
-    @IsNotEmpty({ message: 'null value for order_stt ' })
-    orderStt: number;
+    // @IsNumber()
+    // @IsNotEmpty({ message: 'Null value error for deliver_ward_id' })
+    // @ApiProperty({ example: '1', description: 'deliver_ward_id' })
+    // deliverWardId: number;
+
+    // @ApiProperty({ example: 1, description: 'order_stt', default: 1 })
+    // @IsString()
+    // @IsNotEmpty({ message: 'null value for order_stt ' })
+    // orderStt: number;
 
     @ApiProperty({ example: 1, description: 'pk_id' })
     @IsString()

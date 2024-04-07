@@ -172,7 +172,7 @@ export class AddressBookService {
                 });
 
             await queryRunner.commitTransaction();
-            return new Response(200, 'success', { bookId: addressBook.bookId });
+            return new Response(200, 'success', { bookId: addressBook.bookId, inforId: addressBook.inforId });
         } catch (error) {
             await queryRunner.rollbackTransaction();
             return error;

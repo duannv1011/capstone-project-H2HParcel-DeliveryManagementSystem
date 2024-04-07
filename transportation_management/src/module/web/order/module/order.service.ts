@@ -21,6 +21,7 @@ import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
 import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
 
 @Injectable()
 export class OrderService {
@@ -165,59 +166,18 @@ export class OrderService {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
         data.cusId = cusId;
-        const checkPickupInfor = await this.addressbookRepository.findOne({
-            where: { cusId: cusId, inforId: data.pickupInforId ? data.pickupInforId : 0 },
-        });
+
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            // create or set exisited pickupinforid to be use
-            let puinforid;
-            if (!checkPickupInfor) {
-                // create adress
-                const address1 = new AddressEntity();
-                address1.addressId = 0;
-                address1.house = data.pickupHouse;
-                address1.cityId = data.pickupCityId;
-                address1.districtId = data.pickupDistrictId;
-                address1.wardId = data.pickupWardId;
-                const address1Insert = await queryRunner.manager.save(AddressEntity, address1);
-                // create information
-                const pickupIf = new InformationEntity();
-                pickupIf.inforId = 0;
-                pickupIf.name = data.pickupName;
-                pickupIf.phone = data.pickupPhone;
-                pickupIf.address = address1Insert;
-                const pickupinforInsert = await queryRunner.manager.save(InformationEntity, pickupIf);
-                puinforid = pickupinforInsert.inforId;
-            } else {
-                puinforid = checkPickupInfor.inforId;
-            }
-            // create new information (deliver information)
-            // create adress
-            const address2 = new AddressEntity();
-            address2.addressId = 0;
-            address2.house = data.pickupHouse;
-            address2.cityId = data.pickupCityId;
-            address2.districtId = data.pickupDistrictId;
-            address2.wardId = data.pickupWardId;
-            const address2Insert = await queryRunner.manager.save(AddressEntity, address2);
-            // create information
-            const deliverIf = new InformationEntity();
-            deliverIf.inforId = 0;
-            deliverIf.name = data.pickupName;
-            deliverIf.phone = data.pickupPhone;
-            deliverIf.address = address2Insert;
-            const deliverinforInsert = await queryRunner.manager.save(InformationEntity, deliverIf);
-            const dlvInforId = deliverinforInsert.inforId;
             //create order
             const order = new OrderEntity();
             order.orderId = 0;
             order.cusId = cusId;
-            order.pickupInforId = puinforid;
+            order.pickupInforId = data.pickupInforId;
             order.pickupShipper = null;
-            order.deliverInforId = dlvInforId;
+            order.deliverInforId = data.deliver_infor_id;
             order.deliverShipper = null;
             order.orderStt = 1;
             order.pkId = data.pkId;
@@ -229,6 +189,10 @@ export class OrderService {
             activityLog.logId = 0;
             activityLog.orderId = order.orderId;
             activityLog.time = new Date();
+            const acctivitylogstatus = new ActivityLogStatusEntity();
+            acctivitylogstatus.alsttId = 1;
+            activityLog.currentStatus = 1;
+            activityLog.logStatus = acctivitylogstatus;
             activityLog.currentStatus = orderCreated.orderStt;
             await queryRunner.manager.save(activityLog);
             await queryRunner.commitTransaction();
