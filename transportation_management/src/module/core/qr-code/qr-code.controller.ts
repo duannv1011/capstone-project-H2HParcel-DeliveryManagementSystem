@@ -89,15 +89,15 @@ export class QrCodeController {
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Assign qr code to order' })
     @ApiOperation({ summary: 'Assign qr code to order' })
-    @UseGuards(AuthGuard)
+    @Roles(Role.SHIPPER)
+    @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
     @ApiUnauthorizedResponse()
     @ApiBody({ type: AssignCodeDto })
     @Post('assign')
-    async assignCodeToOrder(@Body() request: AssignCodeDto): Promise<Response> {
-        const result = await this.qrCodeService.assignCodeToOrder(request);
-
-        return new Response(201, 'success', result, null, 1);
+    async assignCodeToOrder(@Body() request: AssignCodeDto, @UserLogin() user: UserLoginData) {
+        const result = await this.qrCodeService.assignCodeToOrder(request, Number(user.accId));
+        return result;
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -109,8 +109,6 @@ export class QrCodeController {
     @ApiUnauthorizedResponse()
     @Post('qr/staff/scan-qr')
     async scanQr(@Body() request: ScanQrDto, @UserLogin() user: UserLoginData): Promise<Response> {
-        const result = await this.qrCodeService.scanQR(request, Number(user.accId));
-
-        return new Response(201, 'success', result, null, 1);
+        return await this.qrCodeService.scanQR(request, Number(user.accId));
     }
 }

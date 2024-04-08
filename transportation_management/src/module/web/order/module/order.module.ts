@@ -21,6 +21,8 @@ import { WardEntity } from 'src/entities/ward.entity';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
 import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
 import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
+import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
 
 @Module({
     imports: [
@@ -41,6 +43,8 @@ import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
             InformationEntity,
             RequestStatusEntity,
             RequestTypeEntity,
+            ActivityLogEntity,
+            ActivityLogStatusEntity,
             OrderEntity,
             RequestEntity,
             RequestRecordEntity,

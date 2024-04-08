@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { StaffEntity } from './staff.entity';
 import { ActivityLogStatusEntity } from './activity-log-status.entity';
+import { AccountEntity } from './account.entity';
 
 @Entity('ActivityLog')
 export class ActivityLogEntity {
@@ -18,10 +18,9 @@ export class ActivityLogEntity {
     @JoinColumn({ name: 'current_status' })
     logStatus: ActivityLogStatusEntity;
 
-    @Column({ name: 'staff_id', nullable: true })
-    staffId: number;
-
-    @ManyToOne(() => StaffEntity, { eager: true })
-    @JoinColumn({ name: 'staff_id' })
-    staff: StaffEntity;
+    @Column({ name: 'acc_id', nullable: true })
+    accId: number;
+    @ManyToOne(() => AccountEntity, { eager: true })
+    @JoinColumn({ name: 'acc_id' })
+    account: AccountEntity;
 }

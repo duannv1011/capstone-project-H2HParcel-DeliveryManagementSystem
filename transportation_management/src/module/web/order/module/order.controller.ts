@@ -77,7 +77,7 @@ export class OrderController {
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'asign Shipper To Order ' })
     @ApiResponse({ status: 200, description: 'asign Shipper To Orde  successfully.' })
-    async asignShipperToOrder(@Body() data: asignShipperDto) {
-        return this.orderService.asignShipperToOrder(data);
+    async asignShipperToOrder(@Body() data: asignShipperDto, @UserLogin() user: UserLoginData) {
+        return this.orderService.asignShipperToOrder(data, Number(user.accId));
     }
 }

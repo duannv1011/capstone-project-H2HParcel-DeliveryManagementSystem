@@ -18,6 +18,8 @@ import { createTransitRequestDto } from './dto/staff-create-transit.dto';
 import { TransitEntity } from 'src/entities/transit.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
+import { OrderStatusEntity } from 'src/entities/order-status.entity';
 @Injectable()
 export class RequestService {
     constructor(
@@ -321,7 +323,6 @@ export class RequestService {
     }
 
     async resloveOrder(data: StaffUpdateRequestStastus, accId: number) {
-        const staff = await this.staffRepository.findOne({ where: { accId: accId } });
         const reqest = await this.requestRepository.findOneBy({ recordId: data.recordId });
         const order = await this.orderRepository.findOneBy({ orderId: reqest.orderId });
         const queryRunner = this.dataSource.createQueryRunner();
@@ -336,46 +337,74 @@ export class RequestService {
             return 'iligal value for requestStatus';
         }
         reqRc.requestStt = data.requestStatus;
+        const reqstt = new RequestStatusEntity();
+        reqstt.rqs_id = data.requestStatus;
+        reqRc.requestStatus = reqstt;
         if (data.requestStatus === 3) {
-            const cancel = await this.requestRecordRepository.save(reqRc);
-            return cancel ? 'denied Success' : 'error';
+            //update deniel status
+            await queryRunner.manager.save(reqRc);
+            if (reqRc.requestType === 1) {
+                //create ActivityLog for update deniel
+                const activityLog = await this.ActivitylogOrder(order.orderId, 11, accId);
+                await queryRunner.manager.save(ActivityLogEntity, activityLog);
+            }
+            if (reqRc.requestType === 2) {
+                //create ActivityLog for cancel deniel
+                const activityLog = await this.ActivitylogOrder(order.orderId, 14, accId);
+                await queryRunner.manager.save(ActivityLogEntity, activityLog);
+            }
+            await queryRunner.commitTransaction();
+            return 'denied Success';
         } else {
             try {
                 if (reqRc.requestType === 1) {
                     //accept edit
                     //update order
                     const information = reqest.deliverInformation;
+                    console.log(information);
                     order.deliverInformation = information;
                     //
                     await queryRunner.manager.save(order);
                     // update RequestStatus to aporve
                     await queryRunner.manager.save(reqRc);
+                    //create ActivityLog
+                    const activityLog = await this.ActivitylogOrder(order.orderId, 10, accId);
+                    await queryRunner.manager.save(ActivityLogEntity, activityLog);
                     await queryRunner.commitTransaction();
                     return ' aproved update successfull';
                 }
                 if (reqRc.requestType === 2) {
                     //accept cancel
-                    //update order
+                    //update order step1
                     order.deliverInformation = order.pickupInformation;
                     const newPrice = order.estimatedPrice * 0.4;
                     order.estimatedPrice = newPrice;
+                    const orderStatus = new OrderStatusEntity();
+                    orderStatus.sttId = 9;
+                    order.status = orderStatus;
                     await queryRunner.manager.save(order);
-                    // update RequestStatus to aporve
+                    // update RequestStatus to aporve of requestRecord Table
                     await queryRunner.manager.save(reqRc);
                     // crreate log update
-                    const activityLog = new ActivityLogEntity();
-                    activityLog.logId = 0;
-                    activityLog.orderId = order.orderId;
-                    activityLog.time = new Date();
-                    activityLog.staffId = staff.staffId;
-                    //log cancell status
-                    activityLog.currentStatus = 9;
+                    //create ActivityLog step1 aprove cancle log
+                    const activityLog = await this.ActivitylogOrder(order.orderId, 13, accId);
                     await queryRunner.manager.save(ActivityLogEntity, activityLog);
-                    //then update log update order
+                    //end stepp
+                    // start step2
+                    // update order step2
+                    orderStatus.sttId = 7;
+                    order.status = orderStatus;
+                    await queryRunner.manager.save(order);
+                    //create ActivityLog step2
                     const activityLog2: ActivityLogEntity = Object.assign(activityLog);
                     activityLog2.logId = 0;
-                    activityLog2.currentStatus = 6;
+                    activityLog2.currentStatus = 15;
                     await queryRunner.manager.save(ActivityLogEntity, activityLog2);
+                    //create ActivityLog step3
+                    const activityLog3: ActivityLogEntity = Object.assign(activityLog);
+                    activityLog3.logId = 0;
+                    activityLog3.currentStatus = 16;
+                    await queryRunner.manager.save(ActivityLogEntity, activityLog3);
                     await queryRunner.commitTransaction();
                     return 'aproved Cancel successfull';
                 }
@@ -427,5 +456,16 @@ export class RequestService {
             rqRecord.requestStt++;
             await this.requestRecordRepository.update(request.recordId, rqRecord);
         }
+    }
+    async ActivitylogOrder(orderId: number, status: number, accId: number): Promise<ActivityLogEntity> {
+        const activityLog = new ActivityLogEntity();
+        const activitystatus = new ActivityLogStatusEntity();
+        activityLog.logId = 0;
+        activityLog.orderId = orderId;
+        activityLog.currentStatus = status;
+        activitystatus.alsttId = status;
+        activityLog.accId = accId;
+        activityLog.time = new Date();
+        return activityLog;
     }
 }

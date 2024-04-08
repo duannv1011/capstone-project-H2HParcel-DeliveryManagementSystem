@@ -50,6 +50,8 @@ export class OrderService {
         private customerRepository: Repository<CustomerEntity>,
         @InjectRepository(InformationEntity)
         private informationRepository: Repository<InformationEntity>,
+        @InjectRepository(ActivityLogEntity)
+        private activityLogRepository: Repository<ActivityLogEntity>,
         @InjectRepository(AddressEntity)
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
@@ -178,19 +180,10 @@ export class OrderService {
             order.orderStt = 1;
             order.pkId = data.pkId;
             order.estimatedPrice = data.estimatedPrice;
-            const orderCreated = await queryRunner.manager.save(OrderEntity, order);
+            await queryRunner.manager.save(OrderEntity, order);
             //create ActivityLog
-            const activityLog = new ActivityLogEntity();
-            activityLog.staffId = null;
-            activityLog.logId = 0;
-            activityLog.orderId = order.orderId;
-            activityLog.time = new Date();
-            const acctivitylogstatus = new ActivityLogStatusEntity();
-            acctivitylogstatus.alsttId = 1;
-            activityLog.currentStatus = 1;
-            activityLog.logStatus = acctivitylogstatus;
-            activityLog.currentStatus = orderCreated.orderStt;
-            await queryRunner.manager.save(activityLog);
+            const activityLog = await this.ActivitylogOrder(order.orderId, 1, accId);
+            await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
             return 'create order successfully';
         } catch (error) {
@@ -331,6 +324,9 @@ export class OrderService {
                 await queryRunner.manager.save(RequestRecordEntity, requestRecord);
             }
 
+            //create ActivityLog
+            const activityLog = await this.ActivitylogOrder(data.orderId, 9, accId);
+            await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
             return 'send edit request successfully';
         } catch (error) {
@@ -352,11 +348,24 @@ export class OrderService {
         if (oStt > 4) {
             return { orderStatus: oStt, error: 'canot Cancel this order' };
         }
-
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
+            if (order.orderStt === 1) {
+                // update order to cancel
+                const orderStatus = new OrderStatusEntity();
+                orderStatus.sttId = 9;
+                order.status = orderStatus;
+                order.estimatedPrice = 0;
+                await queryRunner.manager.save(order);
+                // log activity order to 15
+                //create ActivityLog
+                const activityLog = await this.ActivitylogOrder(order.orderId, 15, accId);
+                await queryRunner.manager.save(ActivityLogEntity, activityLog);
+                await queryRunner.commitTransaction();
+                return 'Cancel successfull';
+            }
             const checkHaveRequest = await this.requesRecodtRepository
                 .createQueryBuilder('rc')
                 .leftJoinAndSelect('rc.requests', 'r')
@@ -389,6 +398,9 @@ export class OrderService {
                 request.requesrRecord = requestRecordInsertreult;
                 await queryRunner.manager.save(RequestEntity, request);
             }
+            //create ActivityLog
+            const activityLog = await this.ActivitylogOrder(order.orderId, 12, accId);
+            await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
             return 'send Cancel request successfully';
         } catch (error) {
@@ -443,7 +455,7 @@ export class OrderService {
         return Number(priceMultiplier.multiplier);
     }
 
-    async asignShipperToOrder(data: asignShipperDto) {
+    async asignShipperToOrder(data: asignShipperDto, accId) {
         const order = await this.orderRepository.findOneBy({ orderId: data.orderId });
         const orderStatus = new OrderStatusEntity();
 
@@ -456,9 +468,35 @@ export class OrderService {
             orderStatus.sttId = 7;
             order.deliverShipper = data.shiperrId;
         }
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            //update order
+            order.status = orderStatus;
+            await queryRunner.manager.save(order);
+            //create ActivityLog
+            const activityLog = await this.ActivitylogOrder(order.orderId, orderStatus.sttId, accId);
+            await queryRunner.manager.save(ActivityLogEntity, activityLog);
+            await queryRunner.commitTransaction();
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error;
+        } finally {
+            await queryRunner.release();
+        }
 
-        order.status = orderStatus;
-        await this.orderRepository.save(order);
         return 'assign shipper successfully';
+    }
+    async ActivitylogOrder(orderId: number, status: number, accId: number): Promise<ActivityLogEntity> {
+        const activityLog = new ActivityLogEntity();
+        const activitystatus = new ActivityLogStatusEntity();
+        activityLog.logId = 0;
+        activityLog.orderId = orderId;
+        activityLog.currentStatus = status;
+        activitystatus.alsttId = status;
+        activityLog.accId = accId;
+        activityLog.time = new Date();
+        return activityLog;
     }
 }

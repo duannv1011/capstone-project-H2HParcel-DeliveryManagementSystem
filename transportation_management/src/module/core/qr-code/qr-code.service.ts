@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { QrCodeCreateDto } from './dto/qr-code.create.dto';
 import * as moment from 'moment-timezone';
 import * as JSZip from 'jszip';
@@ -16,6 +16,8 @@ import { OrderEntity } from '../../../entities/order.entity';
 import { ScanQrDto } from './dto/scan-qr-code.dto';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
+import { OrderStatusEntity } from 'src/entities/order-status.entity';
 
 @Injectable()
 export class QrCodeService {
@@ -26,6 +28,8 @@ export class QrCodeService {
         private orderRepository: Repository<OrderEntity>,
         @InjectRepository(StaffEntity)
         private staffRepository: Repository<StaffEntity>,
+        @InjectRepository(OrderStatusEntity)
+        private orderStatusRepository: Repository<OrderStatusEntity>,
         private dataSource: DataSource,
     ) {}
 
@@ -139,23 +143,44 @@ export class QrCodeService {
      *
      * @param request AssignCodeCreateDto
      */
-    async assignCodeToOrder(request: AssignCodeDto): Promise<boolean> {
+    async assignCodeToOrder(request: AssignCodeDto, accId) {
+        const code = await this.codeRepository.findOne({ where: { codeValue: request.codeValue } });
+        console.log(code);
+        const orderdata = await this.orderRepository.findOneBy({ orderId: request.orderId });
+        if (!code) {
+            return 'code value not found';
+        }
+        if (code.order) {
+            return 'code is asigned please asign new QR code';
+        }
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
         try {
-            const code: QRCodeEntity = await this.codeRepository.findOne({ where: { codeValue: request.codeValue } });
-
-            if (code) {
-                const order: OrderEntity = new OrderEntity();
-                order.orderId = request.orderId;
-                code.order = order;
-                await this.codeRepository.save(code);
-
-                return true;
-            }
-
-            return false;
+            //update code tale
+            const order = new OrderEntity();
+            order.orderId = request.orderId;
+            code.order = order;
+            code.price = orderdata.estimatedPrice.toString();
+            code.qrUrl = '';
+            await queryRunner.manager.save(code);
+            // update order status
+            const orderStaus = new OrderStatusEntity();
+            orderStaus.sttId = 3;
+            orderdata.status = orderStaus;
+            orderdata.orderStt = 3;
+            await queryRunner.manager.save(OrderEntity, orderdata);
+            //create ActivityLog
+            const activityLog = await this.ActivitylogOrder(order.orderId, orderStaus.sttId, accId);
+            await queryRunner.manager.save(ActivityLogEntity, activityLog);
+            await queryRunner.commitTransaction();
+            return `order: ${order.orderId} is asign to qr: ${code.codeValue}`;
         } catch (error) {
-            Logger.log(error);
-            throw new InternalServerErrorException();
+            console.error('Error occurred:', error);
+            await queryRunner.rollbackTransaction();
+            return 'Error occurred while assigning code to order';
+        } finally {
+            await queryRunner.release();
         }
     }
 
@@ -186,28 +211,46 @@ export class QrCodeService {
         if (!staff) {
             return 'staff not found';
         }
-        const staffId = Number(staff.staffId);
         const code = await this.codeRepository
             .createQueryBuilder('qr')
             .leftJoinAndSelect('qr.order', 'o')
             .where('qr.code_value =:codeValue', { codeValue: data.qrCode })
             .getOne();
+        if (!code || !code.order) {
+            return 'code not found or is not asigned any order';
+        }
         const statusId = Number(code.order.orderStt);
         if (7 < statusId || statusId < 3) {
             return 'can not Scan this Order';
         }
-        const order: OrderEntity = code.order;
+        const order = await this.orderRepository.findOneBy({ orderId: code.order.orderId });
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
-
         try {
+            const orderStatus = new OrderStatusEntity();
             if ([3, 5].includes(statusId) && [3, 4].includes(staff.account.role.roleId)) {
-                const orderUpdate = await this.updateOrder(order, queryRunner, staffId);
-                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${orderUpdate.status.sttName}` };
+                //update order
+                orderStatus.sttId = order.orderStt + 1;
+                order.status = orderStatus;
+                const orderUpdate = await queryRunner.manager.save(order);
+                //create ActivityLog
+                const activityLog = await this.ActivitylogOrder(order.orderId, orderUpdate.orderStt, accId);
+                await queryRunner.manager.save(activityLog);
+                await queryRunner.commitTransaction();
+                const stt = await this.orderStatusRepository.findOneBy({ sttId: orderStatus.sttId });
+                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${stt.sttName}` };
             } else if ([4, 6].includes(statusId) && staff.account.role.roleId === 2) {
-                const orderUpdate = await this.updateOrder(order, queryRunner, staffId);
-                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${orderUpdate.status.sttName}` };
+                //update order
+                orderStatus.sttId = order.orderStt + 1;
+                order.status = orderStatus;
+                const orderUpdate = await queryRunner.manager.save(order);
+                //create ActivityLog
+                const activityLog = await this.ActivitylogOrder(order.orderId, orderUpdate.orderStt, accId);
+                await queryRunner.manager.save(activityLog);
+                await queryRunner.commitTransaction();
+                const stt = await this.orderStatusRepository.findOneBy({ sttId: orderStatus.sttId });
+                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${stt.sttName}` };
             } else {
                 return 'can not Scan this Order';
             }
@@ -219,17 +262,15 @@ export class QrCodeService {
         }
     }
 
-    async updateOrder(order: OrderEntity, queryRunner: QueryRunner, staffId: number) {
-        order.orderStt++;
-        const orderUpdate = await queryRunner.manager.save(order);
-
+    async ActivitylogOrder(orderId: number, status: number, accId: number): Promise<ActivityLogEntity> {
         const activityLog = new ActivityLogEntity();
-        activityLog.staffId = staffId;
+        const activitystatus = new ActivityLogStatusEntity();
         activityLog.logId = 0;
-        activityLog.orderId = order.orderId;
+        activityLog.orderId = orderId;
+        activityLog.currentStatus = status;
+        activitystatus.alsttId = status;
+        activityLog.accId = accId;
         activityLog.time = new Date();
-        activityLog.currentStatus = orderUpdate.orderStt;
-        await queryRunner.manager.save(activityLog);
-        return orderUpdate;
+        return activityLog;
     }
 }
