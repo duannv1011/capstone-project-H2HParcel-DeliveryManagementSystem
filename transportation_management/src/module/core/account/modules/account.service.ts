@@ -9,6 +9,7 @@ import { CustomerEntity } from 'src/entities/customer.entity';
 import { decode } from 'jsonwebtoken';
 import { JwtPayload } from 'src/shared/jwtToken._itf';
 import { Response } from 'src/module/response/Response';
+import { changePasswordDto } from '../dto/changePass_dto';
 
 @Injectable()
 export class AccountService {
@@ -74,13 +75,17 @@ export class AccountService {
         }
     }
 
-    async updateCustomerPass(password: string, token: string): Promise<any> {
+    async updateCustomerPass(data: changePasswordDto, token: string): Promise<any> {
         const JwtPayload = decode(token) as JwtPayload;
         const account = await this.accountRepository.findOne({ where: { accId: JwtPayload.id } });
+        const checkPass = bcrypt.compare(data.oldpassword, account.password);
         if (!account) {
             return new Response(404, 'notfound', null);
         }
-        const newpass = await this.hashpassword(password);
+        if (!checkPass) {
+            return new Response(400, 'old password is wrong', null);
+        }
+        const newpass = await this.hashpassword(data.newpassword);
         const update = await this.accountRepository
             .createQueryBuilder()
             .update(AccountEntity)

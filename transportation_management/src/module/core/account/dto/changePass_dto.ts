@@ -9,5 +9,13 @@ export class changePasswordDto {
     @Matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/, {
         message: 'Invalid password format exp:Abcd@123',
     })
-    password: string;
+    oldpassword: string;
+    @IsString()
+    @IsNotEmpty({ message: 'Null value error for password' })
+    @MinLength(8, { message: 'Password must be at least 8 characters long' })
+    @ApiProperty({ example: 'password', description: 'The password' })
+    @Matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/, {
+        message: 'Invalid password format exp:Abcd@123',
+    })
+    newpassword: string;
 }

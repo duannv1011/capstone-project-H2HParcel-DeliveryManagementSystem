@@ -49,7 +49,7 @@ export class AccountController {
     @UsePipes(ValidationPipe)
     async updateCustomerPass(@Body() pass: changePasswordDto, @Req() request: Request) {
         const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
-        return this.accountService.updateCustomerPass(pass.password, token);
+        return this.accountService.updateCustomerPass(pass, token);
     }
     @Get('getdistance')
     async getDistance(@Query('warehouse1') warehouse1: number, @Query('warehouse2') warehouse2: number) {

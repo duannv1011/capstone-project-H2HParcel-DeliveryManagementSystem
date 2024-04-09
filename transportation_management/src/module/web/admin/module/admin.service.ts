@@ -308,7 +308,6 @@ export class AdminService {
                 const packageTypeToUpdate = await this.packageTypeRepository.findOneBy({ pkId: id });
                 packageTypeToUpdate.pkPrice =
                     id === 1 ? data.paperPrice : id === 2 ? data.smallParcelprice : data.mediumParcelPrice;
-
                 await queryRunner.manager.save(packageTypeToUpdate);
             }
             for (const id of idsToUpdate) {
