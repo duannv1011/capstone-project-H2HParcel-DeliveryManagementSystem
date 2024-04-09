@@ -118,6 +118,7 @@ CREATE TABLE "Order" (
   "order_stt" integer,
   "pk_id" integer,
   "estimated_price" integer
+  "image_verify_url" varchar
 );
 
 CREATE TABLE "PackageType" (
