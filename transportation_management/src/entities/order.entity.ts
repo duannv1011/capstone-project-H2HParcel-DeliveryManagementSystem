@@ -57,4 +57,7 @@ export class OrderEntity extends AbstractEntity {
     @ManyToOne(() => PackageTypeEntity, { eager: true })
     @JoinColumn({ name: 'pk_id' })
     packageType: PackageTypeEntity;
+
+    @Column({ name: 'image_verify_url', nullable: true })
+    public imageVerifyUrl: string;
 }

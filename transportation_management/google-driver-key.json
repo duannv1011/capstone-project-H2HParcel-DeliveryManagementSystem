@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "plated-planet-419720",
+  "private_key_id": "51d1f175ddd64267cab9a25545b884ded3e2120f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDmLYdWMnAoCE9t\nE7xAFuHAXZfoo4dfwFhbFuOGOByImrNaVfjRkcpBpriCSUIpNGKiRn7dqtG67pT1\noHxkNp2Duh5UdPg4VxC0THH0ZEpdCg0b3NbNNnqWqsQoc+q2C7vMy8smDTJQkG5B\nsHlGsf+g3M4TmFGLKZsvqqFhigo4CqTmxmafpRdv6dVxd0Ex9SUwFdshdQUXm/Sg\n7uZo+Gd+xwZm0Y+TWJC2dbu89hR2EKuIU/biHjkeePO7txRI9kZW6IfmAJmkNBxx\nn+eAGym+B1SPQEiqe4q1tjhrNif0p2B8KqVMZSSRB9/eRtXkdGYtT/loAA+RaORb\n+dtCmLktAgMBAAECggEAIfEUw+EsKLsQ+0StvcWiBHvIqsVycOwsG0KEyoX7rykg\nyXFj/4NAD+5FxvCGkQzofoVmr8lApBAKZy4DKcPj9ki7sDiPYb909yFOrHsdfBq/\nVBx8kEY4TX9g7ZYqRi30w35JtpK7mKWznHwpZgNZbp8gxELxw1OfTqgapAd2+kxP\n7ICsurUnVH6v3bWfZful5LpDoUx/RLwKw9v11TVnbefLk44fgiDr3r1Yz8kyI+oT\n5xE3y3vitjx9lAh3idtR5og7TPCRORlwDGs3rPOWqd/loiOP4/NrItcBEleP87Jo\ngQBvDfgse+J+O0JyutJYZJpgcu6QUKdIVf43GN7oAQKBgQD1LCsdbzI14UVySr4S\nCam4/nXQffyoWXalF/bpr5S3GenjDZoLazjdRjevUIlaMnm702vZ/QrrVTWypnen\nWVP9FmuTsCBYkvjxdSfiW3O/aVw2I30vTP4wFg9YxWdZXNlpk2AYFlJ093H2EIPz\nCt7avVz5VgYMSNbh9RPNQ2LL1QKBgQDwV9X0ixnSCxeOen+eUfZW/emRiZzMLin8\ndv09ingfWknQZhlXpZHEZqx4lDZsxxScLf1VxuKcI/xfKW6W1bQzKcGRUYj92Cdt\nzEa+/jW67YBS7F2/T9bPA58kD/aWWQN4Fy1OGehy4hbqtgIXeoJi/QPR8V30C8KD\nUmF4MX0b+QKBgQCXixaXWg0iKr1fWP3Fbn2fIII4Pje2452njHmNln8I8paURusJ\n1dvPQkDXN6O+weZnB9bpZjSipAfOBoF9SoTUslAKeNp1hVsk/LKLgtW34esid6tA\nWonftTMFPveT0AV+8Z57JQkQzYZ+f1TgHL8FW/klEVwpqbhQ8MitntJphQKBgGLL\n+It50rdhD+HlwSgXkSfZYHYPF4FnSKMbVqZBkXdx6f3cunYo/W66thMq+eRlQbeh\nwA3On8CHmmqT4X3ngxe1BnjyB1oxzKN54WsJnJSmpKVxvGe0Lh0S5Awy866CEMcA\n4ALG66KuBbWd8+Yq2gZO848NpQ14+BB7gM2jqkYhAoGBALAjdGwWGVDnyfahVrnP\nktvsLPufhktJCz0BIaiNUg3tpL4AR6S/O1CWZKjSp6BV/bc7PV67VrLpjvt3J2cT\nfDtC0omWHnpARUcwZ+FEQ3gxXpCuc3wbE4725nOTFrGCTsbBJT7vBkhsdrHYF2p7\n70GxgKwGzuL2P7kxgAsg9ggs\n-----END PRIVATE KEY-----\n",
+  "client_email": "googledrive@plated-planet-419720.iam.gserviceaccount.com",
+  "client_id": "114279480661045562944",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/googledrive%40plated-planet-419720.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -8,7 +8,6 @@ import { AccountEntity } from 'src/entities/account.entity';
 import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
-import { OrderEntity } from 'src/entities/order.entity';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
 import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
@@ -21,6 +20,9 @@ import { StaffEntity } from 'src/entities/staff.entity';
 import { WardEntity } from 'src/entities/ward.entity';
 import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
+import { GoogleDriveConfig, GoogleDriveModule } from 'nestjs-googledrive-upload';
+import * as googleDriverConfig from '../../../../google-driver-key.json';
+import { OrderEntity } from 'src/entities/order.entity';
 
 @Module({
     imports: [
@@ -41,7 +43,6 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
             InformationEntity,
             RequestStatusEntity,
             RequestTypeEntity,
-            OrderEntity,
             RequestEntity,
             RequestRecordEntity,
         ]),
@@ -50,6 +51,7 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
             secret: process.env.SECRET_KEY,
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
+        GoogleDriveModule.register(googleDriverConfig as GoogleDriveConfig, process.env.GOOGLE_DRIVER_FOLDER_ID),
     ],
     controllers: [ShipperController],
     providers: [ShipperService],
