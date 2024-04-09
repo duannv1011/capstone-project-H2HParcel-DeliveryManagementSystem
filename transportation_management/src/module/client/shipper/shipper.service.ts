@@ -176,6 +176,7 @@ export class ShipperService {
                         const orderstatus = new OrderStatusEntity();
                         orderstatus.sttId = 9;
                         orderEntity.orderStt = 9;
+                        orderEntity.status = orderstatus;
                         await this.orderRepository.update(orderId, orderEntity);
                         //crate Activity Log
                         const activityLog = await this.ActivitylogOrder(orderEntity.orderId, 9, accId);

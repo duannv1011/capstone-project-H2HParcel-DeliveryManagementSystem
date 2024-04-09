@@ -163,6 +163,7 @@ export class OrderService {
                   status: dataQuery.status.sttName,
                   pakeType: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,
+                  confirmurl: dataQuery.imageVerifyUrl ? dataQuery.imageVerifyUrl : '',
               }
             : null;
         return order ? order : 'query error or not found';
