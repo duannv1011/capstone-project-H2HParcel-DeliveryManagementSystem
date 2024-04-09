@@ -146,8 +146,8 @@ CREATE TABLE "ActivityLog" (
   "staff" integer
 );
 CREATE TABLE "ActivityLogStatus" (
-  "status_id" SERIAL  PRIMARY KEY,
-  "status_name" varchar
+  "alstt_id" SERIAL  PRIMARY KEY,
+  "alstt_name" varchar
 );
 --request stt1,2
 CREATE TABLE "Request" (

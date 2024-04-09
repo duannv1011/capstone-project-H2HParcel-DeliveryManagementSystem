@@ -26,6 +26,16 @@ export class OrderController {
     async getAllOrders(@UserLogin() userLogin: UserLoginData, @Query('pageNo') pageNo: number) {
         return this.orderService.getAllOrders(userLogin.accId, pageNo);
     }
+
+    @Get('customer-order/order/activitylog')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'get All Customer Order ActivityLog' })
+    @ApiResponse({ status: 200, description: 'get   successfully.' })
+    async getallOrderLog(@UserLogin() userLogin: UserLoginData, @Query('order_id') order_id: number) {
+        return this.orderService.getallOrderLog(userLogin.accId, order_id);
+    }
     @Get('customer-order/order-detail')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)

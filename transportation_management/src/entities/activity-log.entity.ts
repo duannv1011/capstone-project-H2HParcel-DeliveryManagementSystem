@@ -20,6 +20,7 @@ export class ActivityLogEntity {
 
     @Column({ name: 'acc_id', nullable: true })
     accId: number;
+
     @ManyToOne(() => AccountEntity, { eager: true })
     @JoinColumn({ name: 'acc_id' })
     account: AccountEntity;

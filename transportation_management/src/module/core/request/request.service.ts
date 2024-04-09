@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { RequestUpdateDto } from './dto/request.update.dto';
 import { Paging } from '../../response/Paging';
-import { RequestRecord, RequestRecordDetailResponse, RequestRecordResponse } from './response/request-record.response';
+import { RequestRecord, RequestRecordResponse } from './response/request-record.response';
 import { Builder } from 'builder-pattern';
 import { RequestRecordEntity } from '../../../entities/request-record.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
@@ -157,43 +157,61 @@ export class RequestService {
      *
      * @param recordId
      */
-    async findRequestRecordDetail(recordId: number): Promise<RequestRecordDetailResponse> {
+    async findRequestRecordDetail(recordId: number) {
         try {
             const record = await this.requestRecordRepository
-                .createQueryBuilder()
-                .select('requestRecord')
-                .from(RequestRecordEntity, 'requestRecord')
-                .leftJoinAndMapOne(
-                    'requestRecord.request',
-                    RequestEntity,
-                    'request',
-                    'requestRecord.referId = request.requestId',
-                )
-                .leftJoinAndMapOne(
-                    'request.deliverInformation',
-                    InformationEntity,
-                    'deliverInformation',
-                    'request.deliverInfor = deliverInformation.inforId',
-                )
-                .leftJoinAndMapOne(
-                    'requestRecord.requestType',
-                    RequestTypeEntity,
-                    'requestType',
-                    'requestRecord.requestType = requestType.rtId',
-                )
-                .leftJoinAndMapOne(
-                    'requestRecord.requestStatus',
-                    RequestStatusEntity,
-                    'requestStatus',
-                    'requestRecord.requestStt = requestStatus.rqsId',
-                )
-                .where('requestRecord.recordId = :recordId', { recordId: recordId })
-                .andWhere('requestStatus.rqsId IN (:...requestStatusIn)', {
-                    requestStatusIn: [RequestStatus.PROCESSING, RequestStatus.APPROVED],
-                })
+                .createQueryBuilder('record')
+                .leftJoinAndSelect('record.requests', 'request') // Join RequestEntity
+                .leftJoinAndSelect('record.transits', 'transit')
+                .leftJoinAndSelect('transit.staff', 's')
+                .leftJoinAndSelect('transit.warehoueFromTable', 'whf')
+                .leftJoinAndSelect('transit.warehoueToTable', 'wht')
+                .leftJoinAndSelect('record.requestTypeTable', 'rqt')
+                .leftJoinAndSelect('record.requestStatus', 'rqs')
+                .leftJoinAndSelect('request.order', 'order')
+                .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
+                .leftJoinAndSelect('request.deliverInformation', 'requestdeli')
+                .leftJoinAndSelect('requestdeli.address', 'address')
+                .leftJoinAndSelect('address.city', 'city')
+                .leftJoinAndSelect('address.district', 'district')
+                .leftJoinAndSelect('address.ward', 'ward')
+                .where('record.record_id = :recordId', { recordId: recordId })
                 .getOne();
+            const response = record
+                ? {
+                      recordId: record.recordId ? record.recordId : '',
+                      requestTypeId: record.requestTypeTable ? record.requestTypeTable.requestTypeId : '',
+                      requestType: record.requestTypeTable ? record.requestTypeTable.requestTypeName : '',
+                      requesStatusId: record.requestStatus ? record.requestStatus.rqs_id : '',
+                      requesStatus: record.requestStatus ? record.requestStatus.rqs_name : '',
+                      transitdata: record.transits
+                          ? {
+                                warehoueFromId: record.transits ? record.transits.warehoueFromTable.warehouseId : '',
+                                warehoueFrom: record.transits ? record.transits.warehoueFromTable.warehouseName : '',
+                                warehoueToId: record.transits ? record.transits.warehoueToTable.warehouseId : '',
+                                warehoueTo: record.transits ? record.transits.warehoueToTable.warehouseName : '',
+                                staffId: record.transits ? record.transits.staff.staffId : '',
+                                staff: record.transits ? record.transits.staff.fullname : '',
+                            }
+                          : '',
 
-            return { record: this.toRequestRecord(record) };
+                      requestdata: record.requests
+                          ? {
+                                orderId: record.requests ? record.requests.orderId : '',
+                                inforId: record.requests.deliverInformation.inforId,
+                                name: record.requests.deliverInformation.name,
+                                phone: record.requests.deliverInformation.phone,
+                                house: record.requests.deliverInformation.address.house,
+                                city: record.requests.deliverInformation.address.city.cityName,
+                                district: record.requests.deliverInformation.address.district.districtName,
+                                ward: record.requests.deliverInformation.address.ward.wardName,
+                            }
+                          : '',
+                      note: record.note,
+                      date_created: record.date_create_at ? record.date_create_at : '',
+                  }
+                : null;
+            return response;
         } catch (error) {
             Logger.log(error);
             throw new InternalServerErrorException();
@@ -345,12 +363,12 @@ export class RequestService {
             await queryRunner.manager.save(reqRc);
             if (reqRc.requestType === 1) {
                 //create ActivityLog for update deniel
-                const activityLog = await this.ActivitylogOrder(order.orderId, 11, accId);
+                const activityLog = await this.ActivitylogOrder(order.orderId, 12, accId);
                 await queryRunner.manager.save(ActivityLogEntity, activityLog);
             }
             if (reqRc.requestType === 2) {
                 //create ActivityLog for cancel deniel
-                const activityLog = await this.ActivitylogOrder(order.orderId, 14, accId);
+                const activityLog = await this.ActivitylogOrder(order.orderId, 15, accId);
                 await queryRunner.manager.save(ActivityLogEntity, activityLog);
             }
             await queryRunner.commitTransaction();
@@ -368,7 +386,7 @@ export class RequestService {
                     // update RequestStatus to aporve
                     await queryRunner.manager.save(reqRc);
                     //create ActivityLog
-                    const activityLog = await this.ActivitylogOrder(order.orderId, 10, accId);
+                    const activityLog = await this.ActivitylogOrder(order.orderId, 11, accId);
                     await queryRunner.manager.save(ActivityLogEntity, activityLog);
                     await queryRunner.commitTransaction();
                     return ' aproved update successfull';
@@ -380,30 +398,30 @@ export class RequestService {
                     const newPrice = order.estimatedPrice * 0.4;
                     order.estimatedPrice = newPrice;
                     const orderStatus = new OrderStatusEntity();
-                    orderStatus.sttId = 9;
+                    orderStatus.sttId = 10;
                     order.status = orderStatus;
                     await queryRunner.manager.save(order);
                     // update RequestStatus to aporve of requestRecord Table
                     await queryRunner.manager.save(reqRc);
                     // crreate log update
                     //create ActivityLog step1 aprove cancle log
-                    const activityLog = await this.ActivitylogOrder(order.orderId, 13, accId);
+                    const activityLog = await this.ActivitylogOrder(order.orderId, 14, accId);
                     await queryRunner.manager.save(ActivityLogEntity, activityLog);
                     //end stepp
                     // start step2
                     // update order step2
-                    orderStatus.sttId = 7;
+                    orderStatus.sttId = 8;
                     order.status = orderStatus;
                     await queryRunner.manager.save(order);
                     //create ActivityLog step2
                     const activityLog2: ActivityLogEntity = Object.assign(activityLog);
                     activityLog2.logId = 0;
-                    activityLog2.currentStatus = 15;
+                    activityLog2.currentStatus = 16;
                     await queryRunner.manager.save(ActivityLogEntity, activityLog2);
                     //create ActivityLog step3
                     const activityLog3: ActivityLogEntity = Object.assign(activityLog);
                     activityLog3.logId = 0;
-                    activityLog3.currentStatus = 16;
+                    activityLog3.currentStatus = 17;
                     await queryRunner.manager.save(ActivityLogEntity, activityLog3);
                     await queryRunner.commitTransaction();
                     return 'aproved Cancel successfull';

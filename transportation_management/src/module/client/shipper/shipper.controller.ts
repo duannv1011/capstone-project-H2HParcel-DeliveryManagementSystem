@@ -40,4 +40,13 @@ export class ShipperController {
     async getOrderDetail(@Query('order_id') order_id: number) {
         return this.shipperService.getDetailOrder(order_id);
     }
+    @Get('shipper/order/finish-order')
+    @Roles(Role.SHIPPER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'shipper take photo confirm then completed order' })
+    @ApiResponse({ status: 200, description: 'successfully.' })
+    async finishOrder(@Query('order_id') order_id: number) {
+        return this.shipperService.finishOrder(order_id);
+    }
 }

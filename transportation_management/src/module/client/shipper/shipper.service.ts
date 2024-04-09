@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
+import { OrderStatusEntity } from 'src/entities/order-status.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
@@ -132,5 +133,12 @@ export class ShipperService {
             fullname: s.fullname,
         }));
         return shippers ? response : 'not found!';
+    }
+    async finishOrder(orderId: number) {
+        const order = await this.orderRepository.findOneBy({ orderId: orderId });
+        const orderStatus = new OrderStatusEntity();
+        orderStatus.sttId = 9;
+        order.status = orderStatus;
+        await this.orderRepository.save(order);
     }
 }

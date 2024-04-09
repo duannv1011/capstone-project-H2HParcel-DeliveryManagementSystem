@@ -109,6 +109,14 @@ export class OrderService {
             totalpage,
         };
     }
+    async getallOrderLog(accid, orderId) {
+        const activitylog = await this.activityLogRepository
+            .createQueryBuilder('a')
+            .leftJoinAndSelect('a.logStatus', 's')
+            .where('a.order_id =:orderId', { orderId: orderId })
+            .getMany();
+        return activitylog ? activitylog : 'error';
+    }
 
     async getDetailOrder(orderId: number, accId: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
@@ -355,13 +363,13 @@ export class OrderService {
             if (order.orderStt === 1) {
                 // update order to cancel
                 const orderStatus = new OrderStatusEntity();
-                orderStatus.sttId = 9;
+                orderStatus.sttId = 10;
                 order.status = orderStatus;
                 order.estimatedPrice = 0;
                 await queryRunner.manager.save(order);
                 // log activity order to 15
                 //create ActivityLog
-                const activityLog = await this.ActivitylogOrder(order.orderId, 15, accId);
+                const activityLog = await this.ActivitylogOrder(order.orderId, 16, accId);
                 await queryRunner.manager.save(ActivityLogEntity, activityLog);
                 await queryRunner.commitTransaction();
                 return 'Cancel successfull';
@@ -399,7 +407,7 @@ export class OrderService {
                 await queryRunner.manager.save(RequestEntity, request);
             }
             //create ActivityLog
-            const activityLog = await this.ActivitylogOrder(order.orderId, 12, accId);
+            const activityLog = await this.ActivitylogOrder(order.orderId, 13, accId);
             await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
             return 'send Cancel request successfully';

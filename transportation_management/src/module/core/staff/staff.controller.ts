@@ -25,7 +25,7 @@ export class StaffController {
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Get staff profile' })
     @ApiOperation({ summary: 'Get staff profile' })
-    @Roles(Role.STAFF, Role.SHIPPER)
+    @Roles(Role.STAFF, Role.SHIPPER, Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('profile')

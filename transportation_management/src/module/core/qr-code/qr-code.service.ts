@@ -240,7 +240,7 @@ export class QrCodeService {
                 await queryRunner.commitTransaction();
                 const stt = await this.orderStatusRepository.findOneBy({ sttId: orderStatus.sttId });
                 return { order: orderUpdate.hasId, msg: `Order updated successfully to:${stt.sttName}` };
-            } else if ([4, 6].includes(statusId) && staff.account.role.roleId === 2) {
+            } else if ([4, 7].includes(statusId) && staff.account.role.roleId === 2) {
                 //update order
                 orderStatus.sttId = order.orderStt + 1;
                 order.status = orderStatus;
