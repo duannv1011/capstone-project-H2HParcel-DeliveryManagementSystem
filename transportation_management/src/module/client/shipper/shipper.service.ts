@@ -9,6 +9,8 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { Paging } from 'src/module/response/Paging';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { GoogleDriveService } from 'nestjs-googledrive-upload';
+import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
 
 @Injectable()
 export class ShipperService {
@@ -77,7 +79,22 @@ export class ShipperService {
         const paging = new Paging(pageNo, pageSize, count);
         return { response, paging };
     }
-
+    async shiperUpdateprice(order_id: number, price: number) {
+        const order = await this.orderRepository.findOneBy({ orderId: order_id });
+        if (order.pkId != 4) {
+            return 'Packgage type iligal to update';
+        }
+        if (order) {
+            order.estimatedPrice = price;
+            try {
+                await this.orderRepository.save(order);
+            } catch (error) {
+                throw new InternalServerErrorException(error);
+            }
+        } else {
+            throw new InternalServerErrorException('order not found');
+        }
+    }
     async getDetailOrder(orderId: number): Promise<any> {
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')
@@ -140,7 +157,7 @@ export class ShipperService {
         return shippers ? response : 'not found!';
     }
 
-    async imageUpload(file: Express.Multer.File, orderId: number): Promise<boolean> {
+    async imageUpload(file: Express.Multer.File, orderId: number, accId: number): Promise<boolean> {
         try {
             if (file) {
                 const orderEntity = await this.orderRepository.findOne({
@@ -150,10 +167,27 @@ export class ShipperService {
                 });
 
                 if (orderEntity) {
-                    orderEntity.imageVerifyUrl = await this.googleDriveService.uploadImage(file);
-                    await this.orderRepository.update(orderId, orderEntity);
-
-                    return true;
+                    const queryRunner = this.dataSource.createQueryRunner();
+                    await queryRunner.connect();
+                    await queryRunner.startTransaction();
+                    try {
+                        //update order
+                        orderEntity.imageVerifyUrl = await this.googleDriveService.uploadImage(file);
+                        const orderstatus = new OrderStatusEntity();
+                        orderstatus.sttId = 9;
+                        orderEntity.orderStt = 9;
+                        await this.orderRepository.update(orderId, orderEntity);
+                        //crate Activity Log
+                        const activityLog = await this.ActivitylogOrder(orderEntity.orderId, 9, accId);
+                        await queryRunner.manager.save(ActivityLogEntity, activityLog);
+                        await queryRunner.commitTransaction();
+                        return true;
+                    } catch (error) {
+                        await queryRunner.rollbackTransaction();
+                        throw new InternalServerErrorException(error);
+                    } finally {
+                        await queryRunner.release();
+                    }
                 }
 
                 return false;
@@ -162,6 +196,17 @@ export class ShipperService {
             Logger.log(error);
             throw new InternalServerErrorException();
         }
+    }
+    async ActivitylogOrder(orderId: number, status: number, accId: number): Promise<ActivityLogEntity> {
+        const activityLog = new ActivityLogEntity();
+        const activitystatus = new ActivityLogStatusEntity();
+        activityLog.logId = 0;
+        activityLog.orderId = orderId;
+        activityLog.currentStatus = status;
+        activitystatus.alsttId = status;
+        activityLog.accId = accId;
+        activityLog.time = new Date();
+        return activityLog;
     }
     async finishOrder(orderId: number) {
         const order = await this.orderRepository.findOneBy({ orderId: orderId });

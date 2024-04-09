@@ -16,7 +16,7 @@ import { PackageTypeEntity } from 'src/entities/package-type.entity';
 import { CaculataOrderPrice } from '../dto/caculate-order-price.dto';
 import { WardEntity } from 'src/entities/ward.entity';
 import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
-import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 import { CusCreateOrderDto } from '../dto/customer-create-order.dto';
 import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';

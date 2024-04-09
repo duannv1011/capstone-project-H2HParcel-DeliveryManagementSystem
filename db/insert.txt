@@ -771,3 +771,14 @@ VALUES
   ('CANCEL REQUEST DENIED'),15
   ('ORDER CANCELED'),16
   ('RETURNING ORDER');17
+--payRule
+INSERT INTO "PayRule" ("effort", "pay_rule_name")
+VALUES
+  (2750, 'effort value'),
+  (10, 'paper order'),
+  (5, 'small parcel order'),
+  (10, 'medium parcel order'),
+  (20, 'big parcel order'),
+  (25, 'transit 0-5'),
+  (50, 'transit 5-12'),
+  (75, 'transit 12-50');

@@ -9,7 +9,7 @@ import { AddressBookEntity } from 'src/entities/address-book.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
-import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 import { QRCodeEntity } from 'src/entities/qrcode.entity';
 import { RequestRecordEntity } from 'src/entities/request-record.entity';
 import { RequestStatusEntity } from 'src/entities/request-status.entity';

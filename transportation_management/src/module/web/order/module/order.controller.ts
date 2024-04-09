@@ -81,7 +81,7 @@ export class OrderController {
     async caculateOrderPrice(@Body() data: CaculataOrderPrice) {
         return this.orderService.caculateOrderPrice(data);
     }
-    @Put('customer-order/quick-update-order')
+    @Put('staff-order/quick-update-order')
     @Roles(Role.MANAGER, Role.STAFF)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')

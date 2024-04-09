@@ -13,6 +13,9 @@ import { RoleEntity } from 'src/entities/role.entity';
 import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
 import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
+import { UpdateMutiplier } from '../dto/admin-mutiplier-update.dto';
+import { UpdatePriceAndMutiplier } from '../dto/admin-update-price-mutiplier.dto';
 
 @Injectable()
 export class AdminService {
@@ -29,6 +32,8 @@ export class AdminService {
         private roleRepository: Repository<RoleEntity>,
         @InjectRepository(PackageTypeEntity)
         private packageTypeRepository: Repository<PackageTypeEntity>,
+        @InjectRepository(PriceMultiplierEntity)
+        private priceMutilplierRepository: Repository<PriceMultiplierEntity>,
         private dataSource: DataSource,
         private configService: ConfigService,
         private authenticationService: AuthenticationService,
@@ -272,6 +277,9 @@ export class AdminService {
     }
     async updatePageTypeById(data: UpdatePakageType) {
         const pkt = await this.packageTypeRepository.findOneBy({ pkId: data.pkId });
+        if (data.pkId === 4) {
+            return { status: 404, msg: 'Can not update this type' };
+        }
         pkt.pkName = data.pkName;
         pkt.pkPrice = data.pkPrice;
         await this.packageTypeRepository.save(pkt);
@@ -279,5 +287,47 @@ export class AdminService {
             status: 200,
             msg: 'update success',
         };
+    }
+    async getAllPriceMutilplier() {
+        return await this.priceMutilplierRepository.find();
+    }
+    async updatePriceMutilplier(data: UpdateMutiplier) {
+        const multiplier = await this.priceMutilplierRepository.findOneBy({ id: data.id });
+        multiplier.minDistance = data.minDistance;
+        multiplier.maxDistance = data.maxDistance;
+        multiplier.multiplier = data.mutiplier;
+        return await this.priceMutilplierRepository.save(multiplier);
+    }
+    async updatePriceAndMutiplier(data: UpdatePriceAndMutiplier) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            const idsToUpdate = [1, 2, 3];
+            for (const id of idsToUpdate) {
+                const packageTypeToUpdate = await this.packageTypeRepository.findOneBy({ pkId: id });
+                packageTypeToUpdate.pkPrice =
+                    id === 1 ? data.paperPrice : id === 2 ? data.smallParcelprice : data.mediumParcelPrice;
+
+                await queryRunner.manager.save(packageTypeToUpdate);
+            }
+            for (const id of idsToUpdate) {
+                const multiplier = await this.priceMutilplierRepository.findOneBy({ id: id });
+                multiplier.multiplier = id === 1 ? data.mutiplier1 : id === 2 ? data.mutiplier2 : data.mutiplier3;
+                await queryRunner.manager.save(multiplier);
+            }
+            await queryRunner.commitTransaction();
+            return {
+                status: 200,
+                msg: 'update success',
+            };
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            return error;
+        } finally {
+            await queryRunner.release();
+        }
+
+        return true;
     }
 }

@@ -19,7 +19,7 @@ import { RequestStatusEntity } from 'src/entities/request-status.entity';
 import { RequestTypeEntity } from 'src/entities/request-type.entity';
 import { WardEntity } from 'src/entities/ward.entity';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
-import { PriceMultiplierEntity } from 'src/entities/price-mutiplỉe.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';

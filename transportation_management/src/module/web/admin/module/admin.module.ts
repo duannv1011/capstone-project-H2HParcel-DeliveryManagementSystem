@@ -19,6 +19,7 @@ import { QRCodeEntity } from 'src/entities/qrcode.entity';
 import { InformationEntity } from 'src/entities/information.entity';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { PackageTypeEntity } from 'src/entities/package-type.entity';
             AddressEntity,
             WarehouseEntity,
             OrderEntity,
+            PriceMultiplierEntity,
             PackageTypeEntity,
             RoleEntity,
             QRCodeEntity,

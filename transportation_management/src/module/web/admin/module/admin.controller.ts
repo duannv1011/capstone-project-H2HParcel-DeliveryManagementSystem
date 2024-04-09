@@ -10,6 +10,8 @@ import { CreateStaffDto } from '../dto/staff-create.dto';
 import { updateStaffDto } from '../dto/staff-update.dto';
 import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
+import { UpdateMutiplier } from '../dto/admin-mutiplier-update.dto';
+import { UpdatePriceAndMutiplier } from '../dto/admin-update-price-mutiplier.dto';
 
 @Controller('admin')
 @ApiTags('SUPER ADMIN')
@@ -85,7 +87,7 @@ export class AdminController {
     async createStaff(@Body() data: CreateStaffDto): Promise<any> {
         return await this.adminService.adminCreateStaff(data);
     }
-    @Post('admin/packages-tpye')
+    @Get('admin/packages-type')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -94,7 +96,7 @@ export class AdminController {
     async getAllPackagetype(): Promise<any> {
         return await this.adminService.getAllPackagetype();
     }
-    @Post('admin/packages-tpye/update')
+    @Post('admin/packages-type/update')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
@@ -102,5 +104,33 @@ export class AdminController {
     @ApiResponse({ status: 200, description: 'get successfully.' })
     async updatePageTypeById(@Body() data: UpdatePakageType): Promise<any> {
         return await this.adminService.updatePageTypeById(data);
+    }
+    @Get('admin/price-mutiplier')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'admin get All PriceMutiplier' })
+    @ApiResponse({ status: 200, description: 'get successfully.' })
+    async getAllPriceMutilplier(): Promise<any> {
+        return await this.adminService.getAllPriceMutilplier();
+    }
+    @Post('admin/price-mutiplier/update')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'admin get All packageType ' })
+    @ApiResponse({ status: 200, description: 'get successfully.' })
+    async updatepriceMutiplier(@Body() data: UpdateMutiplier): Promise<any> {
+        return await this.adminService.updatePriceMutilplier(data);
+    }
+
+    @Post('price-mutiplier/update')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'admin update All packageType and Mutiplier' })
+    @ApiResponse({ status: 200, description: 'get successfully.' })
+    async updatePriceAndMutiplier(@Body() data: UpdatePriceAndMutiplier): Promise<any> {
+        return await this.adminService.updatePriceAndMutiplier(data);
     }
 }

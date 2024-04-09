@@ -51,6 +51,15 @@ export class ShipperController {
     async getOrderDetail(@Query('order_id') order_id: number) {
         return this.shipperService.getDetailOrder(order_id);
     }
+    @Put('shipper/order/update-price')
+    @Roles(Role.SHIPPER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'get Detail of Orders by shipper' })
+    @ApiResponse({ status: 200, description: 'get Detail Orders  successfully.' })
+    async shiperUpdateprice(@Query('order_id') order_id: number, @Query('price') price: number) {
+        return this.shipperService.shiperUpdateprice(order_id, price);
+    }
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Upload verify image order to google driver' })
@@ -63,8 +72,9 @@ export class ShipperController {
     async imageUpload(
         @UploadedFile() file: Express.Multer.File,
         @Query('orderId', ParseIntPipe) orderId: number,
+        @UserLogin() user: UserLoginData,
     ): Promise<Response> {
-        const result = await this.shipperService.imageUpload(file, orderId);
+        const result = await this.shipperService.imageUpload(file, orderId, Number(user.accId));
         return new Response(200, 'success', result, null, 1);
     }
     @Get('shipper/order/finish-order')
