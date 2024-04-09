@@ -51,7 +51,10 @@ import { OrderEntity } from 'src/entities/order.entity';
             secret: process.env.SECRET_KEY,
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
-        GoogleDriveModule.register(googleDriverConfig as GoogleDriveConfig, process.env.GOOGLE_DRIVER_FOLDER_ID),
+        GoogleDriveModule.register(
+            googleDriverConfig as GoogleDriveConfig,
+            process.env.GOOGLE_DRIVER_EVIDENCE_FOLDER_ID,
+        ),
     ],
     controllers: [ShipperController],
     providers: [ShipperService],
