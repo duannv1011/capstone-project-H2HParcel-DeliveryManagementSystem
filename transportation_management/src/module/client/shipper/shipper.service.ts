@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
-import { OrderEntity } from 'src/entities/order.entity';
+import { OrderEntity } from '../../../entities/order.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { Paging } from 'src/module/response/Paging';
 import { Brackets, DataSource, Repository } from 'typeorm';
+import { GoogleDriveService } from 'nestjs-googledrive-upload';
 
 @Injectable()
 export class ShipperService {
@@ -22,7 +23,9 @@ export class ShipperService {
         @InjectRepository(AddressEntity)
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
+        private readonly googleDriveService: GoogleDriveService,
     ) {}
+
     async findAllOrder(pageNo: number, accId): Promise<any> {
         const pageSize = Number(process.env.PAGE_SIZE);
         const shipper = await this.staffEntity.findOneBy({ accId: accId });
@@ -73,6 +76,7 @@ export class ShipperService {
         const paging = new Paging(pageNo, pageSize, count);
         return { response, paging };
     }
+
     async getDetailOrder(orderId: number): Promise<any> {
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')
@@ -118,6 +122,7 @@ export class ShipperService {
             : null;
         return order ? order : 'query error or not found';
     }
+
     async getshipperToAsign(accId: number) {
         const staff = await this.staffEntity.findOneBy({ accId: accId });
         const shippers = await this.staffEntity
@@ -132,5 +137,29 @@ export class ShipperService {
             fullname: s.fullname,
         }));
         return shippers ? response : 'not found!';
+    }
+
+    async imageUpload(file: Express.Multer.File, orderId: number): Promise<boolean> {
+        try {
+            if (file) {
+                const orderEntity = await this.orderRepository.findOne({
+                    where: {
+                        orderId: orderId,
+                    },
+                });
+
+                if (orderEntity) {
+                    orderEntity.imageVerifyUrl = await this.googleDriveService.uploadImage(file);
+                    await this.orderRepository.update(orderId, orderEntity);
+
+                    return true;
+                }
+
+                return false;
+            }
+        } catch (error) {
+            Logger.log(error);
+            throw new InternalServerErrorException();
+        }
     }
 }
