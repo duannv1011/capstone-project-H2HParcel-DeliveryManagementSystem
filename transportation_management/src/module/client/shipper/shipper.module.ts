@@ -23,6 +23,7 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { GoogleDriveConfig, GoogleDriveModule } from 'nestjs-googledrive-upload';
 import * as googleDriverConfig from '../../../../google-driver-key.json';
 import { OrderEntity } from 'src/entities/order.entity';
+import * as dotenv from 'dotenv/config';
 
 @Module({
     imports: [
