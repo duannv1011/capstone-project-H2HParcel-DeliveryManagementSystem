@@ -224,116 +224,69 @@ export class OrderService {
         if (checkIsCancel) {
             return 'this order is Cancel or delivered';
         }
-        // const checkPickupInfor = await this.addressbookRepository.findOne({
-        //     where: { cusId: cusId, inforId: data.pickupInforId ? data.pickupInforId : 0 },
-        // });
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            // create or set exisited pickupinforid to be use
-            // create or set exisited pickupinforid to be use
-            //const puinforid = 0;
-
-            // if (oStt === 1) {
-            //     if (!checkPickupInfor) {
-            //         // create adress
-            //         const address1 = new AddressEntity();
-            //         address1.addressId = 0;
-            //         address1.house = data.pickupHouse;
-            //         address1.cityId = data.pickupCityId;
-            //         address1.districtId = data.pickupDistrictId;
-            //         address1.wardId = data.pickupWardId;
-            //         const address1Insert = await queryRunner.manager.save(AddressEntity, address1);
-            //         // create information
-            //         const pickupIf = new InformationEntity();
-            //         pickupIf.inforId = 0;
-            //         pickupIf.name = data.pickupName;
-            //         pickupIf.phone = data.pickupPhone;
-            //         pickupIf.address = address1Insert;
-            //         const pickupinforInsert = await queryRunner.manager.save(InformationEntity, pickupIf);
-            //         puinforid = pickupinforInsert.inforId;
-            //         console.log('stt=1 , new pickup:' + puinforid);
-            //     } else {
-            //         puinforid = checkPickupInfor.inforId;
-            //         console.log('stt=1, old pickup' + puinforid);
-            //     }
-            // }
-            // console.log(puinforid);
-
-            // create new information (deliyver information)
-            const checkRequestLigal = await this.requestRepository
-                .createQueryBuilder('r')
-                .leftJoinAndSelect('r.requesrRecord', 'rc')
+            const checkRequestLigal = await this.requesRecodtRepository
+                .createQueryBuilder('rc')
+                .leftJoinAndSelect('rc.requests', 'r')
                 .leftJoinAndSelect('r.order', 'o')
                 .leftJoinAndSelect('o.status', 's')
                 .leftJoinAndSelect('r.deliverInformation', 'di')
                 .leftJoinAndSelect('di.address', 'a')
                 .where('rc.request_type =:requestType', { requestType: 1 })
-                .where('rc.request_stt =:requestStt', { requestStt: 1 })
                 .andWhere('r.order_id =:orderId', { orderId: order.orderId })
                 .getOne();
-
-            if (!checkRequestLigal) {
-                //create deliver address
-                const address2 = new AddressEntity();
-                address2.addressId = 0;
-                address2.house = data.deliverHouse;
-                address2.cityId = data.deliverCityId;
-                address2.districtId = data.deliverDistrictId;
-                address2.wardId = data.deliverWardId;
-                const address2Insert = await queryRunner.manager.save(AddressEntity, address2);
-                // create deliver information
-                const deliverIf = new InformationEntity();
-                deliverIf.inforId = 0;
-                deliverIf.name = data.deliverName;
-                deliverIf.phone = data.deliverPhone;
-                deliverIf.address = address2Insert;
-                const deliverinforInsert = await queryRunner.manager.save(InformationEntity, deliverIf);
-                const dlvInforId = deliverinforInsert.inforId;
-                //create RequestRecord
+            if (checkRequestLigal) {
+                // update request
+                const requestupdate: RequestEntity = checkRequestLigal.requests;
+                const deliverupdate = new InformationEntity();
+                deliverupdate.inforId = data.deliverInforId;
+                requestupdate.deliverInfor = data.deliverInforId;
+                requestupdate.deliverInformation = deliverupdate;
+                await queryRunner.manager.save(requestupdate);
+                //update requestRecord
+                const requestType = new RequestTypeEntity();
+                requestType.requestTypeId = 1;
+                const requestStatus = new RequestStatusEntity();
+                requestStatus.rqs_id = 1;
+                checkRequestLigal.requestType = 1;
+                checkRequestLigal.requestStt = 1;
+                checkRequestLigal.requestTypeTable = requestType;
+                checkRequestLigal.requestStatus = requestStatus;
+                checkRequestLigal.note = data.note;
+                await queryRunner.manager.save(checkRequestLigal);
+            } else {
+                //create requestRecord
+                const requestType = new RequestTypeEntity();
+                requestType.requestTypeId = 1;
+                const requestStatus = new RequestStatusEntity();
+                requestStatus.rqs_id = 1;
                 const requestRecord = new RequestRecordEntity();
                 requestRecord.recordId = 0;
                 requestRecord.requestType = 1;
+                requestRecord.requestTypeTable = requestType;
                 requestRecord.requestStt = 1;
+                requestRecord.requestStatus = requestStatus;
                 requestRecord.note = data.note;
-                const requestRcInsertreult = await queryRunner.manager.save(RequestRecordEntity, requestRecord);
-                //create  Request
+                const recordUpdate = await queryRunner.manager.save(RequestRecordEntity, requestRecord);
+                //create request
                 const request = new RequestEntity();
                 request.requestId = 0;
-                request.recordId = requestRcInsertreult.recordId;
-                request.orderId = order.orderId;
+                request.recordId = recordUpdate.recordId;
+                request.order = order;
+                request.orderId = data.orderId;
+                const deliver = new InformationEntity();
+                deliver.inforId = data.deliverInforId;
                 request.pickupInfor = order.pickupInforId;
-                request.deliverInfor = dlvInforId;
+                request.pickupInformation = order.pickupInformation;
+                request.deliverInfor = data.deliverInforId;
+                request.deliverInformation = deliver;
                 await queryRunner.manager.save(RequestEntity, request);
-            } else {
-                //update deliver address
-                const address = await queryRunner.manager.findOneBy(AddressEntity, {
-                    addressId: checkRequestLigal.deliverInformation.address.addressId,
-                });
-                address.house = data.deliverHouse;
-                address.cityId = data.deliverCityId;
-                address.districtId = data.deliverDistrictId;
-                address.wardId = data.deliverWardId;
-                console.log(address.house);
-                await queryRunner.manager.save(AddressEntity, address);
-                //update deliver information
-                const deliverIf = await queryRunner.manager.findOneBy(InformationEntity, {
-                    inforId: checkRequestLigal.deliverInformation.inforId,
-                });
-                deliverIf.name = data.deliverName;
-                deliverIf.phone = data.deliverPhone;
-                await queryRunner.manager.save(InformationEntity, deliverIf);
-                //update request record
-                const requestRecord = await queryRunner.manager.findOneBy(RequestRecordEntity, {
-                    recordId: checkRequestLigal.recordId,
-                });
-                requestRecord.note = data.note;
-                await queryRunner.manager.save(RequestRecordEntity, requestRecord);
             }
-
             //create ActivityLog
-            const activityLog = await this.ActivitylogOrder(data.orderId, 9, accId);
+            const activityLog = await this.ActivitylogOrder(order.orderId, 10, accId);
             await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
             return 'send edit request successfully';
