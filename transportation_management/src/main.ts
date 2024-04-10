@@ -4,7 +4,8 @@ import { AppModule } from './app.module';
 import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
 import * as dotenv from 'dotenv';
 async function bootstrap() {
-    dotenv.config({ path: __dirname + '/.env' });
+    dotenv.config({ path: process.cwd() + '/.env' });
+    console.log(process.cwd() + '/.env');
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
         .setTitle('delevery service')

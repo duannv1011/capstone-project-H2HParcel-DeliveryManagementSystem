@@ -53,7 +53,7 @@ import { OrderEntity } from 'src/entities/order.entity';
         }),
         GoogleDriveModule.register(
             googleDriverConfig as GoogleDriveConfig,
-            '15oucDyYYlux4mVvm0B6DwypS7bPI_Fi_',
+            process.env.GOOGLE_DRIVER_EVIDENCE_FOLDER_ID,
         ),
     ],
     controllers: [ShipperController],
