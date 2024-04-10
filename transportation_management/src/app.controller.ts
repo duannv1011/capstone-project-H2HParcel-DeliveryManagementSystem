@@ -7,6 +7,8 @@ export class AppController {
 
     @Get('Hello')
     getHello(): string {
+        console.log(process.env.GOOGLE_DRIVER_EVIDENCE_FOLDER_ID);
+        console.log(process.cwd() + '/env');
         return this.appService.getHello();
     }
 }
