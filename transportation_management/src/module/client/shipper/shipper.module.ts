@@ -24,12 +24,14 @@ import { GoogleDriveConfig, GoogleDriveModule } from 'nestjs-googledrive-upload'
 import * as googleDriverConfig from '../../../../google-driver-key.json';
 import { OrderEntity } from 'src/entities/order.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([
             AccountEntity,
             AddressBookEntity,
+            ActivityLogEntity,
             StaffEntity,
             WarehouseRuleEntity,
             CustomerEntity,
