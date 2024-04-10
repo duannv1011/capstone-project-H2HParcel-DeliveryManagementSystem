@@ -17,7 +17,13 @@ export class OrderViewService {
         @InjectRepository(StaffEntity)
         private staffRepository: Repository<StaffEntity>,
     ) {}
-
+    private orderDirection: string = 'ASC';
+    private setOrderDirection(orderby: string) {
+        this.orderDirection = orderby;
+    }
+    private getOrderDirection() {
+        return this.orderDirection;
+    }
     pageSize = Number(process.env.PAGE_SIZE);
 
     /**
@@ -165,7 +171,83 @@ export class OrderViewService {
 
         return { orders: [], paging: null };
     }
+    async findAllByWarehouseFilters(
+        pageNo: number,
+        userLogin: UserLoginData,
+        searchValue: string,
+        orderStatus: number,
+    ): Promise<OrderResponse> {
+        try {
+            orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
+            searchValue = searchValue ? searchValue : '';
+            const warehouseId = (await this.getStaff(userLogin)).warehouseId;
+            if (warehouseId) {
+                const queryBuilder = await this.orderRepository
+                    .createQueryBuilder('order')
+                    .innerJoinAndSelect('order.status', 'orderStatus')
+                    .leftJoinAndSelect('order.customer', 'customer')
+                    .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
+                    .leftJoinAndSelect('order.deliverInformation', 'deliverInformation')
+                    .leftJoinAndSelect('order.pickupShipperStaff', 'pickupShipperStaff')
+                    .leftJoinAndSelect('order.deliverShipperStaff', 'deliverShipperStaff')
+                    .leftJoinAndSelect('order.packageType', 'packageType')
+                    .leftJoinAndSelect('pickupInformation.address', 'pickupAddress')
+                    .leftJoinAndSelect('pickupAddress.city', 'pickupCity')
+                    .leftJoinAndSelect('pickupAddress.district', 'pickupDistrict')
+                    .leftJoinAndSelect('pickupAddress.ward', 'pickupWard')
+                    .leftJoinAndSelect('deliverInformation.address', 'deliverAddress')
+                    .leftJoinAndSelect('deliverAddress.city', 'deliverCity')
+                    .leftJoinAndSelect('deliverAddress.district', 'deliverDistrict')
+                    .leftJoinAndSelect('deliverAddress.ward', 'deliverWard')
+                    .where(
+                        new Brackets((qb) => {
+                            qb.where('pickupWard.warehouse_id = :warehouseId', {
+                                warehouseId: warehouseId,
+                            }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                        }),
+                    )
+                    .andWhere(
+                        new Brackets((qb) => {
+                            qb.where('pickupShipperStaff.fullname LIKE :pfullname', { pfullname: `%${searchValue}%` })
+                                .orWhere('deliverShipperStaff.fullname LIKE :dfullname', {
+                                    dfullname: `%${searchValue}%`,
+                                })
+                                .orWhere('pickupInformation.name LIKE :pifullname', { pifullname: `%${searchValue}%` })
+                                .orWhere('pickupInformation.phone LIKE :piphone', { piphone: `%${searchValue}%` })
+                                .orWhere('deliverInformation.name LIKE :pifullname', { pifullname: `%${searchValue}%` })
+                                .orWhere('deliverInformation.phone LIKE :piphone', { piphone: `%${searchValue}%` });
+                        }),
+                    )
+                    .skip((pageNo - 1) * this.pageSize)
+                    .take(this.pageSize);
+                if (orderStatus !== 0) {
+                    queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: orderStatus });
+                }
+                if (this.getOrderDirection() === 'ASC') {
+                    queryBuilder.orderBy('order.date_create_at', 'ASC');
+                    this.setOrderDirection('DESC');
+                } else {
+                    queryBuilder.orderBy('order.date_create_at', 'DESC');
+                    this.setOrderDirection('ASC');
+                }
+                const [orders, total] = await queryBuilder.getManyAndCount();
+                console.log(total);
+                const orderList = [];
+                orders.forEach((element) => {
+                    orderList.push(this.toOrder(element));
+                });
 
+                const paging: Paging = new Paging(pageNo, this.pageSize, total);
+
+                return { orders: orderList, paging: paging };
+            }
+
+            return { orders: [], paging: null };
+        } catch (error) {
+            console.error('Error in findAllByWarehouseFilters:', error);
+            throw new Error('An error occurred while fetching orders.');
+        }
+    }
     /**
      * Find orders by range time.
      *
@@ -246,7 +328,7 @@ export class OrderViewService {
                 .pickupPhoneNumber(pickupUser ? pickupUser.phone : '')
                 .pickupAddress(
                     pickupUser
-                        ? `${pickupUser.address.district.districtName} - ${pickupUser.address.city.cityName}`
+                        ? `${pickupUser.address.house}-${pickupUser.address.ward.wardName}-${pickupUser.address.district.districtName} - ${pickupUser.address.city.cityName}`
                         : '',
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
@@ -256,7 +338,7 @@ export class OrderViewService {
                 .deliverPhoneNumber(deliverUser ? deliverUser.phone : '')
                 .deliverAddress(
                     deliverUser
-                        ? `${deliverUser.address.district.districtName} - ${deliverUser.address.city.cityName}`
+                        ? `${deliverUser.address.house}-${deliverUser.address.ward.wardName}-${deliverUser.address.district.districtName} - ${deliverUser.address.city.cityName}`
                         : '',
                 )
                 .deliverStaffName(deliverStaff ? deliverStaff.fullname : '')

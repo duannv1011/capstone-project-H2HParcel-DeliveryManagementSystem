@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { OrderEntity } from 'src/entities/order.entity';
@@ -194,7 +194,7 @@ export class OrderService {
             const activityLog = await this.ActivitylogOrder(order.orderId, 1, accId);
             await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
-            return 'create order successfully';
+            return { status: 200, msg: 'success' };
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;
@@ -290,7 +290,7 @@ export class OrderService {
             const activityLog = await this.ActivitylogOrder(order.orderId, 10, accId);
             await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
-            return 'send edit request successfully';
+            return { status: 200, msg: 'send edit request successfully' };
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;
@@ -326,7 +326,7 @@ export class OrderService {
                 const activityLog = await this.ActivitylogOrder(order.orderId, 16, accId);
                 await queryRunner.manager.save(ActivityLogEntity, activityLog);
                 await queryRunner.commitTransaction();
-                return 'Cancel successfull';
+                return { status: 200, msg: 'send Cancel request successfully' };
             }
             const checkHaveRequest = await this.requesRecodtRepository
                 .createQueryBuilder('rc')
@@ -336,7 +336,10 @@ export class OrderService {
                 .where('r.order_id =:orderId', { orderId: order.orderId })
                 .getOne();
             if (checkHaveRequest && checkHaveRequest.requestType === 2) {
-                return { error: 'this order is processing cancel or was cancel!Canot re Cancel again this order' };
+                return {
+                    status: HttpStatus.CONFLICT,
+                    error: 'this order is processing cancel or was cancel!Canot re Cancel again this order',
+                };
             }
 
             if (checkHaveRequest && checkHaveRequest.requestType === 1) {
@@ -364,7 +367,7 @@ export class OrderService {
             const activityLog = await this.ActivitylogOrder(order.orderId, 13, accId);
             await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
-            return 'send Cancel request successfully';
+            return { status: 200, msg: 'send Cancel request successfully' };
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;

@@ -1,6 +1,14 @@
 import { Body, Controller, Get, ParseIntPipe, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Response } from '../../response/Response';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiBody,
+    ApiOkResponse,
+    ApiOperation,
+    ApiQuery,
+    ApiTags,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { StaffProfileUpdateDto } from '../../../shared/dto/profile/staff_profile.update.dto';
 import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
@@ -12,7 +20,6 @@ import { UserLoginData } from '../authentication/dto/user_login_data';
 import { StaffService } from './staff.service';
 import { OrderStatusUpdateDto } from './dto/order-status.update.dto';
 import { OrderViewService } from '../../../shared/service/order-view.service';
-
 @ApiTags('staff')
 @Controller('staff')
 export class StaffController {
@@ -88,6 +95,29 @@ export class StaffController {
         const result = await this.orderService.findAllByStaff(pageNo, userLogin);
 
         return new Response(200, 'true', result.orders, result.paging, 1);
+    }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View all order by warehouse of staff and filter' })
+    @ApiOperation({ summary: 'View all order by warehouse of staff filter' })
+    @Roles(Role.STAFF, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @ApiQuery({ name: 'seachValue', required: false, type: String })
+    @ApiQuery({ name: 'orderStatus', required: false, type: Number })
+    @Get('order/all-filters')
+    async findAllByWarehouseFilters(
+        @UserLogin() userLogin: UserLoginData,
+        @Query('pageNo', ParseIntPipe) pageNo: number,
+        @Query('seachValue') seachValue: string,
+        @Query('orderStatus') orderStatus: number,
+    ) {
+        if (!orderStatus && orderStatus !== 0) {
+            orderStatus = 0;
+        }
+        if (!seachValue && orderStatus === null) {
+            seachValue = '';
+        }
+        return await this.orderService.findAllByWarehouseFilters(pageNo, userLogin, seachValue, orderStatus);
     }
 
     @ApiBearerAuth('JWT-auth')

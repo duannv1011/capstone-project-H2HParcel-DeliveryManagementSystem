@@ -17,6 +17,8 @@ export class ShipperService {
     constructor(
         @InjectRepository(OrderEntity)
         private orderRepository: Repository<OrderEntity>,
+        @InjectRepository(ActivityLogEntity)
+        private activityLogRepository: Repository<ActivityLogEntity>,
         @InjectRepository(CustomerEntity)
         private customerEntity: Repository<CustomerEntity>,
         @InjectRepository(StaffEntity)
@@ -28,7 +30,13 @@ export class ShipperService {
         private dataSource: DataSource,
         private readonly googleDriveService: GoogleDriveService,
     ) {}
-
+    private orderDirection: string = 'ASC';
+    private setOrderDirection(orderby: string) {
+        this.orderDirection = orderby;
+    }
+    private getOrderDirection() {
+        return this.orderDirection;
+    }
     async findAllOrder(pageNo: number, accId): Promise<any> {
         const pageSize = Number(process.env.PAGE_SIZE);
         const shipper = await this.staffEntity.findOneBy({ accId: accId });
@@ -79,6 +87,84 @@ export class ShipperService {
         const paging = new Paging(pageNo, pageSize, count);
         return { response, paging };
     }
+    async getAllorderSearch(pageNo: number, accId, orderStatus: number): Promise<any> {
+        orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
+        // searchValue = searchValue ? searchValue.trim().toUpperCase() : '';
+        // console.log(searchValue);
+        const pageSize = Number(process.env.PAGE_SIZE);
+        const shipper = await this.staffEntity.findOneBy({ accId: accId });
+        const shipperId = Number(shipper.staffId);
+        const query = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('o.pickupShipperStaff', 'ps')
+            .leftJoinAndSelect('o.deliverShipperStaff', 'ds')
+            .leftJoinAndSelect('o.status', 'os')
+            .leftJoinAndSelect('o.packageType', 'op')
+            .leftJoinAndSelect('pi.address', 'pa')
+            .leftJoinAndSelect('pa.city', 'pc')
+            .leftJoinAndSelect('pa.district', 'pdi')
+            .leftJoinAndSelect('pa.ward', 'pw')
+            .leftJoinAndSelect('di.address', 'da')
+            .leftJoinAndSelect('da.city', 'dc')
+            .leftJoinAndSelect('da.district', 'ddi')
+            .leftJoinAndSelect('da.ward', 'dw')
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('o.pickupShipper = :shipperId', {
+                        shipperId: shipperId,
+                    }).orWhere('o.deliverShipper = :shipperId', { shipperId: shipperId });
+                }),
+            )
+            // .andWhere(
+            //     new Brackets((qb) => {
+            //         qb.where('UPPER(ps.fullname) LIKE :pfullname', { pfullname: `%${searchValue}%` })
+            //             .orWhere('UPPER(ds.fullname) LIKE :dfullname', {
+            //                 dfullname: `%${searchValue}%`,
+            //             })
+            //             .orWhere('UPPER(pi.name) LIKE :pifullname', { pifullname: `%${searchValue}%` })
+            //             .orWhere('UPPER(pi.phone) LIKE :piphone', { piphone: `%${searchValue}%` })
+            //             .orWhere('UPPER(di.name) LIKE :pifullname', { pifullname: `%${searchValue}%` })
+            //             .orWhere('UPPER(di.phone) LIKE :piphone', { piphone: `%${searchValue}%` });
+            //     }),
+            // )
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize);
+        if (orderStatus !== 0) {
+            query.andWhere('o.order_stt = :orderStatus', { orderStatus: orderStatus });
+        }
+        query.orderBy('o.orderId', 'DESC');
+        // if (this.getOrderDirection() === 'ASC') {
+        //     query.orderBy('o.orderId', 'ASC');
+        //     this.setOrderDirection('DESC');
+        // } else {
+        //     query.orderBy('o.orderId', 'DESC');
+        //     this.setOrderDirection('ASC');
+        // }
+        const [orders, count] = await query.getManyAndCount();
+        const response = orders.map((o) => ({
+            orderId: o.orderId,
+            status: o.status.sttName,
+            senderName: o.pickupInformation.name,
+            pickupPhoneNumber: o.pickupInformation.phone,
+            pickupAddress: `${o.pickupInformation.address.house}-${o.pickupInformation.address.ward.wardName}-${o.pickupInformation.address.district.districtName}-${o.pickupInformation.address.city.cityName}`,
+            pickupStaffName: o.pickupShipperStaff ? o.pickupShipperStaff.fullname : '',
+            receiverName: o.deliverInformation.name,
+            deliverPhoneNumber: o.deliverInformation.phone,
+            deliverAddress: `${o.deliverInformation.address.house}-${o.deliverInformation.address.ward.wardName}-${o.deliverInformation.address.district.districtName}-${o.deliverInformation.address.city.cityName}`,
+            deliverStaffName: o.deliverShipperStaff ? o.deliverShipperStaff.fullname : '',
+            pickUpdateWarehouseId: o.pickupInformation.address.ward.warehouseId,
+            deliverUpdateWarehouseId: o.deliverInformation.address.ward.warehouseId,
+            packageTypeId: o.packageType.pkId,
+            packageTypeName: o.packageType.pkName,
+            price: o.estimatedPrice,
+        }));
+
+        const paging = new Paging(pageNo, pageSize, count);
+        return { response, paging };
+    }
+
     async shiperUpdateprice(order_id: number, price: number) {
         const order = await this.orderRepository.findOneBy({ orderId: order_id });
         if (order.pkId != 4) {
@@ -178,9 +264,17 @@ export class ShipperService {
                         orderEntity.orderStt = 9;
                         orderEntity.status = orderstatus;
                         await this.orderRepository.update(orderId, orderEntity);
-                        //crate Activity Log
-                        const activityLog = await this.ActivitylogOrder(orderEntity.orderId, 9, accId);
-                        await queryRunner.manager.save(ActivityLogEntity, activityLog);
+                        const checklog = await this.activityLogRepository.findOne({
+                            where: { orderId: orderId, currentStatus: 9 },
+                        });
+                        if (checklog) {
+                            checklog.time = new Date();
+                            await queryRunner.manager.save(checklog);
+                        } else {
+                            //crate Activity Log
+                            const activityLog = await this.ActivitylogOrder(orderEntity.orderId, 9, accId);
+                            await queryRunner.manager.save(ActivityLogEntity, activityLog);
+                        }
                         await queryRunner.commitTransaction();
                         return true;
                     } catch (error) {

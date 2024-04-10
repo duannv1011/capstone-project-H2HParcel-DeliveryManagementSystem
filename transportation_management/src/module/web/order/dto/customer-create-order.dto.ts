@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CusCreateOrderDto {
     //@ApiProperty({ example: 11, description: 'cusId' })
@@ -7,7 +7,7 @@ export class CusCreateOrderDto {
     @IsNotEmpty({ message: 'null value for cusId ' })
     cusId: number;
 
-    @ApiProperty({ example: 10, description: 'pickup_infor_id is null or = 0 if not a default' })
+    @ApiProperty({ example: 10, description: 'pickup_infor_id' })
     @IsNumber()
     //@IsNotEmpty({ message: 'null value for pickup_infor_id ' })
     pickupInforId: number;

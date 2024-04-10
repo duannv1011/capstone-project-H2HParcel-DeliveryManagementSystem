@@ -7,6 +7,7 @@ import {
     ApiBearerAuth,
     ApiOkResponse,
     ApiOperation,
+    ApiQuery,
     ApiResponse,
     ApiTags,
     ApiUnauthorizedResponse,
@@ -30,6 +31,24 @@ export class ShipperController {
     @ApiResponse({ status: 200, description: 'get All Customer Orders  successfully.' })
     async getAllorder(@Query('pageNo') pageNo: number, @UserLogin() uselogin: UserLoginData): Promise<any> {
         return await this.shipperService.findAllOrder(pageNo, Number(uselogin.accId));
+    }
+    @Get('shipper/orders-search')
+    @Roles(Role.SHIPPER)
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiOperation({ summary: 'get All Orders of shipper and search' })
+    @ApiResponse({ status: 200, description: 'search All Customer Orders  successfully.' })
+    // @ApiQuery({ name: 'seachValue', required: false, type: String })
+    @ApiQuery({ name: 'orderStatus', required: false, type: Number })
+    async getAllorderSearch(
+        @Query('pageNo') pageNo: number,
+        @UserLogin() uselogin: UserLoginData,
+        // @Query('seachValue') seachValue: string,
+        @Query('orderStatus') orderStatus: number,
+    ): Promise<any> {
+        // seachValue = seachValue ? seachValue : '';
+        orderStatus = orderStatus ? orderStatus : 0;
+        return await this.shipperService.getAllorderSearch(pageNo, Number(uselogin.accId), orderStatus);
     }
 
     @Get('shippers')
@@ -75,7 +94,7 @@ export class ShipperController {
         @UserLogin() user: UserLoginData,
     ): Promise<Response> {
         const result = await this.shipperService.imageUpload(file, orderId, Number(user.accId));
-        return new Response(200, 'success', result, null, 1);
+        return new Response(200, 'success', result);
     }
     @Get('shipper/order/finish-order')
     @Roles(Role.SHIPPER)

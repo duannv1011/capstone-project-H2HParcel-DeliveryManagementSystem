@@ -99,7 +99,7 @@ export class AuthenticationService {
             //update defaultBook of Customer
             customerdata.defaultBook = addressbookdata.bookId;
             await queryRunner.manager.save(CustomerEntity, customerdata);
-            return 'regiter success';
+            return { status: 200, msg: 'regiter success' };
         } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;

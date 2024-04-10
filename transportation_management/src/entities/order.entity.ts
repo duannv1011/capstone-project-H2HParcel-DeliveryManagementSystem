@@ -4,6 +4,7 @@ import { InformationEntity } from './information.entity';
 import { StaffEntity } from './staff.entity';
 import { OrderStatusEntity } from './order-status.entity';
 import { PackageTypeEntity } from './package-type.entity';
+import { CustomerEntity } from './customer.entity';
 
 @Entity('Order')
 export class OrderEntity extends AbstractEntity {
@@ -38,6 +39,10 @@ export class OrderEntity extends AbstractEntity {
     @JoinColumn({ name: 'pickup_infor_id' })
     pickupInformation: InformationEntity;
 
+    @ManyToOne(() => CustomerEntity, { eager: true })
+    @JoinColumn({ name: 'cus_id' })
+    customer: CustomerEntity;
+
     @ManyToOne(() => StaffEntity, { eager: true })
     @JoinColumn({ name: 'pickup_shipper' })
     pickupShipperStaff: StaffEntity;
@@ -60,4 +65,7 @@ export class OrderEntity extends AbstractEntity {
 
     @Column({ name: 'image_verify_url', nullable: true })
     public imageVerifyUrl: string;
+
+    @Column({ name: 'payment_method', nullable: true, default: 1 })
+    public paymentMethod: number;
 }

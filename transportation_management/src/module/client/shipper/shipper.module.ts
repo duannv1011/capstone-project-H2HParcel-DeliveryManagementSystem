@@ -23,6 +23,7 @@ import { WarehouseEntity } from 'src/entities/warehouse.entity';
 import { GoogleDriveConfig, GoogleDriveModule } from 'nestjs-googledrive-upload';
 import * as googleDriverConfig from '../../../../google-driver-key.json';
 import { OrderEntity } from 'src/entities/order.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
@@ -51,10 +52,8 @@ import { OrderEntity } from 'src/entities/order.entity';
             secret: process.env.SECRET_KEY,
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
-        GoogleDriveModule.register(
-            googleDriverConfig as GoogleDriveConfig,
-            '15oucDyYYlux4mVvm0B6DwypS7bPI_Fi_',
-        ),
+        GoogleDriveModule.register(googleDriverConfig as GoogleDriveConfig, '15oucDyYYlux4mVvm0B6DwypS7bPI_Fi_'),
+        ConfigModule,
     ],
     controllers: [ShipperController],
     providers: [ShipperService],
