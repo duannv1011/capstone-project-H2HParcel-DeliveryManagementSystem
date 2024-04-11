@@ -16,6 +16,7 @@ import {
     ApiBody,
     ApiOkResponse,
     ApiOperation,
+    ApiQuery,
     ApiResponse,
     ApiTags,
     ApiUnauthorizedResponse,
@@ -59,7 +60,31 @@ export class RequestController {
     async getAllReqeustByWarehouseId(@Query('pageNo') pageNo: number, @UserLogin() user: UserLoginData) {
         return await this.requestService.getAllReqeustByWarehouseId(pageNo, Number(user.accId));
     }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get all request of warehouse successfully' })
+    @ApiOperation({ summary: 'get all request of warehouse ' })
+    @Roles(Role.STAFF, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @ApiQuery({ name: 'requestType', required: false, type: Number })
+    @ApiQuery({ name: 'requestStatus', required: false, type: Number })
+    @Get('staff/requests-staff/requests-search')
+    async getAllReqeustByWarehouseIdSearch(
+        @Query('pageNo') pageNo: number,
+        @UserLogin() user: UserLoginData,
+        @Query('requestStatus') requestStatus: number,
+        @Query('requestType') requestType: number,
+    ) {
+        requestStatus = requestStatus ? requestStatus : 0;
 
+        requestType = requestType ? requestType : 0;
+        return await this.requestService.getAllReqeustByWarehouseIdSearch(
+            pageNo,
+            Number(user.accId),
+            Number(requestStatus),
+            Number(requestType),
+        );
+    }
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View request record detail' })
     @ApiOperation({ summary: 'View request record detail' })

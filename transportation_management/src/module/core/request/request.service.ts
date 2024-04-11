@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { RequestUpdateDto } from './dto/request.update.dto';
 import { Paging } from '../../response/Paging';
 import { RequestRecord, RequestRecordResponse } from './response/request-record.response';
@@ -20,6 +20,7 @@ import { OrderEntity } from 'src/entities/order.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
+import { WarehouseEntity } from 'src/entities/warehouse.entity';
 @Injectable()
 export class RequestService {
     constructor(
@@ -143,6 +144,83 @@ export class RequestService {
                       city: item.requests.deliverInformation.address.city.cityName,
                       district: item.requests.deliverInformation.address.district.districtName,
                       ward: item.requests.deliverInformation.address.ward.wardName,
+                  }
+                : '',
+            note: item.note,
+            date_created: item.date_create_at ? item.date_create_at : '',
+        }));
+        const paging = new Paging(pageNo, pageSize, count);
+        return { data: response, pages: paging };
+    }
+    async getAllReqeustByWarehouseIdSearch(pageNo: number, accId: number, requestStatus: number, requestType: number) {
+        const pageSize = Number(process.env.PAGE_SIZE);
+        const staff = await this.staffRepository.findOneBy({ accId: accId });
+        const queryBuilder = await this.requestRecordRepository
+            .createQueryBuilder('record')
+            .leftJoinAndSelect('record.requests', 'request') // Join RequestEntity
+            .leftJoinAndSelect('record.transits', 'transit')
+            .leftJoinAndSelect('transit.staff', 's')
+            .leftJoinAndSelect('transit.warehoueFromTable', 'whf')
+            .leftJoinAndSelect('transit.warehoueToTable', 'wht')
+            .leftJoinAndSelect('record.requestTypeTable', 'rqt')
+            .leftJoinAndSelect('record.requestStatus', 'rqs')
+            .leftJoinAndSelect('request.order', 'order')
+            .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
+            .leftJoinAndSelect('request.deliverInformation', 'requestdeli')
+            .leftJoinAndSelect('requestdeli.address', 'address')
+            .leftJoinAndSelect('address.city', 'city')
+            .leftJoinAndSelect('address.district', 'district')
+            .leftJoinAndSelect('address.ward', 'ward')
+            .where(
+                new Brackets((db) => {
+                    db.where('ward.warehouse_id = :warehouseId', { warehouseId: staff.warehouseId })
+                        .orWhere('transit.warehouse_to = :warehouseTo', { warehouseTo: staff.warehouseId })
+                        .orWhere('transit.warehouse_from = :warehouseFrom', { warehouseFrom: staff.warehouseId });
+                }),
+            )
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize);
+        if (requestStatus != 0) {
+            queryBuilder.andWhere('record.request_stt = :requestStatus', { requestStatus: requestStatus });
+        }
+        if (requestType != 0) {
+            queryBuilder.andWhere('record.request_type = :requestType', { requestType: requestType });
+        }
+        queryBuilder.orderBy('record.recordId', 'DESC');
+        const [lists, count] = await queryBuilder.getManyAndCount();
+        const response = lists.map((item) => ({
+            recordId: item.recordId ? item.recordId : '',
+            requestTypeId: item.requestTypeTable ? item.requestTypeTable.requestTypeId : '',
+            requestType: item.requestTypeTable ? item.requestTypeTable.requestTypeName : '',
+            requesStatusId: item.requestStatus ? item.requestStatus.rqs_id : '',
+            requesStatus: item.requestStatus ? item.requestStatus.rqs_name : '',
+            transitdata: item.transits
+                ? {
+                      warehoueFromId: item.transits ? item.transits.warehoueFromTable.warehouseId : '',
+                      warehoueFrom: item.transits ? item.transits.warehoueFromTable.warehouseName : '',
+                      warehoueToId: item.transits ? item.transits.warehoueToTable.warehouseId : '',
+                      warehoueTo: item.transits ? item.transits.warehoueToTable.warehouseName : '',
+                      staffId: item.transits ? item.transits.staff.staffId : '',
+                      staff: item.transits ? item.transits.staff.fullname : '',
+                  }
+                : '',
+
+            requestdata: item.requests
+                ? {
+                      orderId: item.requests ? item.requests.orderId : '',
+                      inforId: item.requests.deliverInformation ? item.requests.deliverInformation.inforId : '',
+                      name: item.requests.deliverInformation ? item.requests.deliverInformation.name : '',
+                      phone: item.requests.deliverInformation ? item.requests.deliverInformation.phone : '',
+                      house: item.requests.deliverInformation ? item.requests.deliverInformation.address.house : '',
+                      city: item.requests.deliverInformation
+                          ? item.requests.deliverInformation.address.city.cityName
+                          : '',
+                      district: item.requests.deliverInformation
+                          ? item.requests.deliverInformation.address.district.districtName
+                          : '',
+                      ward: item.requests.deliverInformation
+                          ? item.requests.deliverInformation.address.ward.wardName
+                          : '',
                   }
                 : '',
             note: item.note,
@@ -457,8 +535,9 @@ export class RequestService {
             transit.warehouseFrom = staff.warehouseId;
             transit.warehouseTo = data.warehouseTo;
             await queryRunner.manager.save(transit);
+            const warehouse = await queryRunner.manager.findOneBy(WarehouseEntity, { warehouseId: data.warehouseTo });
             await queryRunner.commitTransaction();
-            return `${staff.fullname} is assigned to transition to ${transit.warehouseTo}`;
+            return `${staff.fullname} is assigned to transition to ${warehouse.warehouseName}`;
         } catch (error) {
             Logger.log(error);
             await queryRunner.rollbackTransaction();
