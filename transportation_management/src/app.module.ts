@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_FILTER } from '@nestjs/core';
-import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
 import { AccountModule } from './module/core/account/modules/account.module';
 import { AccountController } from './module/core/account/modules/account.controller';
 import { AccountService } from './module/core/account/modules/account.service';
@@ -43,7 +41,6 @@ import { ManagercrudModule } from './module/web/managercrud/module/managercrud.m
 import { RequestModule } from './module/core/request/request.module';
 import { ReportModule } from './module/web/report/report.module';
 import { ShipperModule } from './module/client/shipper/shipper.module';
-
 @Module({
     imports: [
         DatabaseModule,
@@ -87,10 +84,6 @@ import { ShipperModule } from './module/client/shipper/shipper.module';
         AppService,
         AccountService,
         AuthenticationService,
-        {
-            provide: APP_FILTER,
-            useClass: ExceptionsLoggerFilter,
-        },
         CustomerService,
         ConfigService,
         SendMailService,

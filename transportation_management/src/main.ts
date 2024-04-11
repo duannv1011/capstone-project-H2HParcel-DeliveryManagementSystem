@@ -1,13 +1,12 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { ExceptionsLoggerFilter } from './utils/exceptions-logger-filter/exceptions-logger-filter';
 import * as dotenv from 'dotenv';
 async function bootstrap() {
     dotenv.config({ path: __dirname + '/.env' });
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
-        .setTitle('delevery service')
+        .setTitle('H2H Transportation System ')
         .setDescription('The description of the method')
         .setVersion('1.0')
         //.addBasicAuth()
@@ -21,10 +20,8 @@ async function bootstrap() {
             },
             'JWT-auth', // Security scheme name (must match the one used with @ApiBearerAuth decorator)
         )
-        .addTag('Delevery System Api')
+        .addTag('Delievery System Api')
         .build();
-    const { httpAdapter } = app.get(HttpAdapterHost);
-    app.useGlobalFilters(new ExceptionsLoggerFilter(httpAdapter));
     app.enableCors();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);

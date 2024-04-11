@@ -46,7 +46,7 @@ export class SendMailService {
             });
             // const payload = { id: accId, email: email.email, verify_code: verifyCode };
             // const token = await this.genarateToken(payload);
-            return { email: email, verifyCode: verifyCode };
+            return { code: 200, msg: 'success', email: email, verifyCode: verifyCode };
         } catch (error) {
             console.log(error);
             return 'eror';
@@ -63,7 +63,7 @@ export class SendMailService {
         console.log(accId);
         const updateAccount = await this.accountRepository.update({ accId: accId }, { password: hashpasswords });
         if (!updateAccount) {
-            return 'update failed';
+            return { code: 200, msg: 'update failed' };
         }
         return 'update successful';
     }
