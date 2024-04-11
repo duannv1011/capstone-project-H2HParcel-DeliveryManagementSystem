@@ -30,7 +30,7 @@ export class WarehourseController {
         return this.warehouseService.getAllWarehouse(Number(pageNo), Number(pagesize));
     }
     @Get('staff/warehouses')
-    @Roles(Role.STAFF, Role.MANAGER)
+    @Roles(Role.STAFF, Role.MANAGER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'get All Warehouse except staff warehouse' })
