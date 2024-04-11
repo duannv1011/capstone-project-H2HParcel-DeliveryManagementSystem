@@ -205,12 +205,14 @@ export class OrderService {
         const order = dataQuery
             ? {
                   orderId: dataQuery.orderId,
+                  pickUpInforId: dataQuery.pickUpInforId,
                   pickName: dataQuery.pickupInformation.name,
                   pickPhone: dataQuery.pickupInformation.phone,
                   pickCity: dataQuery.pickupInformation.address.city.cityName,
                   pickDistrict: dataQuery.pickupInformation.address.district.districtName,
                   pickWard: dataQuery.pickupInformation.address.ward.wardName,
                   pickShiper: dataQuery.pickupShipperStaff ? dataQuery.pickupShipperStaff.fullname : null,
+                  deliverInforId: dataQuery.deliverInforId,
                   deliverName: dataQuery.deliverInformation.name,
                   deliverPhone: dataQuery.deliverInformation.phone,
                   deliverCity: dataQuery.deliverInformation.address.city.cityName,
