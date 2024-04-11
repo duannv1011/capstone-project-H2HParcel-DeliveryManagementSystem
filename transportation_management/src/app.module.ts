@@ -41,6 +41,9 @@ import { ManagercrudModule } from './module/web/managercrud/module/managercrud.m
 import { RequestModule } from './module/core/request/request.module';
 import { ReportModule } from './module/web/report/report.module';
 import { ShipperModule } from './module/client/shipper/shipper.module';
+import { PaymentController } from './module/core/payment/payment.controller';
+import { PaymentModule } from './module/core/payment/payment.module';
+import { PaymentService } from './module/core/payment/payment.service';
 @Module({
     imports: [
         DatabaseModule,
@@ -66,6 +69,7 @@ import { ShipperModule } from './module/client/shipper/shipper.module';
         RequestModule,
         ShipperModule,
         ReportModule,
+        PaymentModule,
     ],
     controllers: [
         AppController,
@@ -79,6 +83,7 @@ import { ShipperModule } from './module/client/shipper/shipper.module';
         QrCodeController,
         AdminController,
         StaffController,
+        PaymentController,
     ],
     providers: [
         AppService,
@@ -92,6 +97,7 @@ import { ShipperModule } from './module/client/shipper/shipper.module';
         ProfileService,
         AdminService,
         StatusService,
+        PaymentService,
     ],
 })
 export class AppModule {}
