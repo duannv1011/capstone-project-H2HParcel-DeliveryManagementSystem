@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enum/roles.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
@@ -26,7 +26,21 @@ export class OrderController {
     async getAllOrders(@UserLogin() userLogin: UserLoginData, @Query('pageNo') pageNo: number) {
         return this.orderService.getAllOrders(userLogin.accId, pageNo);
     }
-
+    @Get('customer-order/orders-search')
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'get All Customer Orders' })
+    @ApiResponse({ status: 200, description: 'get All Customer Orders  successfully.' })
+    @ApiQuery({ name: 'orderStatus', required: false, type: Number })
+    async getAllOrdersSeacrh(
+        @UserLogin() userLogin: UserLoginData,
+        @Query('pageNo') pageNo: number,
+        @Query('orderStatus') orderStatus: number,
+    ) {
+        orderStatus = orderStatus ? orderStatus : 0;
+        return this.orderService.getAllOrdersSeacrh(userLogin.accId, pageNo, orderStatus);
+    }
     @Get('customer-order/order/activitylog')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)

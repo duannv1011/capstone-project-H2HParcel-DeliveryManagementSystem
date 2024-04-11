@@ -171,6 +171,64 @@ export class OrderViewService {
 
         return { orders: [], paging: null };
     }
+    async findAllByWarehouseFiltersByStatus(
+        pageNo: number,
+        userLogin: UserLoginData,
+        orderStatus: number,
+    ): Promise<OrderResponse> {
+        try {
+            orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
+            const warehouseId = (await this.getStaff(userLogin)).warehouseId;
+            if (warehouseId) {
+                const queryBuilder = await this.orderRepository
+                    .createQueryBuilder('order')
+                    .innerJoinAndSelect('order.status', 'orderStatus')
+                    .leftJoinAndSelect('order.customer', 'customer')
+                    .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
+                    .leftJoinAndSelect('order.deliverInformation', 'deliverInformation')
+                    .leftJoinAndSelect('order.pickupShipperStaff', 'pickupShipperStaff')
+                    .leftJoinAndSelect('order.deliverShipperStaff', 'deliverShipperStaff')
+                    .leftJoinAndSelect('order.packageType', 'packageType')
+                    .leftJoinAndSelect('pickupInformation.address', 'pickupAddress')
+                    .leftJoinAndSelect('pickupAddress.city', 'pickupCity')
+                    .leftJoinAndSelect('pickupAddress.district', 'pickupDistrict')
+                    .leftJoinAndSelect('pickupAddress.ward', 'pickupWard')
+                    .leftJoinAndSelect('deliverInformation.address', 'deliverAddress')
+                    .leftJoinAndSelect('deliverAddress.city', 'deliverCity')
+                    .leftJoinAndSelect('deliverAddress.district', 'deliverDistrict')
+                    .leftJoinAndSelect('deliverAddress.ward', 'deliverWard')
+                    .where(
+                        new Brackets((qb) => {
+                            qb.where('pickupWard.warehouse_id = :warehouseId', {
+                                warehouseId: warehouseId,
+                            }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                        }),
+                    )
+                    .skip((pageNo - 1) * this.pageSize)
+                    .take(this.pageSize);
+                if (orderStatus !== 0) {
+                    queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: orderStatus });
+                }
+                queryBuilder.orderBy('order.date_create_at', 'DESC');
+
+                const [orders, total] = await queryBuilder.getManyAndCount();
+                console.log(total);
+                const orderList = [];
+                orders.forEach((element) => {
+                    orderList.push(this.toOrder(element));
+                });
+
+                const paging: Paging = new Paging(pageNo, this.pageSize, total);
+
+                return { orders: orderList, paging: paging };
+            }
+
+            return { orders: [], paging: null };
+        } catch (error) {
+            console.error('Error in findAllByWarehouseFilters:', error);
+            throw new Error('An error occurred while fetching orders.');
+        }
+    }
     async findAllByWarehouseFilters(
         pageNo: number,
         userLogin: UserLoginData,

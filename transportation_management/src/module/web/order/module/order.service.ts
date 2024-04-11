@@ -56,7 +56,6 @@ export class OrderService {
         private addressRepository: Repository<AddressEntity>,
         private dataSource: DataSource,
     ) {}
-
     async getAllOrders(accId: number, pageNo: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
@@ -80,9 +79,67 @@ export class OrderService {
             .leftJoinAndSelect('da.district', 'ddi')
             .leftJoinAndSelect('da.ward', 'dw')
             .where('o.cus_id = :cusId', { cusId: cusId })
+            .orderBy('o.orderId', 'DESC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
+        const orders = list.map((item) => ({
+            orderId: item.orderId,
+            pickName: item.pickupInformation.name,
+            pickPhone: item.pickupInformation.phone,
+            pickupAddress: `${item.pickupInformation.address.house}-${item.pickupInformation.address.ward.wardName}-${item.pickupInformation.address.district.districtName}-${item.pickupInformation.address.city.cityName}`,
+            pickShiper: item.pickupShipperStaff ? item.pickupShipperStaff.fullname : null,
+            deliverName: item.deliverInformation.name,
+            deliverPhone: item.deliverInformation.phone,
+            deliverAddress: `${item.deliverInformation.address.house}-${item.deliverInformation.address.ward.wardName}-${item.deliverInformation.address.district.districtName}-${item.deliverInformation.address.city.cityName}`,
+            deliverShiper: item.deliverShipperStaff ? item.deliverShipperStaff.fullname : null,
+            status: item.status.sttName,
+            pakeType: item.packageType.pkName,
+            price: item.estimatedPrice,
+        }));
+        const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
+        if (!count || totalpage < pageNo) {
+            return { status: 404, msg: 'not found!' };
+        }
+        return {
+            orders,
+            count,
+            pageNo,
+            pageSize,
+            totalpage,
+        };
+    }
+    async getAllOrdersSeacrh(accId: number, pageNo: number, orderStatus: number): Promise<any> {
+        orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
+        const cusId = customer ? customer.cusId : 0;
+        console.log(pageNo);
+        //const orders = await this.orderRepository.findOne({ where: { cusId: cusId } });
+        const pageSize = Number(process.env.PAGE_SIZE);
+        const queryBuilder = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('o.pickupShipperStaff', 'ps')
+            .leftJoinAndSelect('o.deliverShipperStaff', 'ds')
+            .leftJoinAndSelect('o.status', 'os')
+            .leftJoinAndSelect('o.packageType', 'op')
+            .leftJoinAndSelect('pi.address', 'pa')
+            .leftJoinAndSelect('pa.city', 'pc')
+            .leftJoinAndSelect('pa.district', 'pdi')
+            .leftJoinAndSelect('pa.ward', 'pw')
+            .leftJoinAndSelect('di.address', 'da')
+            .leftJoinAndSelect('da.city', 'dc')
+            .leftJoinAndSelect('da.district', 'ddi')
+            .leftJoinAndSelect('da.ward', 'dw')
+            .where('o.cus_id = :cusId', { cusId: cusId })
+            .orderBy('o.orderId', 'DESC')
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize);
+        if (orderStatus !== 0) {
+            queryBuilder.andWhere('o.order_stt = :orderStatus', { orderStatus: orderStatus });
+        }
+        const [list, count] = await queryBuilder.getManyAndCount();
         const orders = list.map((item) => ({
             orderId: item.orderId,
             pickName: item.pickupInformation.name,
@@ -114,6 +171,7 @@ export class OrderService {
             .createQueryBuilder('a')
             .leftJoinAndSelect('a.logStatus', 's')
             .where('a.order_id =:orderId', { orderId: orderId })
+            .orderBy('a.logId', 'DESC')
             .getMany();
         return activitylog ? activitylog : 'error';
     }
@@ -326,7 +384,7 @@ export class OrderService {
                 const activityLog = await this.ActivitylogOrder(order.orderId, 16, accId);
                 await queryRunner.manager.save(ActivityLogEntity, activityLog);
                 await queryRunner.commitTransaction();
-                return { status: 200, msg: 'send Cancel request successfully' };
+                return { status: 200, msg: ' Cancel successfully' };
             }
             const checkHaveRequest = await this.requesRecodtRepository
                 .createQueryBuilder('rc')
@@ -360,7 +418,6 @@ export class OrderService {
                 request.pickupInfor = order.pickupInforId;
                 request.deliverInfor = order.deliverInforId;
                 request.recordId = requestRecordInsertreult.recordId;
-                request.requesrRecord = requestRecordInsertreult;
                 await queryRunner.manager.save(RequestEntity, request);
             }
             //create ActivityLog
