@@ -237,9 +237,10 @@ export class OrderViewService {
     ): Promise<OrderResponse> {
         try {
             orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
-            searchValue = searchValue ? searchValue : '';
+            searchValue = searchValue ? searchValue.toLowerCase() : '';
             const warehouseId = (await this.getStaff(userLogin)).warehouseId;
             if (warehouseId) {
+                const searchWords = searchValue.split(' ').filter(Boolean);
                 const queryBuilder = await this.orderRepository
                     .createQueryBuilder('order')
                     .innerJoinAndSelect('order.status', 'orderStatus')
@@ -264,20 +265,36 @@ export class OrderViewService {
                             }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
                         }),
                     )
-                    .andWhere(
-                        new Brackets((qb) => {
-                            qb.where('pickupShipperStaff.fullname LIKE :pfullname', { pfullname: `%${searchValue}%` })
-                                .orWhere('deliverShipperStaff.fullname LIKE :dfullname', {
-                                    dfullname: `%${searchValue}%`,
-                                })
-                                .orWhere('pickupInformation.name LIKE :pifullname', { pifullname: `%${searchValue}%` })
-                                .orWhere('pickupInformation.phone LIKE :piphone', { piphone: `%${searchValue}%` })
-                                .orWhere('deliverInformation.name LIKE :pifullname', { pifullname: `%${searchValue}%` })
-                                .orWhere('deliverInformation.phone LIKE :piphone', { piphone: `%${searchValue}%` });
-                        }),
-                    )
                     .skip((pageNo - 1) * this.pageSize)
                     .take(this.pageSize);
+                if (searchWords.length > 0) {
+                    queryBuilder.andWhere(
+                        new Brackets((qb) => {
+                            searchWords.forEach((word) => {
+                                const likeParam = `%${word}%`;
+                                qb.where('LOWER(pickupShipperStaff.fullname) ILIKE :pfullname', {
+                                    pfullname: likeParam,
+                                })
+                                    .orWhere('LOWER(deliverShipperStaff.fullname) ILIKE :dfullname', {
+                                        dfullname: likeParam,
+                                    })
+                                    .orWhere('LOWER(pickupInformation.name) ILIKE :pifullname', {
+                                        pifullname: likeParam,
+                                    })
+                                    .orWhere('LOWER(pickupInformation.phone) ILIKE :piphone', {
+                                        piphone: likeParam,
+                                    })
+                                    .orWhere('LOWER(deliverInformation.name) ILIKE :pifullname', {
+                                        pifullname: likeParam,
+                                    })
+                                    .orWhere('LOWER(deliverInformation.phone) ILIKE :piphone', {
+                                        piphone: likeParam,
+                                    });
+                            });
+                        }),
+                    );
+                }
+
                 if (orderStatus !== 0) {
                     queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: orderStatus });
                 }
@@ -289,12 +306,7 @@ export class OrderViewService {
                     this.setOrderDirection('ASC');
                 }
                 const [orders, total] = await queryBuilder.getManyAndCount();
-                console.log(total);
-                const orderList = [];
-                orders.forEach((element) => {
-                    orderList.push(this.toOrder(element));
-                });
-
+                const orderList = orders.map((element) => this.toOrder(element));
                 const paging: Paging = new Paging(pageNo, this.pageSize, total);
 
                 return { orders: orderList, paging: paging };

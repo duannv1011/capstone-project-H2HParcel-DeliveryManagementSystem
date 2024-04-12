@@ -11,16 +11,25 @@ import { Brackets, DataSource, Repository } from 'typeorm';
 import { GoogleDriveService } from 'nestjs-googledrive-upload';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
-
+import * as _ from 'lodash';
+import { TransitEntity } from 'src/entities/transit.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
+import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 @Injectable()
 export class ShipperService {
     constructor(
         @InjectRepository(OrderEntity)
         private orderRepository: Repository<OrderEntity>,
+        @InjectRepository(TransitEntity)
+        private transitRepository: Repository<TransitEntity>,
         @InjectRepository(ActivityLogEntity)
         private activityLogRepository: Repository<ActivityLogEntity>,
+        @InjectRepository(WarehouseRuleEntity)
+        private warehouseRuleRepository: Repository<WarehouseRuleEntity>,
         @InjectRepository(CustomerEntity)
         private customerEntity: Repository<CustomerEntity>,
+        @InjectRepository(PriceMultiplierEntity)
+        private priceMutiPlierRepository: Repository<PriceMultiplierEntity>,
         @InjectRepository(StaffEntity)
         private staffEntity: Repository<StaffEntity>,
         @InjectRepository(WarehouseEntity)
@@ -37,17 +46,76 @@ export class ShipperService {
     private getOrderDirection() {
         return this.orderDirection;
     }
+    async checkMutipelPrice(warehouseFrom: number, warehouseTo: number) {
+        const warehouseRule = await this.warehouseRuleRepository
+            .createQueryBuilder('w')
+            .where((qb) => {
+                qb.andWhere('(w.warehouse_id_1 = :warehouseId1 AND w.warehouse_id_2 = :warehouseId2)', {
+                    warehouseId1: warehouseFrom,
+                    warehouseId2: warehouseTo,
+                }).orWhere('(w.warehouse_id_1 = :warehouseId2 AND w.warehouse_id_2 = :warehouseId1)', {
+                    warehouseId1: warehouseFrom,
+                    warehouseId2: warehouseTo,
+                });
+            })
+            .getOne();
+        const distance = Number(
+            warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
+        );
+        const num = distance.toFixed();
+        const priceMultiplier = await this.priceMutiPlierRepository
+            .createQueryBuilder('p')
+            .where('p.max_distance >= :num', { num })
+            .andWhere('p.min_distance < :num', { num })
+            .orderBy('p.minDistance', 'DESC')
+            .getOne();
+        return Number(priceMultiplier.id);
+    }
     async getShiperPayslip(accId: number) {
         const shiper = await this.staffEntity.findOneBy({ accId: accId });
         if (!shiper) {
             return { status: 404, error: 'Not Found' };
         }
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
         const shiperId = shiper.staffId;
-        const queryBuilder = await this.orderRepository
+        const transits = await this.transitRepository.findBy({ staffId: shiperId });
+        const mutiplier = [];
+        for (const tran of transits) {
+            const mul = await this.checkMutipelPrice(tran.warehouseFrom, tran.warehouseTo);
+            if (mul) {
+                mutiplier.push(mul);
+            }
+        }
+        const idCounts = _.countBy(mutiplier);
+        let transitefort = 0;
+        let transitTotal1 = 0;
+        let transitTotal2 = 0;
+        let transitTotal3 = 0;
+        for (const [key, value] of Object.entries(idCounts)) {
+            switch (key) {
+                case '1':
+                    transitTotal1 = value;
+                    transitefort += value * 25;
+                    break;
+                case '2':
+                    transitTotal2 = value;
+                    transitefort += value * 50;
+                    break;
+                case '3':
+                    transitTotal3 = value;
+                    transitefort += value * 75;
+                    break;
+                default:
+                    break;
+            }
+        }
+        const [orders, count] = await this.orderRepository
             .createQueryBuilder('o')
             .leftJoinAndSelect('o.pickupInformation', 'pi')
             .leftJoinAndSelect('o.deliverInformation', 'di')
-            .where('')
+            .where('o.orderStt = :stt', { stt: 9 })
+            .andWhere('extract(month from o.date_update_at) = :month', { month: currentMonth })
             .andWhere(
                 new Brackets((qb) => {
                     qb.where('o.pickupShipper = :puShipperId', {
@@ -55,9 +123,61 @@ export class ShipperService {
                     }).orWhere('o.deliverShipper = :diShipperId', { diShipperId: shiperId });
                 }),
             )
-            .getMany();
-        return '';
+            .getManyAndCount();
+        const pickupOrders = orders.filter((order) => order.pickupShipper === shiperId);
+        const deliverOrders = orders.filter((order) => order.deliverShipper === shiperId);
+        const pickupEffort = pickupOrders.reduce((acc, order) => {
+            switch (order.pkId) {
+                case 1:
+                    return acc + 10 * 0.4;
+                case 2:
+                    return acc + 5 * 0.4;
+                case 3:
+                    return acc + 10 * 0.4;
+                case 4:
+                    return acc + 20 * 0.4;
+                default:
+                    return acc;
+            }
+        }, 0);
+        const deliverEffort = deliverOrders.reduce((acc, order) => {
+            switch (order.pkId) {
+                case 1:
+                    return acc + 10 * 0.6;
+                case 2:
+                    return acc + 5 * 0.6;
+                case 3:
+                    return acc + 10 * 0.6;
+                case 4:
+                    return acc + 20 * 0.6;
+                default:
+                    return acc;
+            }
+        }, 0); // 60% for deliver
+        //transit
+        console.log(transitefort);
+        const totalEffort = pickupEffort + deliverEffort + transitefort;
+        const totalOrder = count;
+        const totalOrderPickup = pickupOrders.length;
+        const totalOrderDeliver = deliverOrders.length;
+        return {
+            status: 200,
+            data: {
+                shiper: shiper.fullname,
+                month: currentMonth,
+                totalOrder: totalOrder,
+                totalOrderPickup: totalOrderPickup,
+                totalOrderDeliver: totalOrderDeliver,
+                transit0_5: transitTotal1,
+                transit5_10: transitTotal2,
+                transit10_200: transitTotal3,
+                totalTransit: transits.length,
+                totalEffort: totalEffort,
+                salary: totalEffort * 2750,
+            },
+        };
     }
+
     async findAllOrder(pageNo: number, accId): Promise<any> {
         const pageSize = Number(process.env.PAGE_SIZE);
         const shipper = await this.staffEntity.findOneBy({ accId: accId });

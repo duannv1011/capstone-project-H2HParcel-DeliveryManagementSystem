@@ -25,6 +25,7 @@ import * as googleDriverConfig from '../../../../google-driver-key.json';
 import { OrderEntity } from 'src/entities/order.entity';
 import { ConfigModule } from '@nestjs/config';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
+import { TransitEntity } from 'src/entities/transit.entity';
 
 @Module({
     imports: [
@@ -35,6 +36,8 @@ import { ActivityLogEntity } from 'src/entities/activity-log.entity';
             StaffEntity,
             WarehouseRuleEntity,
             CustomerEntity,
+            PriceMultiplierEntity,
+            TransitEntity,
             AddressEntity,
             WarehouseEntity,
             WardEntity,
