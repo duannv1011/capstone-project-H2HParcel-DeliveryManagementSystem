@@ -10,7 +10,7 @@ export class PaymentController {
 
     @Get('create_payment_url')
     @Redirect()
-    @ApiQuery({ name: 'bankCode', required: false, type: Number })
+    @ApiQuery({ name: 'bankCode', required: false, type: String })
     async createPaymentUrl(
         @Req() req: Request,
         @Query('amount', ParseIntPipe) amount: number,
