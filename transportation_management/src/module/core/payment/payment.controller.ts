@@ -1,17 +1,22 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Redirect, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/payment-create.dto';
 import { Request } from 'express';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('order')
 @ApiTags('payment')
 export class PaymentController {
     constructor(private readonly paymentService: PaymentService) {}
-    @Post('/create_payment_url')
-    async createPaymentUrl(@Body() data: CreatePaymentDto, req: Request) {
+
+    @UsePipes(ValidationPipe)
+    @ApiBody({ type: CreatePaymentDto })
+    @Post('create_payment_url')
+    @Redirect()
+    async createPaymentUrl(@Body() data: CreatePaymentDto, @Req() req: Request) {
         return await this.paymentService.createPaymentUrl(data, req);
     }
+
     @Get('vnpay_return')
     @ApiResponse({ status: 200, description: 'Success' })
     async vnpayReturn(@Query() params: Record<string, string>) {
@@ -24,7 +29,7 @@ export class PaymentController {
 
         if (isValid) {
             // Check if the data in the database is valid and respond accordingly
-            return { code: params['vnp_ResponseCode'] };
+            return { code: params['vnp_ResponseCode'], data: params };
         } else {
             return { code: 409 };
         }

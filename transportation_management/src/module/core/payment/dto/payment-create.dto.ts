@@ -8,7 +8,7 @@ export class CreatePaymentDto {
     amount: string;
     @IsString()
     @IsNotEmpty({ message: 'Null value error for bankCode' })
-    @ApiProperty({ example: 'BNC', description: 'The bankCode' })
+    @ApiProperty({ example: 'NCB', description: 'The bankCode' })
     bankCode: string;
     @IsString()
     @IsNotEmpty({ message: 'Null value error for amount' })
