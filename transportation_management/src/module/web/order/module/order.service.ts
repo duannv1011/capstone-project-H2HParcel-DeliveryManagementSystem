@@ -85,10 +85,12 @@ export class OrderService {
             .getManyAndCount();
         const orders = list.map((item) => ({
             orderId: item.orderId,
+            pickUpInforId: item.pickupInformation.inforId,
             pickName: item.pickupInformation.name,
             pickPhone: item.pickupInformation.phone,
             pickupAddress: `${item.pickupInformation.address.house}-${item.pickupInformation.address.ward.wardName}-${item.pickupInformation.address.district.districtName}-${item.pickupInformation.address.city.cityName}`,
             pickShiper: item.pickupShipperStaff ? item.pickupShipperStaff.fullname : null,
+            deliverInfor: item.deliverInformation.inforId,
             deliverName: item.deliverInformation.name,
             deliverPhone: item.deliverInformation.phone,
             deliverAddress: `${item.deliverInformation.address.house}-${item.deliverInformation.address.ward.wardName}-${item.deliverInformation.address.district.districtName}-${item.deliverInformation.address.city.cityName}`,
@@ -142,10 +144,12 @@ export class OrderService {
         const [list, count] = await queryBuilder.getManyAndCount();
         const orders = list.map((item) => ({
             orderId: item.orderId,
+            pickUpInforId: item.pickupInformation.inforId,
             pickName: item.pickupInformation.name,
             pickPhone: item.pickupInformation.phone,
             pickupAddress: `${item.pickupInformation.address.house}-${item.pickupInformation.address.ward.wardName}-${item.pickupInformation.address.district.districtName}-${item.pickupInformation.address.city.cityName}`,
             pickShiper: item.pickupShipperStaff ? item.pickupShipperStaff.fullname : null,
+            deliverInfor: item.deliverInformation.inforId,
             deliverName: item.deliverInformation.name,
             deliverPhone: item.deliverInformation.phone,
             deliverAddress: `${item.deliverInformation.address.house}-${item.deliverInformation.address.ward.wardName}-${item.deliverInformation.address.district.districtName}-${item.deliverInformation.address.city.cityName}`,

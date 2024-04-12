@@ -37,7 +37,27 @@ export class ShipperService {
     private getOrderDirection() {
         return this.orderDirection;
     }
-    async getShiperPayslip(accId: number) {}
+    async getShiperPayslip(accId: number) {
+        const shiper = await this.staffEntity.findOneBy({ accId: accId });
+        if (!shiper) {
+            return { status: 404, error: 'Not Found' };
+        }
+        const shiperId = shiper.staffId;
+        const queryBuilder = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .where('')
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('o.pickupShipper = :puShipperId', {
+                        puShipperId: shiperId,
+                    }).orWhere('o.deliverShipper = :diShipperId', { diShipperId: shiperId });
+                }),
+            )
+            .getMany();
+        return '';
+    }
     async findAllOrder(pageNo: number, accId): Promise<any> {
         const pageSize = Number(process.env.PAGE_SIZE);
         const shipper = await this.staffEntity.findOneBy({ accId: accId });
