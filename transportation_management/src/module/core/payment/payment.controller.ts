@@ -1,4 +1,4 @@
-import { Controller, Get, ParseIntPipe, Query, Redirect, Req } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, Query, Req } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { Request } from 'express';
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -9,7 +9,6 @@ export class PaymentController {
     constructor(private readonly paymentService: PaymentService) {}
 
     @Get('create_payment_url')
-    @Redirect()
     @ApiQuery({ name: 'bankCode', required: false, type: String })
     async createPaymentUrl(
         @Req() req: Request,
