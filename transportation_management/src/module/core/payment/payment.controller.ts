@@ -1,20 +1,22 @@
-import { Body, Controller, Get, Post, Query, Redirect, Req, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, ParseIntPipe, Query, Redirect, Req } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { CreatePaymentDto } from './dto/payment-create.dto';
 import { Request } from 'express';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('order')
 @ApiTags('payment')
 export class PaymentController {
     constructor(private readonly paymentService: PaymentService) {}
 
-    @UsePipes(ValidationPipe)
-    @ApiBody({ type: CreatePaymentDto })
-    @Post('create_payment_url')
+    @Get('create_payment_url')
     @Redirect()
-    async createPaymentUrl(@Body() data: CreatePaymentDto, @Req() req: Request) {
-        return await this.paymentService.createPaymentUrl(data, req);
+    async createPaymentUrl(
+        @Req() req: Request,
+        @Query('amount', ParseIntPipe) amount: number,
+        @Query('bankCode') bankCode: string,
+        @Query('language') language: string,
+    ) {
+        return { url: await this.paymentService.createPaymentUrl(amount, bankCode, language, req) };
     }
 
     @Get('vnpay_return')

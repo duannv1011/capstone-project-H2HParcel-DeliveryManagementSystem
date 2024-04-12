@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { vnpay } from '../../../enum/vnpay.enum';
 import { ConfigService } from '@nestjs/config';
-import { CreatePaymentDto } from './dto/payment-create.dto';
 import * as moment from 'moment';
 import * as querystring from 'qs';
 import * as crypto from 'crypto';
@@ -27,7 +26,7 @@ export class PaymentService {
         return sorted;
     }
 
-    async createPaymentUrl(paymentDto: CreatePaymentDto, req: Request): Promise<string> {
+    async createPaymentUrl(amount: number, bankCode: string, language: string, req: Request): Promise<string> {
         const returnUrl = vnpay.vnp_ReturnUrl;
         const tmnCode = vnpay.vnp_TmnCode;
         const secretKey = vnpay.vnp_HashSecret;
@@ -37,11 +36,9 @@ export class PaymentService {
         const createDate = moment(date).format('YYYYMMDDHHmmss');
 
         const ipAddr = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        const locale = paymentDto.language || 'vn';
+        const locale = language || 'vn';
         const currCode = 'VND';
         const orderId = moment(date).format('DDHHmmss');
-        const amount = Number(paymentDto.amount);
-        const bankCode = paymentDto.bankCode;
 
         const vnp_Params = {
             vnp_Version: '2.1.0',
@@ -68,7 +65,7 @@ export class PaymentService {
         sortedParams['vnp_SecureHash'] = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
         const queryParams = querystring.stringify(sortedParams, { encode: false });
-        Logger.log(vnpUrl + '?' + queryParams);
+
         return vnpUrl + '?' + queryParams;
     }
 
