@@ -37,6 +37,7 @@ export class ShipperService {
     private getOrderDirection() {
         return this.orderDirection;
     }
+    async getShiperPayslip(accId: number) {}
     async findAllOrder(pageNo: number, accId): Promise<any> {
         const pageSize = Number(process.env.PAGE_SIZE);
         const shipper = await this.staffEntity.findOneBy({ accId: accId });

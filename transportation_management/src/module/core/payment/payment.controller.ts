@@ -1,7 +1,7 @@
 import { Controller, Get, ParseIntPipe, Query, Redirect, Req } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { Request } from 'express';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('order')
 @ApiTags('payment')
@@ -10,6 +10,7 @@ export class PaymentController {
 
     @Get('create_payment_url')
     @Redirect()
+    @ApiQuery({ name: 'bankCode', required: false, type: Number })
     async createPaymentUrl(
         @Req() req: Request,
         @Query('amount', ParseIntPipe) amount: number,

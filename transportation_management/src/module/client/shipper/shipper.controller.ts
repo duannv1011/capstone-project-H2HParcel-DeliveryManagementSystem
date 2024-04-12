@@ -22,7 +22,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @ApiTags('shipper-api')
 export class ShipperController {
     constructor(private readonly shipperService: ShipperService) {}
-
+    @Get('shipper/payslip')
+    @Roles(Role.SHIPPER)
+    @ApiBearerAuth('JWT-auth')
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiOperation({ summary: 'get Payslip of shipper' })
+    @ApiResponse({ status: 200, description: 'get  Payslip  of Shipper successfully.' })
+    async getShiperPayslip(@UserLogin() uselogin: UserLoginData): Promise<any> {
+        return await this.shipperService.getShiperPayslip(Number(uselogin.accId));
+    }
     @Get('shipper/orders')
     @Roles(Role.SHIPPER)
     @ApiBearerAuth('JWT-auth')
