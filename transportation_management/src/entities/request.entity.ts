@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
 import { InformationEntity } from './information.entity';
 import { OrderEntity } from './order.entity';
@@ -25,11 +25,11 @@ export class RequestEntity extends AbstractEntity {
     @Column({ name: 'deliver_infor', nullable: true })
     deliverInfor: number;
 
-    @OneToOne(() => InformationEntity, { eager: true })
+    @ManyToOne(() => InformationEntity, { eager: true })
     @JoinColumn({ name: 'pickup_infor' })
     pickupInformation: InformationEntity;
 
-    @OneToOne(() => InformationEntity, { eager: true })
+    @ManyToOne(() => InformationEntity, { eager: true })
     @JoinColumn({ name: 'deliver_infor' })
     deliverInformation: InformationEntity;
 

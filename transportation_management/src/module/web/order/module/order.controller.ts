@@ -59,6 +59,15 @@ export class OrderController {
     async getOrderDetail(@UserLogin() userLogin: UserLoginData, @Query('order_id') order_id: number) {
         return this.orderService.getDetailOrder(order_id, userLogin.accId);
     }
+    @Get('staff/warehoue/customers')
+    @Roles(Role.STAFF, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'get all Cutomer is create Order in  warehouse by staff' })
+    @ApiResponse({ status: 200, description: 'get  successfully.' })
+    async getCustomerOrderInWhouse(@UserLogin() userLogin: UserLoginData, @Query('pageNo') pageNo: number) {
+        return await this.orderService.getCustomerOrderInWhouse(Number(userLogin.accId), pageNo);
+    }
     @Put('customer-order/order')
     @Roles(Role.CUSTOMER)
     @UseGuards(AuthGuard, RoleGuard)

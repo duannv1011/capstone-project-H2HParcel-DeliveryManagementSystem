@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from 'src/entities/customer.entity';
 import { OrderEntity } from 'src/entities/order.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 import { InformationEntity } from 'src/entities/information.entity';
 import { AddressEntity } from 'src/entities/address.entity';
 import { CustomerEditOrder } from '../dto/custoemr-edit-order.dto';
@@ -22,12 +22,16 @@ import { asignShipperDto } from '../dto/asing-shipper-order.dto';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
+import { StaffEntity } from 'src/entities/staff.entity';
+import { Paging } from 'src/module/response/Paging';
 
 @Injectable()
 export class OrderService {
     constructor(
         @InjectRepository(OrderEntity)
         private orderRepository: Repository<OrderEntity>,
+        @InjectRepository(StaffEntity)
+        private staffRepository: Repository<StaffEntity>,
         @InjectRepository(PriceMultiplierEntity)
         private priceMutiPlierRepository: Repository<PriceMultiplierEntity>,
         @InjectRepository(WardEntity)
@@ -362,6 +366,47 @@ export class OrderService {
             await queryRunner.release();
         }
     }
+    async getCustomerOrderInWhouse(accId: number, pageNo: number) {
+        const staff = await this.staffRepository.findOne({ where: { accId: accId } });
+        const warehouseId = staff ? staff.warehouseId : 0;
+        const pageSize = Number(process.env.PAGE_SIZE);
+        const customerOrders = await this.orderRepository
+            .createQueryBuilder('order')
+            .select([
+                'customer.cus_id AS cusId',
+                'customer.fullname AS customerName',
+                'customer.email AS customerEmail',
+                'customer.phone AS customerPhone',
+                'COUNT(order.order_id) AS totalOrder',
+            ])
+            .leftJoin('order.customer', 'customer')
+            .leftJoin('order.pickupInformation', 'pickupInformation')
+            .leftJoin('order.deliverInformation', 'deliverInformation')
+            .leftJoin('pickupInformation.address', 'pickupAddress')
+            .leftJoin('pickupAddress.city', 'pickupCity')
+            .leftJoin('pickupAddress.district', 'pickupDistrict')
+            .leftJoin('pickupAddress.ward', 'pickupWard')
+            .leftJoin('deliverInformation.address', 'deliverAddress')
+            .leftJoin('deliverAddress.city', 'deliverCity')
+            .leftJoin('deliverAddress.district', 'deliverDistrict')
+            .leftJoin('deliverAddress.ward', 'deliverWard')
+            .where(
+                new Brackets((qb) => {
+                    qb.where('pickupWard.warehouse_id = :warehouseId', {
+                        warehouseId: warehouseId,
+                    }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                }),
+            )
+            .skip((pageNo - 1) * pageSize)
+            .take(pageSize)
+            .groupBy('customer.cus_id, customer.fullname, customer.email, customer.phone')
+            .getRawMany();
+        const totalOrderInWarehouse = customerOrders.reduce((acc, curr) => acc + parseInt(curr.totalorder, 10), 0);
+
+        const count = customerOrders.length;
+        const pageing = new Paging(pageNo, pageSize, count);
+        return { data: customerOrders, pageing: pageing, totalOrderInWarehouse: totalOrderInWarehouse };
+    }
 
     async customeCancelOrder(data: CustomerCancelOrder, accId: number) {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
@@ -378,20 +423,6 @@ export class OrderService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            if (order.orderStt === 1) {
-                // update order to cancel
-                const orderStatus = new OrderStatusEntity();
-                orderStatus.sttId = 10;
-                order.status = orderStatus;
-                order.estimatedPrice = 0;
-                await queryRunner.manager.save(order);
-                // log activity order to 15
-                //create ActivityLog
-                const activityLog = await this.ActivitylogOrder(order.orderId, 16, accId);
-                await queryRunner.manager.save(ActivityLogEntity, activityLog);
-                await queryRunner.commitTransaction();
-                return { status: 200, msg: ' Cancel successfully' };
-            }
             const checkHaveRequest = await this.requesRecodtRepository
                 .createQueryBuilder('rc')
                 .leftJoinAndSelect('rc.requests', 'r')
@@ -405,7 +436,43 @@ export class OrderService {
                     error: 'this order is processing cancel or was cancel!Canot re Cancel again this order',
                 };
             }
-
+            if (order.orderStt === 1 || order.orderStt === 2) {
+                // update order to cancel
+                const orderStatus = new OrderStatusEntity();
+                orderStatus.sttId = 10;
+                order.status = orderStatus;
+                order.estimatedPrice = 0;
+                await queryRunner.manager.save(order);
+                if (!checkHaveRequest) {
+                    // update request record
+                    await this.requesRecodtRepository.update(checkHaveRequest.recordId, {
+                        requestType: 2,
+                        requestStt: 1,
+                    });
+                } else {
+                    //create RequestRecord
+                    const requestRecord = new RequestRecordEntity();
+                    requestRecord.recordId = 0;
+                    requestRecord.requestType = 2;
+                    requestRecord.requestStt = 1;
+                    requestRecord.note = data.note;
+                    const requestRecordInsertreult = await queryRunner.manager.save(RequestRecordEntity, requestRecord);
+                    //create Request
+                    const request = new RequestEntity();
+                    request.requestId = 0;
+                    request.orderId = order.orderId;
+                    request.pickupInfor = order.pickupInforId;
+                    request.deliverInfor = order.deliverInforId;
+                    request.recordId = requestRecordInsertreult.recordId;
+                    await queryRunner.manager.save(RequestEntity, request);
+                }
+                // log activity order to 15
+                //create ActivityLog
+                const activityLog = await this.ActivitylogOrder(order.orderId, 16, accId);
+                await queryRunner.manager.save(ActivityLogEntity, activityLog);
+                await queryRunner.commitTransaction();
+                return { status: 200, msg: ' Cancel successfully' };
+            }
             if (checkHaveRequest && checkHaveRequest.requestType === 1) {
                 //update request record to cacancel
                 await this.requesRecodtRepository.update(checkHaveRequest.recordId, { requestType: 2, requestStt: 1 });

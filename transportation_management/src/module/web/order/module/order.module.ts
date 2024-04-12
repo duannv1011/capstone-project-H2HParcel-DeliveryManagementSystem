@@ -48,6 +48,7 @@ import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity
             OrderEntity,
             RequestEntity,
             RequestRecordEntity,
+            StaffEntity,
         ]),
         JwtModule.register({
             global: true,
