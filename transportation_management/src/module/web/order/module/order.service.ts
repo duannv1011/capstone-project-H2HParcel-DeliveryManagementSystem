@@ -376,6 +376,7 @@ export class OrderService {
                 'customer.cus_id AS cusId',
                 'customer.fullname AS customerName',
                 'customer.email AS customerEmail',
+                'customer.status AS customerStatus',
                 'customer.phone AS customerPhone',
                 'COUNT(order.order_id) AS totalOrder',
             ])

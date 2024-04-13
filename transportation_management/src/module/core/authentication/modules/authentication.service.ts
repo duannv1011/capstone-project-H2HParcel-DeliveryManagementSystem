@@ -34,6 +34,7 @@ export class AuthenticationService {
     ) {}
 
     async register(registerData: RegisterDto): Promise<any> {
+        registerData.username = registerData.username.toLowerCase();
         const checkexistingUsername = await this.accountRepository
             .createQueryBuilder('account')
             .where('account.username = :username', { username: registerData.username })

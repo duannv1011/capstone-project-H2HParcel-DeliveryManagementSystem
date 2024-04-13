@@ -298,13 +298,7 @@ export class OrderViewService {
                 if (orderStatus !== 0) {
                     queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: orderStatus });
                 }
-                if (this.getOrderDirection() === 'ASC') {
-                    queryBuilder.orderBy('order.date_create_at', 'ASC');
-                    this.setOrderDirection('DESC');
-                } else {
-                    queryBuilder.orderBy('order.date_create_at', 'DESC');
-                    this.setOrderDirection('ASC');
-                }
+                queryBuilder.orderBy('order.date_create_at', 'DESC');
                 const [orders, total] = await queryBuilder.getManyAndCount();
                 const orderList = orders.map((element) => this.toOrder(element));
                 const paging: Paging = new Paging(pageNo, this.pageSize, total);
