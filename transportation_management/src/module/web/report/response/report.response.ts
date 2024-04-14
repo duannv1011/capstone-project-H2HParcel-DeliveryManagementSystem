@@ -14,14 +14,13 @@ export interface ReportDashboard {
 }
 
 export interface ReportOrderDetailResponse {
-    report: ReportOrderDetail;
+    report: any;
     paging: Paging;
 }
 
 export interface ReportOrderDetail {
     reportChart: any;
-    orderByArea: OrderByArea[];
-    orderTotal: number;
+    warehouses: any;
 }
 
 export interface OrderByArea {
