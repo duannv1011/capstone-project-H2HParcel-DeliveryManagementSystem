@@ -5,24 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReportController } from './report.controller';
 import { ReportService } from './report.service';
 import { WarehouseEntity } from '../../../entities/warehouse.entity';
-import { OrderEntity } from '../../../entities/order.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { DistrictEntity } from '../../../entities/district.entity';
-import { WardEntity } from '../../../entities/ward.entity';
-import { CustomerEntity } from '../../../entities/customer.entity';
 
 @Module({
     imports: [
         ConfigModule,
         AuthenticationModule,
-        TypeOrmModule.forFeature([
-            WardEntity,
-            DistrictEntity,
-            WarehouseEntity,
-            OrderEntity,
-            StaffEntity,
-            CustomerEntity,
-        ]),
+        TypeOrmModule.forFeature([DistrictEntity, WarehouseEntity, StaffEntity]),
     ],
     controllers: [ReportController],
     providers: [ReportService],

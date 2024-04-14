@@ -7,7 +7,6 @@ export class ReportWarehouseResponse {
 
 export interface ReportWarehouse {
     reportChart: any;
-    totalRevenue: number;
     warehouses: Warehouse[];
 }
 
