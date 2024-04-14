@@ -15,6 +15,7 @@ import * as _ from 'lodash';
 import { TransitEntity } from 'src/entities/transit.entity';
 import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
+import { PayRuleEntity } from 'src/entities/pay-rule.entity';
 @Injectable()
 export class ShipperService {
     constructor(
@@ -32,6 +33,8 @@ export class ShipperService {
         private priceMutiPlierRepository: Repository<PriceMultiplierEntity>,
         @InjectRepository(StaffEntity)
         private staffEntity: Repository<StaffEntity>,
+        @InjectRepository(PayRuleEntity)
+        private payRuleEntity: Repository<PayRuleEntity>,
         @InjectRepository(WarehouseEntity)
         private warehouseRepository: Repository<WarehouseEntity>,
         @InjectRepository(AddressEntity)
@@ -76,6 +79,11 @@ export class ShipperService {
         if (!shiper) {
             return { status: 404, error: 'Not Found' };
         }
+        const payrule = await this.payRuleEntity.find();
+        const rule = payrule.reduce((acc, item) => {
+            acc[item.ruleId] = item.effort;
+            return acc;
+        }, {});
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         const shiperId = shiper.staffId;
@@ -96,15 +104,15 @@ export class ShipperService {
             switch (key) {
                 case '1':
                     transitTotal1 = value;
-                    transitefort += value * 25;
+                    transitefort += value * rule[6];
                     break;
                 case '2':
                     transitTotal2 = value;
-                    transitefort += value * 50;
+                    transitefort += value * rule[7];
                     break;
                 case '3':
                     transitTotal3 = value;
-                    transitefort += value * 75;
+                    transitefort += value * rule[8];
                     break;
                 default:
                     break;
@@ -129,13 +137,13 @@ export class ShipperService {
         const pickupEffort = pickupOrders.reduce((acc, order) => {
             switch (order.pkId) {
                 case 1:
-                    return acc + 10 * 0.4;
+                    return acc + rule[2] * 0.4;
                 case 2:
-                    return acc + 5 * 0.4;
+                    return acc + rule[3] * 0.4;
                 case 3:
-                    return acc + 10 * 0.4;
+                    return acc + rule[4] * 0.4;
                 case 4:
-                    return acc + 20 * 0.4;
+                    return acc + rule[5] * 0.4;
                 default:
                     return acc;
             }
@@ -143,19 +151,18 @@ export class ShipperService {
         const deliverEffort = deliverOrders.reduce((acc, order) => {
             switch (order.pkId) {
                 case 1:
-                    return acc + 10 * 0.6;
+                    return acc + rule[2] * 0.6;
                 case 2:
-                    return acc + 5 * 0.6;
+                    return acc + rule[3] * 0.6;
                 case 3:
-                    return acc + 10 * 0.6;
+                    return acc + rule[4] * 0.6;
                 case 4:
-                    return acc + 20 * 0.6;
+                    return acc + rule[5] * 0.6;
                 default:
                     return acc;
             }
         }, 0); // 60% for deliver
         //transit
-        console.log(transitefort);
         const totalEffort = pickupEffort + deliverEffort + transitefort;
         const totalOrder = count;
         const totalOrderPickup = pickupOrders.length;

@@ -26,6 +26,7 @@ import { OrderEntity } from 'src/entities/order.entity';
 import { ConfigModule } from '@nestjs/config';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { TransitEntity } from 'src/entities/transit.entity';
+import { PayRuleEntity } from 'src/entities/pay-rule.entity';
 
 @Module({
     imports: [
@@ -43,6 +44,7 @@ import { TransitEntity } from 'src/entities/transit.entity';
             WardEntity,
             PriceMultiplierEntity,
             PackageTypeEntity,
+            PayRuleEntity,
             OrderEntity,
             RoleEntity,
             QRCodeEntity,

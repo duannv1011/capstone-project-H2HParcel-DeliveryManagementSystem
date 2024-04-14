@@ -1,13 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('PayRule')
-export class PriceMultiplierEntity {
+export class PayRuleEntity {
     @PrimaryGeneratedColumn({ name: 'rule_id' })
     ruleId: number;
 
-    @Column({ name: 'rule_id' })
-    rule_id: number;
+    @Column({ name: 'effort' })
+    effort: number;
 
-    @Column({ name: 'pay_rule_name' })
+    @Column({ name: 'pay_rule_name', nullable: true })
     payRuleName: number;
 }
