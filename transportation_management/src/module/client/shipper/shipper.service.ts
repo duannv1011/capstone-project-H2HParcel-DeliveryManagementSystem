@@ -322,6 +322,33 @@ export class ShipperService {
             throw new InternalServerErrorException('order not found');
         }
     }
+    async shiperCancelOrder(order_id: number, accId: number) {
+        const order = await this.orderRepository.findOneBy({ orderId: order_id });
+
+        if (order) {
+            const queryRunner = this.dataSource.createQueryRunner();
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+            try {
+                // update order
+                const orderStatus = new OrderStatusEntity();
+                orderStatus.sttId = 10;
+                order.status = orderStatus;
+                await queryRunner.manager.save(order);
+                // create activity log
+                const activityLog = await this.ActivitylogOrder(order.orderId, 18, accId);
+                await queryRunner.manager.save(ActivityLogEntity, activityLog);
+                await queryRunner.commitTransaction();
+            } catch (error) {
+                await queryRunner.rollbackTransaction();
+                throw new InternalServerErrorException(error);
+            } finally {
+                await queryRunner.release();
+            }
+        } else {
+            throw new InternalServerErrorException('order not found');
+        }
+    }
     async getDetailOrder(orderId: number): Promise<any> {
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')

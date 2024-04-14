@@ -87,7 +87,15 @@ export class ShipperController {
     async shiperUpdateprice(@Query('order_id') order_id: number, @Query('price') price: number) {
         return this.shipperService.shiperUpdateprice(order_id, price);
     }
-
+    @Put('shipper/order/order-cancel')
+    @Roles(Role.SHIPPER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'shipper Cancel Order of Orders by shipper' })
+    @ApiResponse({ status: 200, description: 'Cancel  successfully.' })
+    async shiperOrderCancel(@Query('order_id') order_id: number, @UserLogin() user: UserLoginData) {
+        return this.shipperService.shiperCancelOrder(order_id, user.accId);
+    }
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Upload verify image order to google driver' })
     @ApiOperation({ summary: 'Upload verify image order to google driver' })

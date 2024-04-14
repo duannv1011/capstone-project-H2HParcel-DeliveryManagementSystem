@@ -11,6 +11,7 @@ import { RequestRecordEntity } from '../../../entities/request-record.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { OrderEntity } from 'src/entities/order.entity';
 import { TransitEntity } from 'src/entities/transit.entity';
+import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { TransitEntity } from 'src/entities/transit.entity';
             RequestRecordEntity,
             RequestEntity,
             OrderEntity,
+            WarehouseRuleEntity,
             TransitEntity,
             RequestTypeEntity,
             RequestStatusEntity,
