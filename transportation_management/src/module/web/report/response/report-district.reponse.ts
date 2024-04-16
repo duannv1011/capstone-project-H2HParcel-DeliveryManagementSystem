@@ -6,13 +6,11 @@ export class ReportDistrictResponse {
 }
 
 export interface ReportDistrict {
-    reportChart: any;
-    totalCustomer: number;
     districts: District[];
 }
 
 export interface District {
     districtId: string;
     districtName: string;
-    totalCustomer: number;
+    totalRevenue: number;
 }
