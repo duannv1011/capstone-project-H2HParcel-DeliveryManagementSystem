@@ -218,8 +218,11 @@ export class ProfileService {
             const address: Address = entity.address
                 ? {
                       addressId: entity.address.addressId,
+                      cityId: entity.address.cityId,
                       cityName: city,
+                      districtId: entity.address.districtId,
                       districtName: disstrict,
+                      wardId: entity.address.wardId,
                       wardName: wardName,
                       house: house,
                   }

@@ -16,7 +16,10 @@ export interface Staff {
 export interface Address {
     addressId: number;
     house: string;
+    cityId: number;
     cityName: string;
+    districtId: number;
     districtName: string;
+    wardId: number;
     wardName: string;
 }
