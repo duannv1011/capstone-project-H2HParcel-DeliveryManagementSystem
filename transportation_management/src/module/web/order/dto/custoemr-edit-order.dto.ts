@@ -11,6 +11,10 @@ export class CustomerEditOrder {
     @IsString()
     @IsNotEmpty({ message: 'null value for deliverInforId ' })
     deliverInforId: number;
+    @IsString()
+    @IsNotEmpty({ message: 'Null value error for newPrice' })
+    @ApiProperty({ example: 'the stuff is easy to break', description: 'newPrice' })
+    newPrice: string;
 
     @IsString()
     @IsNotEmpty({ message: 'Null value error for note' })

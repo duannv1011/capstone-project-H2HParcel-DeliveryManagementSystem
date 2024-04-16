@@ -155,6 +155,7 @@ CREATE TABLE "Request" (
   "request_id" SERIAL  PRIMARY KEY,
   "record_id" integer,
   "order_id" integer,
+  "new_price" integer
   "pickup_infor" integer,-- new infor to update order
   "deliver_infor" integer,-- new infor to update order
 );

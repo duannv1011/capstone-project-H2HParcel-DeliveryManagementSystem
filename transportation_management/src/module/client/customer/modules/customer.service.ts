@@ -84,8 +84,11 @@ export class CustomerService {
         dataView.email = customer.email;
         dataView.phone = customer.phone;
         dataView.house = customer.address.house;
+        dataView.cityId = customer.address.cityId;
         dataView.city = customer.address.city.cityName;
+        dataView.districtId = customer.address.districtId;
         dataView.district = customer.address.district.districtName;
+        dataView.wardId = customer.address.wardId;
         dataView.ward = customer.address.ward.wardName;
         return dataView;
     }

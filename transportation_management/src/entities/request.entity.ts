@@ -22,6 +22,9 @@ export class RequestEntity extends AbstractEntity {
     @Column({ name: 'pickup_infor', nullable: true })
     pickupInfor: number;
 
+    @Column({ name: 'new_price', nullable: true })
+    new_price: number;
+
     @Column({ name: 'deliver_infor', nullable: true })
     deliverInfor: number;
 

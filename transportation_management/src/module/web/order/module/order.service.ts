@@ -313,6 +313,7 @@ export class OrderService {
                 const deliverupdate = new InformationEntity();
                 deliverupdate.inforId = data.deliverInforId;
                 requestupdate.deliverInfor = data.deliverInforId;
+                requestupdate.new_price = data.newPrice ? Number(data.newPrice) : 0;
                 requestupdate.deliverInformation = deliverupdate;
                 await queryRunner.manager.save(requestupdate);
                 //update requestRecord
@@ -352,6 +353,7 @@ export class OrderService {
                 request.pickupInformation = order.pickupInformation;
                 request.deliverInfor = data.deliverInforId;
                 request.deliverInformation = deliver;
+                request.new_price = data.newPrice ? Number(data.newPrice) : 0;
                 await queryRunner.manager.save(RequestEntity, request);
             }
             //create ActivityLog
