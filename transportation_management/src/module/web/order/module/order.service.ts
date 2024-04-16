@@ -218,6 +218,7 @@ export class OrderService {
                   pickPhone: dataQuery.pickupInformation.phone,
                   pickCity: dataQuery.pickupInformation.address.city.cityName,
                   pickDistrict: dataQuery.pickupInformation.address.district.districtName,
+                  pickupWardId: dataQuery.pickupInformation.address.wardId,
                   pickWard: dataQuery.pickupInformation.address.ward.wardName,
                   pickShiper: dataQuery.pickupShipperStaff ? dataQuery.pickupShipperStaff.fullname : null,
                   deliverInforId: dataQuery.deliverInforId,
