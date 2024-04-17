@@ -7,12 +7,13 @@ import { ReportService } from './report.service';
 import { WarehouseEntity } from '../../../entities/warehouse.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { DistrictEntity } from '../../../entities/district.entity';
+import { OrderEntity } from 'src/entities/order.entity';
 
 @Module({
     imports: [
         ConfigModule,
         AuthenticationModule,
-        TypeOrmModule.forFeature([DistrictEntity, WarehouseEntity, StaffEntity]),
+        TypeOrmModule.forFeature([DistrictEntity, WarehouseEntity, StaffEntity, OrderEntity]),
     ],
     controllers: [ReportController],
     providers: [ReportService],

@@ -27,10 +27,14 @@ export class ReportService {
         private warehouseRepository: Repository<WarehouseEntity>,
         @InjectRepository(DistrictEntity)
         private districtRepository: Repository<DistrictEntity>,
+        @InjectRepository(OrderEntity)
+        private orderRepository: Repository<OrderEntity>,
     ) {}
 
     pageSize = Number(process.env.PAGE_SIZE);
-
+    async reportDashboardAdmin(pageNo: number) {
+        //const orders= await this.orderRepository
+    }
     async getReportManagerOrderDetail(userLogin: UserLoginData, pageNo: number): Promise<ReportOrderDetailResponse> {
         try {
             const warehouseIdList = await this.getWarehouseIdByStaff(userLogin);

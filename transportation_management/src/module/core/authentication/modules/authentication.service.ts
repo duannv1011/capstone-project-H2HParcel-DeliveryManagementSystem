@@ -13,6 +13,8 @@ import { AddressEntity } from '../../../../entities/address.entity';
 import { AccountEntity } from '../../../../entities/account.entity';
 import { InformationEntity } from 'src/entities/information.entity';
 import { AddressBookEntity } from 'src/entities/address-book.entity';
+import { MailerService } from '@nestjs-modules/mailer';
+//import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthenticationService {
@@ -30,6 +32,7 @@ export class AuthenticationService {
         private customerService: CustomerService,
         private jwtService: JwtService,
         private configService: ConfigService,
+        private mailerService: MailerService,
         private dataSource: DataSource,
     ) {}
 
@@ -100,6 +103,14 @@ export class AuthenticationService {
             //update defaultBook of Customer
             customerdata.defaultBook = addressbookdata.bookId;
             await queryRunner.manager.save(CustomerEntity, customerdata);
+            await this.mailerService.sendMail({
+                to: registerData.customer.email,
+                from: this.configService.get<string>('DEFAULT_EMAIL_FROM'),
+                subject: 'H2H App Reigister Notification',
+                template: 'src/teamplates/email/reset_pass',
+                html: `<p>Congratulations ${registerData.customer.fullName}!, you have successfully registered on the H2H system! Your new account has been created and is ready to use. Thank you for joining us!</p>
+                <p>If you did not register, you can ignore this email.</p>`,
+            });
             return { status: 200, msg: 'regiter success' };
         } catch (error) {
             await queryRunner.rollbackTransaction();

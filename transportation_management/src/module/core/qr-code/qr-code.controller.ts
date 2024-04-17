@@ -77,7 +77,7 @@ export class QrCodeController {
     @UsePipes(ValidationPipe)
     @ApiUnauthorizedResponse()
     @ApiBody({ type: QrCodeListDto })
-    @Header('Content-Type', 'application/zip')
+    @Header('Content-Type ', 'application/zip')
     @Header('Content-Disposition', `attachment; filename="qrcode_${moment().tz(TIMEZONE).format(DATE_FORMAT)}.zip"`)
     @Post('print')
     async zipQrCodeList(@Body() request: QrCodeListDto): Promise<StreamableFile> {

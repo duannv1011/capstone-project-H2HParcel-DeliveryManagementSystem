@@ -230,6 +230,8 @@ export class ShipperService {
             packageTypeId: o.packageType.pkId,
             packageTypeName: o.packageType.pkName,
             price: o.estimatedPrice,
+            paymentMethod: o.paymentMethod ? o.paymentMethod : 1,
+            payment: o.payment ? o.payment : '',
         }));
 
         const paging = new Paging(pageNo, pageSize, count);
@@ -307,6 +309,8 @@ export class ShipperService {
             packageTypeId: o.packageType.pkId,
             packageTypeName: o.packageType.pkName,
             price: o.estimatedPrice,
+            paymentMethod: o.paymentMethod ? o.paymentMethod : 1,
+            payment: o.payment ? o.payment : '',
         }));
 
         const paging = new Paging(pageNo, pageSize, count);
@@ -397,6 +401,8 @@ export class ShipperService {
                   packageTypeId: dataQuery.packageType.pkId,
                   packageTypeName: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,
+                  paymentMethod: dataQuery.paymentMethdataQueryd ? dataQuery.paymentMethdataQueryd : 1,
+                  payment: dataQuery.payment ? dataQuery.payment : '',
               }
             : null;
         return order ? order : 'query error or not found';

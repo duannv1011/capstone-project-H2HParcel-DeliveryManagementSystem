@@ -409,6 +409,9 @@ export class OrderViewService {
                 .pickUpdateWarehouseId(entity.pickupInformation.address.ward.warehouseId)
                 .deliverUpdateWarehouseId(entity.deliverInformation.address.ward.warehouseId)
                 .price(entity.estimatedPrice)
+                .paymentMethod(entity.paymentMethod ? entity.paymentMethod : 1)
+                .payment(entity.payment ? entity.payment : '')
+                .imgUrl(entity.imageVerifyUrl ? entity.imageVerifyUrl : '')
                 .build();
         }
 

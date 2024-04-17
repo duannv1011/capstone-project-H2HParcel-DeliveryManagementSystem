@@ -13,6 +13,16 @@ import { RoleGuard } from '../../../guards/role.guard';
 @Controller('report')
 export class ReportController {
     constructor(private readonly reportService: ReportService) {}
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'Admin report staff detail' })
+    @ApiOperation({ summary: 'Admin report staff detail' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/revenue/dashboard')
+    async reportDashboardAdmin(@Query('pageNo', ParseIntPipe) pageNo: number) {
+        return await this.reportService.reportDashboardAdmin(pageNo);
+    }
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Admin report staff detail' })

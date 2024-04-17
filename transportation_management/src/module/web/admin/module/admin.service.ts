@@ -158,6 +158,20 @@ export class AdminService {
         }
         return false;
     }
+    async updateRoleStaff(staffId: number, roleId: number) {
+        const staff = await this.staffRepository.findOneBy({ staffId: staffId });
+        const acount = staff ? await this.accountRepository.findOneBy({ accId: staff.accId }) : null;
+        if ([2, 3].includes(roleId)) {
+            if (acount) {
+                const role = new RoleEntity();
+                role.roleId = roleId;
+                acount.role = role;
+                acount.roleId = roleId;
+            }
+        }
+        const update = await this.accountRepository.save(acount);
+        return update ? { status: 'success' } : { status: 'error' };
+    }
     async adminUpdateStaff(data: updateStaffDto): Promise<any> {
         const staff = await this.staffRepository.findOne({
             where: {
@@ -172,9 +186,9 @@ export class AdminService {
             return { status: 404, msg: 'email is exist!' };
         }
 
-        staff.fullname = data.fullname;
-        staff.email = data.email;
-        staff.phone = data.phone;
+        staff.fullname = data.fullname ? data.fullname : staff.fullname;
+        staff.email = data.email ? data.email : staff.email;
+        staff.phone = data.phone ? data.phone : staff.phone;
         staff.warehouseId = data.warehouseId ? data.warehouseId : staff.warehouseId;
         staff.status = data.status ? data.status : staff.status;
         await this.staffRepository.save(staff);

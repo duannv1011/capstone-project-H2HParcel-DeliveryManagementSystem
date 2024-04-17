@@ -26,4 +26,7 @@ export interface Order {
     price: number;
     packageTypeId: number;
     packageTypeName: string;
+    paymentMethod: number;
+    payment: string;
+    imgUrl: string;
 }

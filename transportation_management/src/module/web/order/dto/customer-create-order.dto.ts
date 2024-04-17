@@ -89,8 +89,18 @@ export class CusCreateOrderDto {
     @IsNotEmpty({ message: 'null value for pk_id ' })
     pkId: number;
 
+    @ApiProperty({ example: 1, description: 'paymentMethod' })
+    @IsNumber()
+    @IsNotEmpty({ message: 'null value for paymentMethod ' })
+    paymentMethod: number;
+
     @ApiProperty({ example: 10, description: 'estimated_price' })
     @IsString()
     @IsNotEmpty({ message: 'null value for estimated_price ' })
     estimatedPrice: number;
+
+    @ApiProperty({ example: null, description: 'payment' })
+    @IsNumber()
+    @IsNotEmpty({ message: 'null value for payment' })
+    payment: string;
 }

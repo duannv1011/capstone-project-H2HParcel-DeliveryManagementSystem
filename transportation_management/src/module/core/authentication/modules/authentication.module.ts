@@ -12,6 +12,8 @@ import { AccountEntity } from '../../../../entities/account.entity';
 import { RoleEntity } from '../../../../entities/role.entity';
 import { InformationEntity } from 'src/entities/information.entity';
 import { AddressBookEntity } from 'src/entities/address-book.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailerConfig } from '../../send_mail/mail_config/mailer.config';
 
 @Module({
     imports: [
@@ -30,6 +32,7 @@ import { AddressBookEntity } from 'src/entities/address-book.entity';
             secret: process.env.SECRET_KEY,
             signOptions: { expiresIn: process.env.EXPIRES_IN_TOKEN },
         }),
+        MailerModule.forRoot(mailerConfig),
     ],
     providers: [AuthenticationService, CustomerService],
     controllers: [AuthenticationController],

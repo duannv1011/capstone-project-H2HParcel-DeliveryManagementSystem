@@ -69,6 +69,15 @@ export class AdminController {
     async updateStaff(@Body() data: updateStaffDto): Promise<any> {
         return await this.adminService.adminUpdateStaff(data);
     }
+    @Put('admin/staff/role-update')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'Update staff role' })
+    @ApiResponse({ status: 200, description: 'Update staff role data successfully.' })
+    async updateRoleStaff(@Query('staffId') staffId: number, @Query('roleId') roleId: number): Promise<any> {
+        return await this.adminService.updateRoleStaff(staffId, roleId);
+    }
     @Patch('admin/staff/setManager')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
