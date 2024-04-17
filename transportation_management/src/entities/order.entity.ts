@@ -68,4 +68,7 @@ export class OrderEntity extends AbstractEntity {
 
     @Column({ name: 'payment_method', nullable: true, default: 1 })
     public paymentMethod: number;
+
+    @Column({ name: 'payment', nullable: true, default: null })
+    public payment: string;
 }
