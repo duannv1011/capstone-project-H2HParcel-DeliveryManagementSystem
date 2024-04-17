@@ -17,10 +17,20 @@ export interface ReportOrderDetailResponse {
     report: any;
     paging: Paging;
 }
-
+export interface revanueByMonth {
+    month: number;
+    totalRevenue: string;
+}
 export interface ReportOrderDetail {
     reportChart: any;
     warehouses: any;
+}
+export interface RevenueByWarehouse {
+    date: string;
+    currentMonth: string;
+    warehouseId: number;
+    warehouseName: string;
+    revenue: number;
 }
 
 export interface OrderByArea {

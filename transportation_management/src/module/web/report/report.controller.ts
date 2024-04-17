@@ -14,14 +14,24 @@ import { RoleGuard } from '../../../guards/role.guard';
 export class ReportController {
     constructor(private readonly reportService: ReportService) {}
     @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'Admin report staff detail' })
-    @ApiOperation({ summary: 'Admin report staff detail' })
+    @ApiOkResponse({ description: 'get Admin report revenue dashboard for graph successfully' })
+    @ApiOperation({ summary: 'Admin report revenue dashboard for graph' })
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
-    @Get('admin/revenue/dashboard')
-    async reportDashboardAdmin(@Query('pageNo', ParseIntPipe) pageNo: number) {
-        return await this.reportService.reportDashboardAdmin(pageNo);
+    @Get('admin/revenue/dashboard-graph')
+    async reportRevenueAdminforGraph() {
+        return await this.reportService.reportRevenueAdminforGraph();
+    }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get Admin report revenue by warehouse in month for table successfully' })
+    @ApiOperation({ summary: 'get Admin report revenue by warehouse in month for table' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/revenue/dashboard-table')
+    async reportAdminRevenueByWarehoueInMotnhfortable(@Query('month') month: number) {
+        return await this.reportService.reportAdminRevenueByWarehoueInMotnhfortable(month);
     }
 
     @ApiBearerAuth('JWT-auth')

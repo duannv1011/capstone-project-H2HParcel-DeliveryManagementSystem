@@ -1,6 +1,11 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
-import { ReportOrderDetail, ReportOrderDetailResponse } from './response/report.response';
+import {
+    ReportOrderDetail,
+    ReportOrderDetailResponse,
+    RevenueByWarehouse,
+    revanueByMonth,
+} from './response/report.response';
 import { UserLoginData } from '../../core/authentication/dto/user_login_data';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,7 +22,6 @@ import { OrderStatus } from '../../../enum/order-status.enum';
 import { ReportWarehouse, ReportWarehouseResponse, Warehouse } from './response/report-warehouse.reponse';
 import { District, ReportDistrict, ReportDistrictResponse } from './response/report-district.reponse';
 import { InformationEntity } from '../../../entities/information.entity';
-
 @Injectable()
 export class ReportService {
     constructor(
@@ -32,8 +36,79 @@ export class ReportService {
     ) {}
 
     pageSize = Number(process.env.PAGE_SIZE);
-    async reportDashboardAdmin(pageNo: number) {
-        //const orders= await this.orderRepository
+    async reportRevenueAdminforGraph() {
+        const dataquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .select('EXTRACT(MONTH FROM o.date_update_at) AS month')
+            .addSelect('SUM(o.estimated_price) AS totalRevenue')
+            .where('o.order_stt = :stt', { stt: 9 })
+            .groupBy('EXTRACT(MONTH FROM o.date_update_at)')
+            .getRawMany();
+        const revenueByMonth: revanueByMonth[] = Array.from({ length: 12 }, (_, i) => ({
+            month: i + 1,
+            totalRevenue: '0',
+        }));
+        dataquery.forEach((data) => {
+            revenueByMonth[Number(data.month) - 1].totalRevenue = data.totalrevenue;
+        });
+        return revenueByMonth;
+    }
+    async reportAdminRevenueByWarehoueInMotnhfortable(month: number) {
+        const dataQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .leftJoinAndSelect('piw.warehouse', 'piww')
+            .leftJoinAndSelect('diw.warehouse', 'diww')
+            .select([
+                'o.date_update_at',
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                'piww.warehouse_name AS pickupWarehouseName',
+                '(o.estimated_price * 0.4) AS pickupWarehouseRevanue',
+                'diw.warehouse_id AS deliverWarehouse',
+                'diww.warehouse_name AS deliverWarehouseName',
+                '(o.estimated_price * 0.6) AS deliverWarehouseRevanue',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: month.toString() })
+            .getRawMany();
+        const data: RevenueByWarehouse[] = [];
+
+        dataQuery.forEach((item) => {
+            const pickupData: RevenueByWarehouse = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.pickupwarehouse,
+                warehouseName: item.pickupwarehousename,
+                revenue: Number(item.pickupwarehouserevanue),
+            };
+
+            const deliverData: RevenueByWarehouse = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.deliverwarehouse,
+                warehouseName: item.deliverwarehousename,
+                revenue: Number(item.deliverwarehouserevanue),
+            };
+            data.push(pickupData, deliverData);
+        });
+        const warehouseMap = _.groupBy(data, 'warehouseId');
+        const result = [];
+        for (const [key, value] of Object.entries(warehouseMap)) {
+            result.push({
+                warehouseId: key,
+                warehouseName: value[0].warehouseName,
+                revenue: _.sumBy(value, 'revenue'),
+            });
+        }
+
+        return result;
     }
     async getReportManagerOrderDetail(userLogin: UserLoginData, pageNo: number): Promise<ReportOrderDetailResponse> {
         try {
