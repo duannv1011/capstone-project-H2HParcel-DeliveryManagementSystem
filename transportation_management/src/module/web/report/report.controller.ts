@@ -19,7 +19,7 @@ export class ReportController {
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
-    @Get('admin/revenue/dashboard-graph')
+    @Get('admin/revenue/revenue-graph')
     async reportRevenueAdminforGraph() {
         return await this.reportService.reportRevenueAdminforGraph();
     }
@@ -29,7 +29,7 @@ export class ReportController {
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
-    @Get('admin/revenue/dashboard-table')
+    @Get('admin/revenue/warehouse-revenue/table')
     async reportAdminRevenueByWarehoueInMotnhfortable(@Query('month') month: number) {
         return await this.reportService.reportAdminRevenueByWarehoueInMotnhfortable(month);
     }

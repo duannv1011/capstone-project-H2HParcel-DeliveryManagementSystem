@@ -37,14 +37,18 @@ export class ReportService {
 
     pageSize = Number(process.env.PAGE_SIZE);
     async reportRevenueAdminforGraph() {
+        const currentYear = new Date().getFullYear(); // Get the current year
         const dataquery = await this.orderRepository
             .createQueryBuilder('o')
             .select('EXTRACT(MONTH FROM o.date_update_at) AS month')
             .addSelect('SUM(o.estimated_price) AS totalRevenue')
             .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
             .groupBy('EXTRACT(MONTH FROM o.date_update_at)')
             .getRawMany();
-        const revenueByMonth: revanueByMonth[] = Array.from({ length: 12 }, (_, i) => ({
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const revenueByMonth: revanueByMonth[] = Array.from({ length: currentMonth }, (_, i) => ({
             month: i + 1,
             totalRevenue: '0',
         }));
@@ -54,6 +58,7 @@ export class ReportService {
         return revenueByMonth;
     }
     async reportAdminRevenueByWarehoueInMotnhfortable(month: number) {
+        const currentYear = new Date().getFullYear(); // Get the current year
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')
             .leftJoinAndSelect('o.pickupInformation', 'pi')
@@ -77,6 +82,7 @@ export class ReportService {
             ])
             .where('o.order_stt = :stt', { stt: 9 })
             .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: month.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
             .getRawMany();
         const data: RevenueByWarehouse[] = [];
 
@@ -102,13 +108,27 @@ export class ReportService {
         const result = [];
         for (const [key, value] of Object.entries(warehouseMap)) {
             result.push({
-                warehouseId: key,
+                warehouseId: Number(key),
                 warehouseName: value[0].warehouseName,
                 revenue: _.sumBy(value, 'revenue'),
             });
         }
+        const warehouses = await this.warehouseRepository
+            .createQueryBuilder('w')
+            .select(['w.warehouseId', 'w.warehouseName', '0 AS revenue'])
+            .getRawMany();
 
-        return result;
+        const mergedWarehouses = warehouses.map((warehouse) => {
+            const found = result.find(({ warehouseId }) => warehouseId === warehouse.w_warehouse_id);
+            return {
+                warehouseId: warehouse.w_warehouse_id,
+                warehouseName: warehouse.w_warehouse_name,
+                revenue: found ? found.revenue : 0,
+            };
+        });
+        const sortedWarehouses = mergedWarehouses.sort((a, b) => b.revenue - a.revenue);
+
+        return sortedWarehouses;
     }
     async getReportManagerOrderDetail(userLogin: UserLoginData, pageNo: number): Promise<ReportOrderDetailResponse> {
         try {
