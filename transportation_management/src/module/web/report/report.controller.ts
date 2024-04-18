@@ -13,6 +13,7 @@ import { RoleGuard } from '../../../guards/role.guard';
 @Controller('report')
 export class ReportController {
     constructor(private readonly reportService: ReportService) {}
+    //report revenue for admin
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'get Admin report revenue dashboard for graph successfully' })
     @ApiOperation({ summary: 'Admin report revenue dashboard for graph' })
@@ -30,10 +31,31 @@ export class ReportController {
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('admin/revenue/warehouse-revenue/table')
-    async reportAdminRevenueByWarehoueInMotnhfortable(@Query('month') month: number) {
-        return await this.reportService.reportAdminRevenueByWarehoueInMotnhfortable(month);
+    async reportAdminRevenueByWarehoueInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
+        return await this.reportService.reportAdminRevenueByWarehoueInMotnhfortable(month, pageNo);
     }
-
+    //report customer for admin
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get Admin report customer for graph successfully' })
+    @ApiOperation({ summary: 'Admin report get all Customer in month for graph' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/customer/customer-graph')
+    async reportCutomerAdminForGraph() {
+        return await this.reportService.reportCutomerAdminForGraph();
+    }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get Admin report customer for graph successfully' })
+    @ApiOperation({ summary: 'Admin report get all Customer in month for graph' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/customer/customer-table')
+    async reportCutomerAdminForTable() {
+        return await this.reportService.reportCutomerAdminForTable();
+    }
+    //
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Admin report staff detail' })
     @ApiOperation({ summary: 'Admin report staff detail' })

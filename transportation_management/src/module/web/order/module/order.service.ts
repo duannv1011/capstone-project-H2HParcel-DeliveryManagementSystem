@@ -232,6 +232,7 @@ export class OrderService {
                   deliverShiper: dataQuery.deliverShipperStaff ? dataQuery.deliverShipper.fullname : null,
                   statusId: dataQuery.orderStt,
                   status: dataQuery.status.sttName,
+                  pakeId: dataQuery.pkId,
                   pakeType: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,
                   paymenMethod: dataQuery.paymentMethod ? dataQuery.paymentMethod : 1,
@@ -261,7 +262,7 @@ export class OrderService {
             order.deliverShipper = null;
             order.orderStt = 1;
             order.pkId = data.pkId;
-            order.estimatedPrice = data.estimatedPrice;
+            order.estimatedPrice = data.estimatedPrice ? data.estimatedPrice : 0;
             order.paymentMethod = data.paymentMethod ? data.paymentMethod : 1;
             order.payment = data.paymentMethod === 2 ? data.payment : 'cash';
             await queryRunner.manager.save(OrderEntity, order);

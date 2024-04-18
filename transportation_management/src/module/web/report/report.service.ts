@@ -57,7 +57,7 @@ export class ReportService {
         });
         return revenueByMonth;
     }
-    async reportAdminRevenueByWarehoueInMotnhfortable(month: number) {
+    async reportAdminRevenueByWarehoueInMotnhfortable(month: number, pageNo: number) {
         const currentYear = new Date().getFullYear(); // Get the current year
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')
@@ -127,8 +127,60 @@ export class ReportService {
             };
         });
         const sortedWarehouses = mergedWarehouses.sort((a, b) => b.revenue - a.revenue);
+        const pageSize = this.pageSize;
+        // Calculate start and end index for paging
+        pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
 
-        return sortedWarehouses;
+        // Get the paged data
+        const pagedWarehouses = sortedWarehouses.slice(startIndex, endIndex);
+
+        return pagedWarehouses;
+    }
+    async reportCutomerAdminForGraph() {
+        const currentYear = new Date().getFullYear(); // Get the current year
+        const dataquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .select('EXTRACT(MONTH FROM o.date_create_at) as month')
+            .addSelect('COUNT(DISTINCT o.cus_id) as customerCount')
+            .andWhere('EXTRACT(YEAR FROM o.date_create_at) = :year', { year: currentYear.toString() })
+            .groupBy('EXTRACT(MONTH FROM o.date_create_at)')
+            .orderBy('month', 'ASC')
+            .getRawMany();
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const countByMonth: revanueByMonth[] = Array.from({ length: currentMonth }, (_, i) => ({
+            month: i + 1,
+            totalRevenue: '0',
+        }));
+        dataquery.forEach((data) => {
+            countByMonth[Number(data.month) - 1].totalRevenue = data.customercount;
+        });
+        return countByMonth;
+    }
+    async reportCutomerAdminForTable() {
+        const currentYear = new Date().getFullYear(); // Get the current year
+        const dataQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.customer', 'c')
+            .leftJoinAndSelect('c.address', 'a')
+            .leftJoinAndSelect('a.district', 'd')
+            .select(['a.district_id', 'd.district_name', 'COUNT(DISTINCT o.cus_id) as customer_count'])
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .groupBy('a.district_id,d.district_name')
+            .getRawMany();
+        const district = await this.districtRepository.find();
+        const mergedDistrict = district.map((district) => {
+            const found = dataQuery.find(({ district_id }) => district_id === district.districtId);
+            return {
+                districtId: district.districtId,
+                districtName: district.districtName,
+                customerCount: found ? Number(found.customer_count) : 0,
+            };
+        });
+        const result = mergedDistrict.sort((a, b) => b.customerCount - a.customerCount);
+        return result;
     }
     async getReportManagerOrderDetail(userLogin: UserLoginData, pageNo: number): Promise<ReportOrderDetailResponse> {
         try {
