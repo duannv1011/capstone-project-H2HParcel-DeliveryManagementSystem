@@ -66,6 +66,9 @@ export class ShipperService {
             warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
         );
         const num = distance.toFixed();
+        if (distance === 0) {
+            return 1;
+        }
         const priceMultiplier = await this.priceMutiPlierRepository
             .createQueryBuilder('p')
             .where('p.max_distance >= :num', { num })
@@ -382,7 +385,6 @@ export class ShipperService {
             .catch((error) => {
                 return error;
             });
-        console.log(dataQuery);
         const order = dataQuery
             ? {
                   orderId: dataQuery.orderId,
