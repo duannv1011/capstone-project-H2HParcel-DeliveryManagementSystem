@@ -101,7 +101,7 @@ export class OrderService {
             pakeType: item.packageType.pkName,
             price: item.estimatedPrice,
             paymenMethod: item.paymentMethod ? item.paymentMethod : 1,
-            payment: item.payment && item.paymentMethod === 2 ? item.payment : 'cast',
+            payment: item.payment && item.paymentMethod === 2 ? item.payment : 'cash',
         }));
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
@@ -162,7 +162,7 @@ export class OrderService {
             pakeType: item.packageType.pkName,
             price: item.estimatedPrice,
             paymenMethod: item.paymentMethod ? item.paymentMethod : 1,
-            payment: item.payment && item.paymentMethod === 2 ? item.payment : 'cast',
+            payment: item.payment && item.paymentMethod === 2 ? item.payment : 'cash',
         }));
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
@@ -235,7 +235,7 @@ export class OrderService {
                   pakeType: dataQuery.packageType.pkName,
                   price: dataQuery.estimatedPrice,
                   paymenMethod: dataQuery.paymentMethod ? dataQuery.paymentMethod : 1,
-                  payment: dataQuery.payment && dataQuery.paymentMethod === 2 ? dataQuery.payment : 'cast',
+                  payment: dataQuery.payment && dataQuery.paymentMethod === 2 ? dataQuery.payment : 'cash',
                   confirmurl: dataQuery.imageVerifyUrl ? dataQuery.imageVerifyUrl : '',
               }
             : null;
@@ -263,7 +263,7 @@ export class OrderService {
             order.pkId = data.pkId;
             order.estimatedPrice = data.estimatedPrice;
             order.paymentMethod = data.paymentMethod ? data.paymentMethod : 1;
-            order.payment = data.paymentMethod === 2 ? data.payment : '';
+            order.payment = data.paymentMethod === 2 ? data.payment : 'cash';
             await queryRunner.manager.save(OrderEntity, order);
             //create ActivityLog
             const activityLog = await this.ActivitylogOrder(order.orderId, 1, accId);
