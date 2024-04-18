@@ -63,8 +63,6 @@ export class OrderService {
     async getAllOrders(accId: number, pageNo: number): Promise<any> {
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
-        console.log(pageNo);
-        //const orders = await this.orderRepository.findOne({ where: { cusId: cusId } });
         const pageSize = Number(process.env.PAGE_SIZE);
         const [list, count] = await this.orderRepository
             .createQueryBuilder('o')

@@ -67,8 +67,8 @@ export class ReportService {
             .leftJoinAndSelect('di.address', 'dia')
             .leftJoinAndSelect('pia.ward', 'piw')
             .leftJoinAndSelect('dia.ward', 'diw')
-            .leftJoinAndSelect('piw.warehouse', 'piww')
-            .leftJoinAndSelect('diw.warehouse', 'diww')
+            .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
             .select([
                 'o.date_update_at',
                 'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
