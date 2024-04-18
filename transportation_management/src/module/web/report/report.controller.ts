@@ -62,7 +62,7 @@ export class ReportController {
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
-    @Get('admin/revenue/order-graph')
+    @Get('admin/order/order-graph')
     async reportOrderAdminforGraph() {
         return await this.reportService.reportOrderAdminforGraph();
     }
@@ -72,10 +72,22 @@ export class ReportController {
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
-    @Get('admin/revenue/warehouse-order/table')
+    @Get('admin/order/warehouse-order/table')
     async reportOrderByWarehoueInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
         return await this.reportService.reportOrderByWarehoueInMotnhfortable(month, pageNo);
     }
+    //report staff for admin
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'admin get all order by warehouse in month successfully' })
+    @ApiOperation({ summary: 'admin get all order by warehouse in month' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/staff/table')
+    async reportOrderStaffByWarehoueInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
+        return await this.reportService.reportOrderByWarehoueInMotnhfortable(month, pageNo);
+    }
+    //
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Admin report staff detail' })
     @ApiOperation({ summary: 'Admin report staff detail' })
