@@ -4,6 +4,7 @@ import {
     ReportOrderDetail,
     ReportOrderDetailResponse,
     RevenueByWarehouse,
+    orderCountByMonth,
     revanueByMonth,
 } from './response/report.response';
 import { UserLoginData } from '../../core/authentication/dto/user_login_data';
@@ -128,15 +129,21 @@ export class ReportService {
         });
         const sortedWarehouses = mergedWarehouses.sort((a, b) => b.revenue - a.revenue);
         const pageSize = this.pageSize;
-        // Calculate start and end index for paging
         pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
         const startIndex = (pageNo - 1) * pageSize;
         const endIndex = startIndex + pageSize;
-
+        const totalpages =
+            sortedWarehouses.length % pageSize === 0
+                ? sortedWarehouses.length / pageSize
+                : Math.floor(sortedWarehouses.length / pageSize) + 1;
         // Get the paged data
         const pagedWarehouses = sortedWarehouses.slice(startIndex, endIndex);
 
-        return pagedWarehouses;
+        return {
+            data: pagedWarehouses,
+            pageno: pageNo,
+            totalPage: totalpages,
+        };
     }
     async reportCutomerAdminForGraph() {
         const currentYear = new Date().getFullYear(); // Get the current year
@@ -159,7 +166,7 @@ export class ReportService {
         });
         return countByMonth;
     }
-    async reportCutomerAdminForTable() {
+    async reportCutomerAdminForTable(pageNo: number) {
         const currentYear = new Date().getFullYear(); // Get the current year
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')
@@ -179,9 +186,138 @@ export class ReportService {
                 customerCount: found ? Number(found.customer_count) : 0,
             };
         });
-        const result = mergedDistrict.sort((a, b) => b.customerCount - a.customerCount);
-        return result;
+        const sortedData = mergedDistrict.sort((a, b) => b.customerCount - a.customerCount);
+
+        const pageSize = this.pageSize;
+        pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const totalpages =
+            sortedData.length % pageSize === 0
+                ? sortedData.length / pageSize
+                : Math.floor(sortedData.length / pageSize) + 1;
+        // Get the paged data
+        const ressult = sortedData.slice(startIndex, endIndex);
+
+        return {
+            data: ressult,
+            pageno: pageNo,
+            totalPage: totalpages,
+        };
     }
+
+    async reportOrderAdminforGraph() {
+        const currentYear = new Date().getFullYear(); // Get the current year
+        const dataquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .select('EXTRACT(MONTH FROM o.date_update_at) AS month')
+            .addSelect('COUNT(DISTINCT o.order_id) as orderCount')
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .groupBy('EXTRACT(MONTH FROM o.date_update_at)')
+            .getRawMany();
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const orderCountByMonth: orderCountByMonth[] = Array.from({ length: currentMonth }, (_, i) => ({
+            month: i + 1,
+            totalOrder: 0,
+        }));
+        dataquery.forEach((data) => {
+            orderCountByMonth[Number(data.month) - 1].totalOrder = Number(data.ordercount);
+        });
+        return orderCountByMonth;
+    }
+    async reportOrderByWarehoueInMotnhfortable(month: number, pageNo: number) {
+        const currentYear = new Date().getFullYear(); // Get the current year
+        const dataQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
+            .select([
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                'piww.warehouse_name AS pickupWarehouseName',
+                'diw.warehouse_id AS deliverWarehouse',
+                'diww.warehouse_name AS deliverWarehouseName',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: month.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: any = [];
+
+        dataQuery.forEach((item) => {
+            const pickupData: any = {
+                currentMonth: item.curuntmonth,
+                warehouseId: item.pickupwarehouse,
+                warehouseName: item.pickupwarehousename,
+                type: 'pickup',
+            };
+
+            const deliverData: any = {
+                currentMonth: item.curuntmonth,
+                warehouseId: item.deliverwarehouse,
+                warehouseName: item.deliverwarehousename,
+                type: 'deliver',
+            };
+            data.push(pickupData, deliverData);
+        });
+        const warehouseMap = _.groupBy(data, 'warehouseId');
+        const result = [];
+        for (const [key, value] of Object.entries(warehouseMap)) {
+            const count = _.countBy(value, 'type');
+            result.push({
+                warehouseId: Number(key),
+                warehouseName: value[0].warehouseName,
+                totalPickupOrder: count.pickup || 0,
+                totalDeliverOrder: count.deliver || 0,
+            });
+        }
+        const warehouses = await this.warehouseRepository
+            .createQueryBuilder('w')
+            .select(['w.warehouseId', 'w.warehouseName', '0 AS totalPickupOrder', '0 AS totalDeliverOrder'])
+            .getRawMany();
+
+        const mergedWarehouses = warehouses.map((warehouse) => {
+            const found = result.find(({ warehouseId }) => warehouseId === warehouse.w_warehouse_id);
+            return {
+                warehouseId: warehouse.w_warehouse_id,
+                warehouseName: warehouse.w_warehouse_name,
+                totalPickupOrder: found ? found.totalPickupOrder : 0,
+                totalDeliverOrder: found ? found.totalDeliverOrder : 0,
+                totalOrder: found ? found.totalPickupOrder + found.totalDeliverOrder : 0,
+            };
+        });
+        const sortedWarehouses = mergedWarehouses.sort((a, b) => b.totalOrder - a.totalOrder);
+        const pageSize = this.pageSize;
+        pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const totalpages =
+            sortedWarehouses.length % pageSize === 0
+                ? sortedWarehouses.length / pageSize
+                : Math.floor(sortedWarehouses.length / pageSize) + 1;
+        if (pageNo > totalpages) {
+            return { status: 404, error: 'notfoud' };
+        }
+        // Get the paged data
+        const pagedWarehouses = sortedWarehouses.slice(startIndex, endIndex);
+
+        return {
+            data: pagedWarehouses,
+            pageno: pageNo,
+            totalPage: totalpages,
+            count: sortedWarehouses.length,
+        };
+    }
+    ////////////////////////////////////////////////////
     async getReportManagerOrderDetail(userLogin: UserLoginData, pageNo: number): Promise<ReportOrderDetailResponse> {
         try {
             const warehouseIdList = await this.getWarehouseIdByStaff(userLogin);

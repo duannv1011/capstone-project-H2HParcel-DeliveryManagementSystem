@@ -27,7 +27,7 @@ export class ManagerController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Get manager profile' })
-    @Roles(Role.MANAGER)
+    @Roles(Role.MANAGER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @Get('profiles')
     async getOneProfile(@Query('accId') accId: number): Promise<Response> {
@@ -41,7 +41,7 @@ export class ManagerController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'List all profile' })
-    @Roles(Role.MANAGER)
+    @Roles(Role.MANAGER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @Get('profiles/all')
     async getAllProfileByRole(): Promise<Response> {
@@ -52,7 +52,7 @@ export class ManagerController {
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'List all Staff in warehouse by role' })
     @ApiOkResponse({ description: 'List all Staff in warehouse by role sucessfully' })
-    @Roles(Role.MANAGER)
+    @Roles(Role.MANAGER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @Get('manager/managed-staffs')
     async getAllWarehouseStaffByRole(
@@ -65,7 +65,7 @@ export class ManagerController {
 
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Update staff profile by manager' })
-    @Roles(Role.MANAGER)
+    @Roles(Role.MANAGER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @UsePipes(ValidationPipe)
     @Post('profiles/staff/update')

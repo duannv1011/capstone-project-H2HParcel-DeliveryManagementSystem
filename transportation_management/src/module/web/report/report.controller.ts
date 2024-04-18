@@ -46,16 +46,36 @@ export class ReportController {
         return await this.reportService.reportCutomerAdminForGraph();
     }
     @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'get Admin report customer for graph successfully' })
-    @ApiOperation({ summary: 'Admin report get all Customer in month for graph' })
+    @ApiOkResponse({ description: 'get Admin report customer for table successfully' })
+    @ApiOperation({ summary: 'Admin report get all Customer in district for table' })
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('admin/customer/customer-table')
-    async reportCutomerAdminForTable() {
-        return await this.reportService.reportCutomerAdminForTable();
+    async reportCutomerAdminForTable(@Query('pageNo') pageNo: number) {
+        return await this.reportService.reportCutomerAdminForTable(pageNo);
     }
-    //
+    //report order for admin
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get report order successfully' })
+    @ApiOperation({ summary: 'Admin report order by month' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/revenue/order-graph')
+    async reportOrderAdminforGraph() {
+        return await this.reportService.reportOrderAdminforGraph();
+    }
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'admin get all order by warehouse in month successfully' })
+    @ApiOperation({ summary: 'admin get all order by warehouse in month' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/revenue/warehouse-order/table')
+    async reportOrderByWarehoueInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
+        return await this.reportService.reportOrderByWarehoueInMotnhfortable(month, pageNo);
+    }
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'Admin report staff detail' })
     @ApiOperation({ summary: 'Admin report staff detail' })

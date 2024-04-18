@@ -21,6 +21,10 @@ export interface revanueByMonth {
     month: number;
     totalRevenue: string;
 }
+export interface orderCountByMonth {
+    month: number;
+    totalOrder: number;
+}
 export interface ReportOrderDetail {
     reportChart: any;
     warehouses: any;

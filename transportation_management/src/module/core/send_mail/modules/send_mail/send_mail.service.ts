@@ -38,11 +38,11 @@ export class SendMailService {
             await this.mailerService.sendMail({
                 to: email.email,
                 from: this.configService.get<string>('DEFAULT_EMAIL_FROM'),
-                subject: 'H2H App Password Reset',
+                subject: 'H2H System: Đặt lại mật khẩu tài khoản.',
                 template: 'src/teamplates/email/reset_pass',
-                html: `<p>We received a request to reset your password. Please qick to respon the verify code . This code will effect in 10 minute:</p>
+                html: `<p>Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu của bạn. Hãy nhanh chóng phản hồi mã xác minh. Mã này chỉ có hiệu lực sau 10 phút:</p>
                 <H3>${verifyCode}<H3>
-                <p>If you did not request a password reset, you can ignore this email.</p>`,
+                <p>Nếu bạn không yêu cầu đặt lại mật khẩu, bạn có thể bỏ qua email này.</p>`,
             });
             // const payload = { id: accId, email: email.email, verify_code: verifyCode };
             // const token = await this.genarateToken(payload);
