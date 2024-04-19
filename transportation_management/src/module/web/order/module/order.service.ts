@@ -205,7 +205,7 @@ export class OrderService {
             .select(['piww.warehouse_name AS pickupWarehouse', 'diww.warehouse_name AS deliverWarehouse'])
             .where('o.order_id = :order_id', { order_id: order })
             .getRawMany();
-        return activitylogs ? { rawdata: activitylogs, warehoue: orderdata } : 'error';
+        return activitylogs ? { rawdata: activitylogs, warehouse: orderdata ? orderdata : '' } : 'error';
     }
 
     async getDetailOrder(orderId: number, accId: number): Promise<any> {
