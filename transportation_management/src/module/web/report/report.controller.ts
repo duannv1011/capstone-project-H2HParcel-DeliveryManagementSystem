@@ -5,11 +5,14 @@ import { AuthGuard } from '../../../guards/auth.guard';
 import { Roles } from '../../../decorators/role.decorator';
 import { Role } from '../../../enum/roles.enum';
 import { RoleGuard } from '../../../guards/role.guard';
+import { UserLogin } from 'src/decorators/user_login.decorator';
+import { UserLoginData } from 'src/module/core/authentication/dto/user_login_data';
 
 @ApiTags('report')
 @Controller('report')
 export class ReportController {
     constructor(private readonly reportService: ReportService) {}
+    //admin report
     //addmin dash board
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'get Admin report  dashboard  successfully' })
@@ -106,5 +109,64 @@ export class ReportController {
     async reportOrderStaffByWarehoueInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
         return await this.reportService.reportOrderStaffByWarehoueInMotnhfortable(month, pageNo);
     }
-    //
+    //managerReport
+    //dashboard
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'manager get report dashboard successfully' })
+    @ApiOperation({ summary: 'manager get report dashboard' })
+    @Roles(Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('manager/dashboard')
+    async reportDashboardForManager(@UserLogin() user: UserLoginData) {
+        return await this.reportService.reportDashboardForManager(Number(user.accId));
+    }
+    //revanue for graph
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get manager report revenue  for graph successfully' })
+    @ApiOperation({ summary: 'manager report revenue  for graph' })
+    @Roles(Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('manager/revenue/revenue-graph')
+    async reportRevenueManagerforGraph(@UserLogin() user: UserLoginData) {
+        return await this.reportService.reportRevenueManagerforGraph(Number(user.accId));
+    }
+    //manager order for graph
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get manager report order  for graph successfully' })
+    @ApiOperation({ summary: 'manager report order  for graph' })
+    @Roles(Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('manager/order/order-graph')
+    async reportOrderManagerforGraph(@UserLogin() user: UserLoginData) {
+        return await this.reportService.reportOrderManagerforGraph(Number(user.accId));
+    }
+    ////manager order for table
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get manager report order  for table successfully' })
+    @ApiOperation({ summary: 'manager report order  for table' })
+    @Roles(Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('manager/order/order-table')
+    async reportOrderManagerforTable(@UserLogin() user: UserLoginData, @Query('pageNo') pageNo: number) {
+        return await this.reportService.reportOrderManagerforTable(Number(user.accId), pageNo);
+    }
+    //manager list all shiperr on warehouse
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get manager report staff  for table successfully' })
+    @ApiOperation({ summary: 'manager report order  staff for table' })
+    @Roles(Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('manager/staff/staff-table')
+    async reportStaffManagerforTable(
+        @UserLogin() user: UserLoginData,
+        @Query('month') month: number,
+        @Query('pageNo') pageNo: number,
+    ) {
+        return await this.reportService.reportStaffManagerforTable(Number(user.accId), month, pageNo);
+    }
 }

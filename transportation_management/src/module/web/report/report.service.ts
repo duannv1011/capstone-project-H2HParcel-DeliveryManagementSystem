@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { RevenueByArea, RevenueByWarehouse, orderCountByMonth, revanueByMonth } from './response/report.response';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { WarehouseEntity } from '../../../entities/warehouse.entity';
 import { OrderEntity } from '../../../entities/order.entity';
 import { DistrictEntity } from '../../../entities/district.entity';
 import * as _ from 'lodash';
 import { AccountEntity } from 'src/entities/account.entity';
 import { CustomerEntity } from 'src/entities/customer.entity';
+import { WarehouseRuleEntity } from 'src/entities/warehouse-rule.entity';
+import { PayRuleEntity } from 'src/entities/pay-rule.entity';
+import { TransitEntity } from 'src/entities/transit.entity';
+import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 @Injectable()
 export class ReportService {
     constructor(
@@ -22,6 +26,14 @@ export class ReportService {
         private orderRepository: Repository<OrderEntity>,
         @InjectRepository(CustomerEntity)
         private customerRepository: Repository<CustomerEntity>,
+        @InjectRepository(WarehouseRuleEntity)
+        private warehouseRuleRepository: Repository<WarehouseRuleEntity>,
+        @InjectRepository(PayRuleEntity)
+        private payRuleEntity: Repository<PayRuleEntity>,
+        @InjectRepository(TransitEntity)
+        private transitRepository: Repository<TransitEntity>,
+        @InjectRepository(PriceMultiplierEntity)
+        private priceMutiPlierRepository: Repository<PriceMultiplierEntity>,
     ) {}
 
     pageSize = Number(process.env.PAGE_SIZE);
@@ -653,4 +665,532 @@ export class ReportService {
         };
     }
     ////////////////////////////////////////////////////
+    async reportDashboardForManager(accId: number) {
+        const date = new Date();
+        const currentYear = date.getFullYear(); // Get the current year
+        const currentMonth = date.getMonth() + 1;
+        const staff = await this.staffRepository.findOneBy({ accId });
+        if (!staff) {
+            return { status: 404, error: 'notfoud' };
+        }
+        const warehouseId = staff.warehouseId;
+        //revenue
+        const revenueQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .select([
+                'o.date_update_at',
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                '(o.estimated_price * 0.4) AS pickupWarehouseRevanue',
+                'diw.warehouse_id AS deliverWarehouse',
+                '(o.estimated_price * 0.6) AS deliverWarehouseRevanue',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('piw.warehouse_id = :warehouseId', {
+                        warehouseId: warehouseId,
+                    }).orWhere('diw.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                }),
+            )
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: currentMonth.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: any[] = [];
+
+        revenueQuery.forEach((item) => {
+            const pickupData: any = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.pickupwarehouse,
+                revenue: Number(item.pickupwarehouserevanue),
+            };
+
+            const deliverData: any = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.deliverwarehouse,
+                revenue: Number(item.deliverwarehouserevanue),
+            };
+            data.push(pickupData, deliverData);
+        });
+        const summedRevenue = _.sumBy(_.filter(data, { warehouseId: warehouseId }), 'revenue');
+        // totaol order in month
+        const totalorder = revenueQuery.length;
+        //
+        const stafInwarehouses = await this.staffRepository.countBy({ warehouseId: staff.warehouseId });
+        return {
+            currentMonth,
+            revenue: summedRevenue,
+            totalorder: totalorder,
+            staffs: stafInwarehouses,
+        };
+    }
+    async reportRevenueManagerforGraph(accId: number) {
+        const date = new Date();
+        const currentYear = date.getFullYear(); // Get the current year
+        const currentMonth = date.getMonth() + 1;
+        const staff = await this.staffRepository.findOneBy({ accId });
+        if (!staff) {
+            return { status: 404, error: 'notfoud' };
+        }
+        const warehouseId = staff.warehouseId;
+        const revenueQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .select([
+                'o.date_update_at',
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                '(o.estimated_price * 0.4) AS pickupWarehouseRevanue',
+                'diw.warehouse_id AS deliverWarehouse',
+                '(o.estimated_price * 0.6) AS deliverWarehouseRevanue',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('piw.warehouse_id = :warehouseId', {
+                        warehouseId: warehouseId,
+                    }).orWhere('diw.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                }),
+            )
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: any[] = [];
+
+        revenueQuery.forEach((item) => {
+            if (item.pickupwarehouse === warehouseId) {
+                const pickupData: any = {
+                    date: item.o_date_update_at,
+                    currentMonth: item.curuntmonth,
+                    warehouseId: item.pickupwarehouse,
+                    revenue: Number(item.pickupwarehouserevanue),
+                };
+                data.push(pickupData);
+            }
+            if (item.deliverwarehouse === warehouseId) {
+                const deliverData: any = {
+                    date: item.o_date_update_at,
+                    currentMonth: item.curuntmonth,
+                    warehouseId: item.deliverwarehouse,
+                    revenue: Number(item.deliverwarehouserevanue),
+                };
+                data.push(deliverData);
+            }
+        });
+        const months = _.range(1, currentMonth + 1, 1);
+
+        const dataGroup = months.map((month) => ({
+            month,
+            revenue: _.sumBy(_.filter(data, { warehouseId: warehouseId, currentMonth: String(month) }), 'revenue') || 0,
+        }));
+
+        return dataGroup;
+    }
+    async reportOrderManagerforGraph(accId: number) {
+        const date = new Date();
+        const currentYear = date.getFullYear(); // Get the current year
+        const currentMonth = date.getMonth() + 1;
+        const staff = await this.staffRepository.findOneBy({ accId });
+        if (!staff) {
+            return { status: 404, error: 'notfoud' };
+        }
+        const warehouseId = staff.warehouseId;
+        const orderquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .select([
+                'o.date_update_at',
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                'diw.warehouse_id AS deliverWarehouse',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('piw.warehouse_id = :warehouseId', {
+                        warehouseId: warehouseId,
+                    }).orWhere('diw.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                }),
+            )
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: any[] = [];
+
+        orderquery.forEach((item) => {
+            if (item.pickupwarehouse === warehouseId) {
+                const pickupData: any = {
+                    date: item.o_date_update_at,
+                    currentMonth: item.curuntmonth,
+                    warehouseId: item.pickupwarehouse,
+                    type: 'pickup',
+                };
+                data.push(pickupData);
+            }
+            if (item.deliverwarehouse === warehouseId) {
+                const deliverData: any = {
+                    date: item.o_date_update_at,
+                    currentMonth: item.curuntmonth,
+                    warehouseId: item.deliverwarehouse,
+                    type: 'diliver',
+                };
+                data.push(deliverData);
+            }
+        });
+        // const months = _.range(1, currentMonth + 1, 1);
+        // const dataGroup = months.map((month) => ({
+        //     month,
+        //     data: _.countBy(_.filter(data, { currentMonth: String(month) }), 'type') || { pickup: 0, diliver: 0 },
+        // }));
+        const months = _.range(1, currentMonth + 1, 1);
+        const dataGroup = months.map((month) => {
+            const monthData = _.filter(data, { currentMonth: String(month) });
+            return {
+                month,
+                data: {
+                    pickup: _.countBy(monthData, 'type')['pickup'] || 0,
+                    diliver: _.countBy(monthData, 'type')['diliver'] || 0,
+                },
+            };
+        });
+        return dataGroup;
+    }
+    async reportOrderManagerforTable(accId: number, pageNo: number) {
+        const date = new Date();
+        const currentYear = date.getFullYear(); // Get the current year
+        const currentMonth = date.getMonth() + 1;
+        const staff = await this.staffRepository.findOneBy({ accId });
+        if (!staff) {
+            return { status: 404, error: 'notfoud' };
+        }
+        const warehouseId = staff.warehouseId;
+        const warehouse = await this.warehouseRepository.findOneBy({ warehouseId });
+        const orderquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .select([
+                'o.order_id as orderId',
+                'o.date_create_at as createdAt',
+                'o.date_update_at',
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                'diw.warehouse_id AS deliverWarehouse',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('piw.warehouse_id = :warehouseId', {
+                        warehouseId: warehouseId,
+                    }).orWhere('diw.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                }),
+            )
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :currentMonth', { currentMonth: currentMonth.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: any[] = [];
+
+        orderquery.forEach((item) => {
+            if (item.pickupwarehouse === warehouseId) {
+                const pickupData: any = {
+                    orderId: item.orderid,
+                    createdAt: item.createdAt,
+                    deliveredAt: item.o_date_update_at,
+                    currentMonth: item.curuntmonth,
+                    warehouseId: item.pickupwarehouse,
+                    warehouseName: warehouse.warehouseName,
+                    type: 'pickup',
+                };
+                data.push(pickupData);
+            }
+            if (item.deliverwarehouse === warehouseId) {
+                const deliverData: any = {
+                    orderId: item.order_id,
+                    createdAt: item.createdAt,
+                    deliveredAt: item.o_date_update_at,
+                    currentMonth: item.curuntmonth,
+                    warehouseName: warehouse.warehouseName,
+                    type: 'diliver',
+                };
+                data.push(deliverData);
+            }
+        });
+        const sortedOrder = data.sort((a, b) => b.orderId - a.orderId);
+        const pageSize = this.pageSize;
+        pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const totalpages =
+            sortedOrder.length % pageSize === 0
+                ? sortedOrder.length / pageSize
+                : Math.floor(sortedOrder.length / pageSize) + 1;
+        if (pageNo > totalpages) {
+            return { status: 404, error: 'notfoud' };
+        }
+        // Get the paged data
+        const pageStaff = sortedOrder.slice(startIndex, endIndex);
+
+        return {
+            data: pageStaff,
+            pageno: pageNo,
+            totalPage: totalpages,
+            count: sortedOrder.length,
+        };
+        return data;
+    }
+    async reportStaffManagerforTable(accId: number, month: number, pageNo: number) {
+        const currentYear = new Date().getFullYear(); // Get the current year
+        const staff = await this.staffRepository.findOneBy({ accId });
+        if (!staff) {
+            return { status: 404, error: 'notfoud' };
+        }
+        const warehouseId = staff.warehouseId;
+        const dataQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupShipperStaff', 'pi')
+            .leftJoinAndSelect('o.deliverShipperStaff', 'di')
+            .leftJoinAndSelect('pi.warehouse', 'piw')
+            .leftJoinAndSelect('di.warehouse', 'diw')
+            .select([
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id as orderId',
+                'pi.staff_id as pickupStaffId',
+                'pi.fullname as pickupstaffName',
+                'di.staff_id as deliverStaffId',
+                'di.fullname as deliverstaffName',
+                'piw.warehouse_id AS pickupWarehouse',
+                'piw.warehouse_name AS pickupWarehouseName',
+                'diw.warehouse_id AS deliverWarehouse',
+                'diw.warehouse_name AS deliverWarehouseName',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: month.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('piw.warehouse_id = :warehouseId', {
+                        warehouseId: warehouseId,
+                    }).orWhere('diw.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                }),
+            )
+            .getRawMany();
+        const data: any = [];
+
+        dataQuery.forEach((item) => {
+            const pickupData: any = {
+                currentMonth: item.curuntmonth,
+                staffId: item.pickupstaffid,
+                staffName: item.pickupstaffname,
+                warehouseId: item.pickupwarehouse,
+                warehouseName: item.pickupwarehousename,
+                type: 'pickup',
+            };
+
+            const deliverData: any = {
+                currentMonth: item.curuntmonth,
+                staffId: item.deliverstaffid,
+                staffName: item.deliverstaffname,
+                warehouseId: item.deliverwarehouse,
+                warehouseName: item.deliverwarehousename,
+                type: 'deliver',
+            };
+            data.push(pickupData, deliverData);
+        });
+        const staffMap = _.groupBy(data, 'staffId');
+        const result = [];
+        for (const [key, value] of Object.entries(staffMap)) {
+            const count = _.countBy(value, 'type');
+            result.push({
+                staffId: Number(key),
+                staffname: value[0].staffName,
+                warehouseId: value[0].warehouseId,
+                warehouseName: value[0].warehouseName,
+                totalPickupOrder: count.pickup || 0,
+                totalDeliverOrder: count.deliver || 0,
+                //salary: (await this.getShiperPayslip(Number(key))) || 0,
+            });
+        }
+        const staffs = await this.staffRepository
+            .createQueryBuilder('s')
+            .leftJoinAndSelect('s.warehouse', 'w')
+            .leftJoinAndSelect(AccountEntity, 'acc', 'acc.acc_id = s.acc_id')
+            .select(['s.staff_id', 's.fullname', 'w.warehouse_id', 'w.warehouse_name', 'acc.role_id'])
+            .where('acc.role_id = :roleId', { roleId: 2 })
+            .getRawMany();
+        const mergedStaffs = staffs.map((staff) => {
+            const found = result.find(({ staffId }) => staffId === staff.staff_id);
+            console.log(found);
+            return {
+                staffId: staff.staff_id,
+                staffName: staff.s_fullname,
+                warehouseId: staff.warehouse_id,
+                warehouseName: staff.warehouse_name,
+                totalPickupOrder: found ? found.totalPickupOrder : 0,
+                totalDeliverOrder: found ? found.totalDeliverOrder : 0,
+                totalOrder: found ? found.totalPickupOrder + found.totalDeliverOrder : 0,
+                //salary: found ? found.salary : 0,
+            };
+        });
+        const sortedStaff = mergedStaffs.sort((a, b) => b.totalOrder - a.totalOrder);
+        const pageSize = this.pageSize;
+        pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const totalpages =
+            sortedStaff.length % pageSize === 0
+                ? sortedStaff.length / pageSize
+                : Math.floor(sortedStaff.length / pageSize) + 1;
+        if (pageNo > totalpages) {
+            return { status: 404, error: 'notfoud' };
+        }
+        // Get the paged data
+        const pageStaff = sortedStaff.slice(startIndex, endIndex);
+
+        return {
+            data: pageStaff,
+            pageno: pageNo,
+            totalPage: totalpages,
+            count: sortedStaff.length,
+        };
+    }
+    async getShiperPayslip(staff_id: number) {
+        console.log(staff_id);
+        const shiper = await this.staffRepository.findOneBy({ staffId: staff_id });
+        if (!shiper) {
+            return { status: 404, error: 'Not Found' };
+        }
+        const payrule = await this.payRuleEntity.find();
+        const rule = payrule.reduce((acc, item) => {
+            acc[item.ruleId] = item.effort;
+            return acc;
+        }, {});
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const shiperId = shiper.staffId;
+        const transits = await this.transitRepository.findBy({ staffId: shiperId });
+        const mutiplier = [];
+        for (const tran of transits) {
+            const mul = await this.checkMutipelPrice(tran.warehouseFrom, tran.warehouseTo);
+            if (mul) {
+                mutiplier.push(mul);
+            }
+        }
+        const idCounts = _.countBy(mutiplier);
+        let transitefort = 0;
+
+        for (const [key, value] of Object.entries(idCounts)) {
+            switch (key) {
+                case '1':
+                    transitefort += value * rule[6];
+                    break;
+                case '2':
+                    transitefort += value * rule[7];
+                    break;
+                case '3':
+                    transitefort += value * rule[8];
+                    break;
+                default:
+                    break;
+            }
+        }
+        const orders = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .where('o.orderStt = :stt', { stt: 9 })
+            .andWhere('extract(month from o.date_update_at) = :month', { month: currentMonth })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where('o.pickupShipper = :puShipperId', {
+                        puShipperId: shiperId,
+                    }).orWhere('o.deliverShipper = :diShipperId', { diShipperId: shiperId });
+                }),
+            )
+            .getMany();
+        const pickupOrders = orders.filter((order) => order.pickupShipper === shiperId);
+        const deliverOrders = orders.filter((order) => order.deliverShipper === shiperId);
+        const pickupEffort = pickupOrders.reduce((acc, order) => {
+            switch (order.pkId) {
+                case 1:
+                    return acc + rule[2] * 0.4;
+                case 2:
+                    return acc + rule[3] * 0.4;
+                case 3:
+                    return acc + rule[4] * 0.4;
+                case 4:
+                    return acc + rule[5] * 0.4;
+                default:
+                    return acc;
+            }
+        }, 0);
+        const deliverEffort = deliverOrders.reduce((acc, order) => {
+            switch (order.pkId) {
+                case 1:
+                    return acc + rule[2] * 0.6;
+                case 2:
+                    return acc + rule[3] * 0.6;
+                case 3:
+                    return acc + rule[4] * 0.6;
+                case 4:
+                    return acc + rule[5] * 0.6;
+                default:
+                    return acc;
+            }
+        }, 0); // 60% for deliver
+        //transit
+        const totalEffort = pickupEffort + deliverEffort + transitefort;
+        return totalEffort * 2750;
+    }
+    async checkMutipelPrice(warehouseFrom: number, warehouseTo: number) {
+        const warehouseRule = await this.warehouseRuleRepository
+            .createQueryBuilder('w')
+            .where((qb) => {
+                qb.andWhere('(w.warehouse_id_1 = :warehouseId1 AND w.warehouse_id_2 = :warehouseId2)', {
+                    warehouseId1: warehouseFrom,
+                    warehouseId2: warehouseTo,
+                }).orWhere('(w.warehouse_id_1 = :warehouseId2 AND w.warehouse_id_2 = :warehouseId1)', {
+                    warehouseId1: warehouseFrom,
+                    warehouseId2: warehouseTo,
+                });
+            })
+            .getOne();
+        const distance = Number(
+            warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
+        );
+        const num = distance.toFixed();
+        if (distance === 0) {
+            return 1;
+        }
+        const priceMultiplier = await this.priceMutiPlierRepository
+            .createQueryBuilder('p')
+            .where('p.max_distance >= :num', { num })
+            .andWhere('p.min_distance < :num', { num })
+            .orderBy('p.minDistance', 'DESC')
+            .getOne();
+        return Number(priceMultiplier.id);
+    }
 }

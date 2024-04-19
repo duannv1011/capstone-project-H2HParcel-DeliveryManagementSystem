@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
@@ -8,7 +8,6 @@ import { RoleGuard } from 'src/guards/role.guard';
 import { AdminService } from './admin.service';
 import { CreateStaffDto } from '../dto/staff-create.dto';
 import { updateStaffDto } from '../dto/staff-update.dto';
-import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
 import { UpdateMutiplier } from '../dto/admin-mutiplier-update.dto';
 import { UpdatePriceAndMutiplier } from '../dto/admin-update-price-mutiplier.dto';
@@ -78,14 +77,14 @@ export class AdminController {
     async updateRoleStaff(@Query('staffId') staffId: number, @Query('roleId') roleId: number): Promise<any> {
         return await this.adminService.updateRoleStaff(staffId, roleId);
     }
-    @Patch('admin/staff/setManager')
+    @Post('admin/staff/change-manager')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'Update staff to Manager' })
-    @ApiResponse({ status: 200, description: 'Update staff to Manager successfully.' })
-    async setManager(@Body() data: setStaffToManagerDto): Promise<any> {
-        return await this.adminService.adminsetManager(data);
+    @ApiOperation({ summary: 'Update staff to new manager of warehouse' })
+    @ApiResponse({ status: 200, description: 'Update staff to manager  successfully.' })
+    async changeManger(@Query('staffId') staffId: number, @Query('warehouseId') warehouseId: number): Promise<any> {
+        return await this.adminService.changeManger(staffId, warehouseId);
     }
     @Post('admin/create-staff')
     @Roles(Role.ADMIN)

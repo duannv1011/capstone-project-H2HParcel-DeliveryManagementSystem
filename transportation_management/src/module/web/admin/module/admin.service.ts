@@ -10,12 +10,12 @@ import { updateStaffDto } from '../dto/staff-update.dto';
 import { CreateStaffDto } from '../dto/staff-create.dto';
 import { AuthenticationService } from 'src/module/core/authentication/modules/authentication.service';
 import { RoleEntity } from 'src/entities/role.entity';
-import { setStaffToManagerDto } from '../dto/staff-update-to-manager.dto';
 import { PackageTypeEntity } from 'src/entities/package-type.entity';
 import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
 import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 import { UpdateMutiplier } from '../dto/admin-mutiplier-update.dto';
 import { UpdatePriceAndMutiplier } from '../dto/admin-update-price-mutiplier.dto';
+import { WarehouseEntity } from 'src/entities/warehouse.entity';
 
 @Injectable()
 export class AdminService {
@@ -247,10 +247,10 @@ export class AdminService {
             await queryRunner.release();
         }
     }
-    async adminsetManager(data: setStaffToManagerDto): Promise<any> {
+    async changeManger(staffId: number, warehouseId: number): Promise<any> {
         const staff = await this.staffRepository.findOne({
             where: {
-                staffId: data.staffId,
+                staffId: staffId,
             },
         });
         if (!staff || staff.staffId === 1) {
@@ -260,19 +260,54 @@ export class AdminService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
-            //update Account
-            await queryRunner.manager
-                .createQueryBuilder()
-                .update(AccountEntity)
-                .set({ roleId: 4 })
-                .where('acc_id = :accId', { accId: staff.accId })
-                .execute()
-                .catch((error) => {
-                    console.error('Error updating address:', error);
-                    throw error;
-                });
+            const curentManager = await this.staffRepository
+                .createQueryBuilder('s')
+                .leftJoinAndSelect('s.account', 'a')
+                .where('a.role_id = :roleId', { roleId: 4 })
+                .andWhere('s.warehouse_id = :warehouseId', { warehouseId: warehouseId })
+                .getOne();
+            if (!curentManager) {
+                //update Account role to manager
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(AccountEntity)
+                    .set({ roleId: 4 })
+                    .where('acc_id = :accId', { accId: staff.accId })
+                    .execute()
+                    .catch((error) => {
+                        console.error('Error updating address:', error);
+                        throw error;
+                    });
+            } else {
+                //update current manager role to staff
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(AccountEntity)
+                    .set({ roleId: 3 })
+                    .where('acc_id = :accId', { accId: curentManager.accId })
+                    .execute()
+                    .catch((error) => {
+                        console.error('Error updating address:', error);
+                        throw error;
+                    });
+                //update new staff role to manager
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(AccountEntity)
+                    .set({ roleId: 4 })
+                    .where('acc_id = :accId', { accId: staff.accId })
+                    .execute()
+                    .catch((error) => {
+                        console.error('Error updating address:', error);
+                        throw error;
+                    });
+            }
+
             //update staff
-            staff.warehouseId = data.warehouseId;
+            staff.warehouseId = warehouseId;
+            const warehouse = new WarehouseEntity();
+            warehouse.warehouseId = warehouseId;
+            staff.warehouse = warehouse;
             await queryRunner.manager.save(staff);
             await queryRunner.commitTransaction();
             return {
@@ -286,6 +321,7 @@ export class AdminService {
             await queryRunner.release();
         }
     }
+
     async getAllPackagetype() {
         return await this.packageTypeRepository.find();
     }
