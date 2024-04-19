@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RevenueByWarehouse, orderCountByMonth, revanueByMonth } from './response/report.response';
+import { RevenueByArea, RevenueByWarehouse, orderCountByMonth, revanueByMonth } from './response/report.response';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -150,6 +150,94 @@ export class ReportService {
             countByMonth[Number(data.month) - 1].totalRevenue = data.customercount;
         });
         return countByMonth;
+    }
+    async reportAdminRevenueByDitrictInMotnhfortable(month: number, pageNo: number) {
+        const currentYear = new Date().getFullYear(); // Get the current year
+        const dataQuery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
+            .leftJoinAndSelect('piww.address', 'piwwa')
+            .leftJoinAndSelect('diww.address', 'diwwa')
+            .select([
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                '(o.estimated_price * 0.4) AS pickupWarehouseRevanue',
+                'piwwa.district_id as pickupDistrict',
+                'diw.warehouse_id AS deliverWarehouse',
+                '(o.estimated_price * 0.6) AS deliverWarehouseRevanue',
+                'diwwa.district_id as deliverDistrict',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: month.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: RevenueByArea[] = [];
+
+        dataQuery.forEach((item) => {
+            const pickupData: RevenueByArea = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.pickupwarehouse,
+                districtId: item.pickupdistrict,
+                revenue: Number(item.pickupwarehouserevanue),
+            };
+
+            const deliverData: RevenueByArea = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.deliverwarehouse,
+                districtId: item.deliverdistrict,
+                revenue: Number(item.deliverwarehouserevanue),
+            };
+            data.push(pickupData, deliverData);
+        });
+        const AreMap = _.groupBy(data, 'districtId');
+        const result = [];
+        for (const [key, value] of Object.entries(AreMap)) {
+            result.push({
+                districtId: Number(key),
+                revenue: _.sumBy(value, 'revenue'),
+            });
+        }
+        const districts = await this.districtRepository
+            .createQueryBuilder('d')
+            .select(['d.district_id', 'd.district_name', '0 AS revenue'])
+            .getRawMany();
+
+        const mergedArea = districts.map((district) => {
+            const found = result.find(({ districtId }) => districtId === district.district_id);
+            return {
+                districtId: district.district_id,
+                warehouseName: district.district_name,
+                revenue: found ? found.revenue : 0,
+            };
+        });
+        const sortedArea = mergedArea.sort((a, b) => b.revenue - a.revenue);
+        const pageSize = this.pageSize;
+        pageNo = pageNo ? Math.floor(Math.abs(pageNo)) : 1;
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const totalpages =
+            sortedArea.length % pageSize === 0
+                ? sortedArea.length / pageSize
+                : Math.floor(sortedArea.length / pageSize) + 1;
+        // Get the paged data
+        const pagedWarehouses = sortedArea.slice(startIndex, endIndex);
+
+        return {
+            data: pagedWarehouses,
+            pageno: pageNo,
+            totalPage: totalpages,
+            count: sortedArea.length,
+        };
     }
     async reportCutomerAdminForTable(pageNo: number, month: number) {
         const currentYear = new Date().getFullYear(); // Get the current year

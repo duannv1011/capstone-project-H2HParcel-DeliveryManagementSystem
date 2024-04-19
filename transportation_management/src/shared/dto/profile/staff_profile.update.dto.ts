@@ -17,28 +17,23 @@ export class StaffProfileUpdateDto {
     @IsOptional()
     phone?: string;
 
-    //@ApiProperty({ example: 1 })
-    @IsNumber()
-    @IsOptional()
-    addressId?: number;
-
     @ApiProperty({ example: 'so nha 1 ngo X duong y' })
     @IsString()
     @IsOptional()
     house?: string;
 
     @IsNumber()
-    @ApiProperty({ example: '1', description: 'city' })
+    @ApiProperty({ example: 1, description: 'city' })
     @IsOptional()
     cityId?: number;
 
     @IsNumber()
-    @ApiProperty({ example: '1', description: 'district' })
+    @ApiProperty({ example: 1, description: 'district' })
     @IsOptional()
     districtId?: number;
 
     @IsNumber()
-    @ApiProperty({ example: '1', description: 'ward' })
+    @ApiProperty({ example: 1, description: 'ward' })
     @IsOptional()
     wardId?: number;
 }

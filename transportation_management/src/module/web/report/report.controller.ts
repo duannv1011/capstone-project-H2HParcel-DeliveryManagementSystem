@@ -31,6 +31,17 @@ export class ReportController {
     async reportAdminRevenueByWarehoueInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
         return await this.reportService.reportAdminRevenueByWarehoueInMotnhfortable(month, pageNo);
     }
+
+    @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'get Admin report revenue by area in month for table successfully' })
+    @ApiOperation({ summary: 'get Admin report revenue by area in month for table' })
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @Get('admin/revenue/area-revenue/table')
+    async reportAdminRevenueByDitrictInMotnhfortable(@Query('month') month: number, @Query('pageNo') pageNo: number) {
+        return await this.reportService.reportAdminRevenueByDitrictInMotnhfortable(month, pageNo);
+    }
     //report customer for admin
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'get Admin report customer for graph successfully' })

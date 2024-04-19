@@ -8,6 +8,9 @@ import { Address, Staff, StaffResponse } from '../../module/core/staff/response/
 import { Builder } from 'builder-pattern';
 import { AddressEntity } from '../../entities/address.entity';
 import { Paging } from 'src/module/response/Paging';
+import { CityEntity } from 'src/entities/city.entity';
+import { DistrictEntity } from 'src/entities/district.entity';
+import { WardEntity } from 'src/entities/ward.entity';
 
 @Injectable()
 export class ProfileService {
@@ -132,68 +135,56 @@ export class ProfileService {
      * @param accId number
      */
     async updateStaffProfile(request: StaffProfileUpdateDto, accId: number): Promise<boolean> {
+        const staff = await this.staffRepository.findOneBy({ accId: accId });
+        if (!staff) {
+            return false;
+        }
         const queryRunner = this.dataSource.createQueryRunner();
-
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
-            const staffEntity = await this.staffRepository.findOne({ where: { accId: accId } });
-
-            if (staffEntity) {
-                if (request.addressId) {
-                    const addressEntity: AddressEntity = await this.addressRepository.findOne({
-                        where: { addressId: staffEntity.addressId },
-                    });
-
-                    if (addressEntity) {
-                        if (request.house) {
-                            addressEntity.house = request.house;
-                        }
-
-                        if (request.cityId) {
-                            addressEntity.cityId = request.cityId;
-                        }
-
-                        if (request.districtId) {
-                            addressEntity.districtId = request.districtId;
-                        }
-
-                        if (request.wardId) {
-                            addressEntity.wardId = request.wardId;
-                        }
-
-                        await queryRunner.manager.save(addressEntity);
-                    } else {
-                        const address = new AddressEntity();
-                        address.addressId = 0;
-                        address.house = request.house;
-                        address.cityId = request.cityId;
-                        address.districtId = request.districtId;
-                        address.wardId = request.wardId;
-                        await queryRunner.manager.save(address);
-                    }
+            if (!staff.addressId) {
+                //create staff
+                const address = new AddressEntity();
+                address.addressId = 0;
+                address.house = request.house;
+                address.cityId = request.cityId;
+                address.districtId = request.districtId;
+                address.wardId = request.wardId;
+                const newAddress = await queryRunner.manager.save(AddressEntity, address);
+                staff.addressId = newAddress.addressId;
+                staff.address = newAddress;
+            } else {
+                //update adress
+                const address = await this.addressRepository.findOneBy({ addressId: staff.addressId });
+                if (!address) {
+                    address.addressId = 0;
                 }
-
-                if (request.fullname) {
-                    staffEntity.fullname = request.fullname;
-                }
-
-                if (request.phone) {
-                    staffEntity.phone = request.phone;
-                }
-
-                if (request.email) {
-                    staffEntity.email = request.email;
-                }
-
-                await queryRunner.manager.save(staffEntity);
-                await queryRunner.commitTransaction();
-
-                return true;
+                address.house = request.house;
+                const city = new CityEntity();
+                city.cityId = request.cityId;
+                address.cityId = request.cityId;
+                address.city = city;
+                const district = new DistrictEntity();
+                district.districtId = request.districtId;
+                address.districtId = request.districtId;
+                address.district = district;
+                const ward = new WardEntity();
+                ward.wardId = request.wardId;
+                address.wardId = request.wardId;
+                address.ward = ward;
+                const newAddress = await queryRunner.manager.save(address);
+                staff.addressId = newAddress.addressId;
+                staff.address = newAddress;
             }
-
-            return false;
+            // update staff
+            staff.fullname = request.fullname;
+            staff.email = request.email;
+            staff.phone = request.phone;
+            await queryRunner.manager.save(staff);
+            await queryRunner.commitTransaction();
+            return true;
         } catch (error) {
             Logger.error(error);
             await queryRunner.rollbackTransaction();

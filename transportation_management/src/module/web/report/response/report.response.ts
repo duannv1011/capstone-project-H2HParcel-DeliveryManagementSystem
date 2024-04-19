@@ -36,7 +36,13 @@ export interface RevenueByWarehouse {
     warehouseName: string;
     revenue: number;
 }
-
+export interface RevenueByArea {
+    date: string;
+    currentMonth: string;
+    warehouseId: number;
+    districtId: string;
+    revenue: number;
+}
 export interface OrderByArea {
     warehouseName: string;
     pickupOrderTotal: number;
