@@ -457,7 +457,6 @@ export class RequestService {
                     //accept edit
                     //update order
                     const information = reqest.deliverInformation;
-                    console.log(information);
                     order.deliverInformation = information;
                     //
                     await queryRunner.manager.save(order);

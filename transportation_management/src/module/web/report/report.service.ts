@@ -8,6 +8,7 @@ import { OrderEntity } from '../../../entities/order.entity';
 import { DistrictEntity } from '../../../entities/district.entity';
 import * as _ from 'lodash';
 import { AccountEntity } from 'src/entities/account.entity';
+import { CustomerEntity } from 'src/entities/customer.entity';
 @Injectable()
 export class ReportService {
     constructor(
@@ -19,9 +20,167 @@ export class ReportService {
         private districtRepository: Repository<DistrictEntity>,
         @InjectRepository(OrderEntity)
         private orderRepository: Repository<OrderEntity>,
+        @InjectRepository(CustomerEntity)
+        private customerRepository: Repository<CustomerEntity>,
     ) {}
 
     pageSize = Number(process.env.PAGE_SIZE);
+
+    async reportDashboardAdmin() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+        //revenue
+        const revenuequery = await this.orderRepository
+            .createQueryBuilder('o')
+            .select('SUM(o.estimated_price) AS totalRevenue')
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :curmonth', { curmonth: currentMonth.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawOne();
+        //customer
+        const customer = await this.customerRepository.count();
+        //order
+        const orderquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :curmonth', { curmonth: currentMonth.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getCount();
+        //staff
+        const totalStaff = await this.staffRepository.count();
+        // warehouse
+        const totalWarehouse = await this.warehouseRepository.count();
+        const warehousequery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
+            .select([
+                'o.date_update_at',
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                'piww.warehouse_name AS pickupWarehouseName',
+                '(o.estimated_price * 0.4) AS pickupWarehouseRevanue',
+                'diw.warehouse_id AS deliverWarehouse',
+                'diww.warehouse_name AS deliverWarehouseName',
+                '(o.estimated_price * 0.6) AS deliverWarehouseRevanue',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: currentMonth.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data: RevenueByWarehouse[] = [];
+
+        warehousequery.forEach((item) => {
+            const pickupData: RevenueByWarehouse = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.pickupwarehouse,
+                warehouseName: item.pickupwarehousename,
+                revenue: Number(item.pickupwarehouserevanue),
+            };
+
+            const deliverData: RevenueByWarehouse = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.deliverwarehouse,
+                warehouseName: item.deliverwarehousename,
+                revenue: Number(item.deliverwarehouserevanue),
+            };
+            data.push(pickupData, deliverData);
+        });
+        const warehouseMap = _.groupBy(data, 'warehouseId');
+        const result = [];
+        for (const [key, value] of Object.entries(warehouseMap)) {
+            result.push({
+                warehouseId: Number(key),
+                warehouseName: value[0].warehouseName,
+                revenue: _.sumBy(value, 'revenue'),
+            });
+        }
+        const bestWarehouseRevanue = _.maxBy(result, 'revenue');
+        // area
+        const toTolDistrict = await this.districtRepository.count();
+        const areaquery = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pia')
+            .leftJoinAndSelect('di.address', 'dia')
+            .leftJoinAndSelect('pia.ward', 'piw')
+            .leftJoinAndSelect('dia.ward', 'diw')
+            .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
+            .leftJoinAndSelect('piww.address', 'piwwa')
+            .leftJoinAndSelect('diww.address', 'diwwa')
+            .leftJoinAndSelect('piwwa.district', 'pidictrict')
+            .leftJoinAndSelect('piwwa.district', 'didictrict')
+            .select([
+                'EXTRACT(MONTH FROM o.date_update_at) AS curuntMonth',
+                'o.order_id',
+                'piw.warehouse_id AS pickupWarehouse',
+                '(o.estimated_price * 0.4) AS pickupWarehouseRevanue',
+                'piwwa.district_id as pickupDistrict',
+                'pidictrict.district_name as pickupDistrictName',
+                'diw.warehouse_id AS deliverWarehouse',
+                '(o.estimated_price * 0.6) AS deliverWarehouseRevanue',
+                'diwwa.district_id as deliverDistrict',
+                'didictrict.district_name as deliverDistrictName',
+            ])
+            .where('o.order_stt = :stt', { stt: 9 })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: currentMonth.toString() })
+            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .getRawMany();
+        const data1: any[] = [];
+
+        areaquery.forEach((item) => {
+            const pickupData: any = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.pickupwarehouse,
+                districtId: item.pickupdistrict,
+                districtName: item.pickupdistrictname,
+                revenue: Number(item.pickupwarehouserevanue),
+            };
+
+            const deliverData: any = {
+                date: item.o_date_update_at,
+                currentMonth: item.curuntmonth,
+                warehouseId: item.deliverwarehouse,
+                districtId: item.deliverdistrict,
+                districtName: item.deliverdistrictname,
+                revenue: Number(item.deliverwarehouserevanue),
+            };
+            data1.push(pickupData, deliverData);
+        });
+        const areaMap = _.groupBy(data1, 'districtId');
+        const result1 = [];
+        for (const [key, value] of Object.entries(areaMap)) {
+            result1.push({
+                districtId: Number(key),
+                districtName: value[0].districtName,
+                revenue: _.sumBy(value, 'revenue'),
+            });
+        }
+        const areBestREvanue = _.maxBy(result1, 'revenue');
+        return {
+            revenue: revenuequery,
+            customers: customer,
+            orders: orderquery,
+            staffs: totalStaff,
+            totalwareHouse: totalWarehouse,
+            bestRevenueWarehouse: bestWarehouseRevanue,
+            totalDistrict: toTolDistrict,
+            bestRevenueArea: areBestREvanue,
+        };
+    }
     async reportRevenueAdminforGraph() {
         const currentYear = new Date().getFullYear(); // Get the current year
         const dataquery = await this.orderRepository
@@ -102,6 +261,7 @@ export class ReportService {
         const warehouses = await this.warehouseRepository
             .createQueryBuilder('w')
             .select(['w.warehouseId', 'w.warehouseName', '0 AS revenue'])
+            .where('w.warehouse_id != :warehouseId', { warehouseId: 1 })
             .getRawMany();
 
         const mergedWarehouses = warehouses.map((warehouse) => {
@@ -357,6 +517,7 @@ export class ReportService {
         const warehouses = await this.warehouseRepository
             .createQueryBuilder('w')
             .select(['w.warehouseId', 'w.warehouseName', '0 AS totalPickupOrder', '0 AS totalDeliverOrder'])
+            .where('w.warehouse_id != :warehouseId', { warehouseId: 1 })
             .getRawMany();
 
         const mergedWarehouses = warehouses.map((warehouse) => {

@@ -212,7 +212,6 @@ export class OrderViewService {
                 queryBuilder.orderBy('order.date_create_at', 'DESC');
 
                 const [orders, total] = await queryBuilder.getManyAndCount();
-                console.log(total);
                 const orderList = [];
                 orders.forEach((element) => {
                     orderList.push(this.toOrder(element));
@@ -392,7 +391,7 @@ export class OrderViewService {
                 .pickupPhoneNumber(pickupUser ? pickupUser.phone : '')
                 .pickupAddress(
                     pickupUser
-                        ? `${pickupUser.address.house}-${pickupUser.address.ward.wardName}-${pickupUser.address.district.districtName} - ${pickupUser.address.city.cityName}`
+                        ? `${pickupUser.address.house}, ${pickupUser.address.ward.wardName}, ${pickupUser.address.district.districtName} - ${pickupUser.address.city.cityName}`
                         : '',
                 )
                 .pickupStaffName(pickupStaff ? pickupStaff.fullname : '')
@@ -402,7 +401,7 @@ export class OrderViewService {
                 .deliverPhoneNumber(deliverUser ? deliverUser.phone : '')
                 .deliverAddress(
                     deliverUser
-                        ? `${deliverUser.address.house}-${deliverUser.address.ward.wardName}-${deliverUser.address.district.districtName} - ${deliverUser.address.city.cityName}`
+                        ? `${deliverUser.address.house}, ${deliverUser.address.ward.wardName}, ${deliverUser.address.district.districtName} - ${deliverUser.address.city.cityName}`
                         : '',
                 )
                 .deliverStaffName(deliverStaff ? deliverStaff.fullname : '')

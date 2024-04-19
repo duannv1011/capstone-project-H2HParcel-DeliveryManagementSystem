@@ -21,12 +21,13 @@ export class WarehourseService {
     async getAllWarehouse(pageNo: number, pageSize: number): Promise<any> {
         const [list, count] = await this.warehouseRepository
             .createQueryBuilder('wh')
-            .select(['wh.warehouseId', 'wh.warehouse_name', 'a.house', 'c.city_name', 'd.district_name', 'w.ward_name'])
+            .select(['wh.warehouseId', 'wh.warehouseName', 'a.house', 'c.city_name', 'd.district_name', 'w.ward_name'])
             .leftJoinAndSelect('wh.address', 'a')
             .leftJoinAndSelect('a.city', 'c')
             .leftJoinAndSelect('a.district', 'd')
             .leftJoinAndSelect('a.ward', 'w')
             .where('wh.isActive = :isActive', { isActive: true })
+            .andWhere('wh.warehouseId != :warehouseId1', { warehouseId1: 1 })
             .orderBy('wh.warehouseId', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
@@ -49,15 +50,15 @@ export class WarehourseService {
         const warehouses = await this.warehouseRepository
             .createQueryBuilder('wh')
             .select(['wh.warehouseId', 'wh.warehouse_name', 'a.house', 'c.city_name', 'd.district_name', 'w.ward_name'])
-            .leftJoinAndSelect('wh.address', 'a')
-            .leftJoinAndSelect('a.city', 'c')
-            .leftJoinAndSelect('a.district', 'd')
-            .leftJoinAndSelect('a.ward', 'w')
+            .leftJoin('wh.address', 'a')
+            .leftJoin('a.city', 'c')
+            .leftJoin('a.district', 'd')
+            .leftJoin('a.ward', 'w')
             .where('wh.isActive = :isActive', { isActive: true })
             .andWhere('wh.warehouse_id != :warehouseId1', { warehouseId1: staff.warehouseId })
             .andWhere('wh.warehouse_id != :warehouseId2', { warehouseId2: 1 })
             .orderBy('wh.warehouseId', 'ASC')
-            .getManyAndCount();
+            .getRawMany();
         return warehouses ? warehouses : 'not found';
     }
     async getDetailWarehouse(warehouseId: number): Promise<any> {

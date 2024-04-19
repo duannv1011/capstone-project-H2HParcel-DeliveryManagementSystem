@@ -91,12 +91,12 @@ export class OrderService {
             pickUpInforId: item.pickupInformation.inforId,
             pickName: item.pickupInformation.name,
             pickPhone: item.pickupInformation.phone,
-            pickupAddress: `${item.pickupInformation.address.house}-${item.pickupInformation.address.ward.wardName}-${item.pickupInformation.address.district.districtName}-${item.pickupInformation.address.city.cityName}`,
+            pickupAddress: `${item.pickupInformation.address.house}, ${item.pickupInformation.address.ward.wardName}, ${item.pickupInformation.address.district.districtName}, ${item.pickupInformation.address.city.cityName}`,
             pickShiper: item.pickupShipperStaff ? item.pickupShipperStaff.fullname : null,
             deliverInfor: item.deliverInformation.inforId,
             deliverName: item.deliverInformation.name,
             deliverPhone: item.deliverInformation.phone,
-            deliverAddress: `${item.deliverInformation.address.house}-${item.deliverInformation.address.ward.wardName}-${item.deliverInformation.address.district.districtName}-${item.deliverInformation.address.city.cityName}`,
+            deliverAddress: `${item.deliverInformation.address.house}, ${item.deliverInformation.address.ward.wardName}, ${item.deliverInformation.address.district.districtName}, ${item.deliverInformation.address.city.cityName}`,
             deliverShiper: item.deliverShipperStaff ? item.deliverShipperStaff.fullname : null,
             status: item.status.sttName,
             packeType: item.packageType.pkName,
@@ -120,7 +120,6 @@ export class OrderService {
         orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
         const customer = await this.customerRepository.findOne({ where: { accId: accId } });
         const cusId = customer ? customer.cusId : 0;
-        console.log(pageNo);
         //const orders = await this.orderRepository.findOne({ where: { cusId: cusId } });
         const pageSize = Number(process.env.PAGE_SIZE);
         const queryBuilder = await this.orderRepository
@@ -152,12 +151,12 @@ export class OrderService {
             pickUpInforId: item.pickupInformation.inforId,
             pickName: item.pickupInformation.name,
             pickPhone: item.pickupInformation.phone,
-            pickupAddress: `${item.pickupInformation.address.house}-${item.pickupInformation.address.ward.wardName}-${item.pickupInformation.address.district.districtName}-${item.pickupInformation.address.city.cityName}`,
+            pickupAddress: `${item.pickupInformation.address.house}, ${item.pickupInformation.address.ward.wardName}${item.pickupInformation.address.district.districtName}, ${item.pickupInformation.address.city.cityName}`,
             pickShiper: item.pickupShipperStaff ? item.pickupShipperStaff.fullname : null,
             deliverInfor: item.deliverInformation.inforId,
             deliverName: item.deliverInformation.name,
             deliverPhone: item.deliverInformation.phone,
-            deliverAddress: `${item.deliverInformation.address.house}-${item.deliverInformation.address.ward.wardName}-${item.deliverInformation.address.district.districtName}-${item.deliverInformation.address.city.cityName}`,
+            deliverAddress: `${item.deliverInformation.address.house}, ${item.deliverInformation.address.ward.wardName}, ${item.deliverInformation.address.district.districtName}, ${item.deliverInformation.address.city.cityName}`,
             deliverShiper: item.deliverShipperStaff ? item.deliverShipperStaff.fullname : null,
             status: item.status.sttName,
             packeType: item.packageType.pkName,
@@ -233,7 +232,6 @@ export class OrderService {
             .catch((error) => {
                 return error;
             });
-        console.log(dataQuery);
         const order = dataQuery
             ? {
                   orderId: dataQuery.orderId,

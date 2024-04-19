@@ -145,7 +145,6 @@ export class QrCodeService {
      */
     async assignCodeToOrder(request: AssignCodeDto, accId) {
         const code = await this.codeRepository.findOne({ where: { codeValue: request.codeValue } });
-        console.log(code);
         const orderdata = await this.orderRepository.findOneBy({ orderId: request.orderId });
         if (!code) {
             return 'code value not found';

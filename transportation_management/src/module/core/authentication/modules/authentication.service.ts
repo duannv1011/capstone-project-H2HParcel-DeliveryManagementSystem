@@ -79,7 +79,6 @@ export class AuthenticationService {
             const addressdata = await queryRunner.manager.save(AddressEntity, {
                 ...addressDtoData,
             });
-            console.log('address' + addressdata);
             //create information
             const information = new InformationEntity();
             information.name = registerData.customer.fullName;
@@ -88,7 +87,6 @@ export class AuthenticationService {
             const informationResult = await queryRunner.manager.save(InformationEntity, information);
             // create customer
             const customerDtodata = registerData.customer;
-            console.log(customerDtodata);
             customerDtodata.addressId = addressdata.addressId;
             customerDtodata.accId = accountId;
             customerDtodata.status = 1;
