@@ -24,6 +24,7 @@ import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
 import { StaffEntity } from 'src/entities/staff.entity';
 import { Paging } from 'src/module/response/Paging';
+import { WarehouseEntity } from 'src/entities/warehouse.entity';
 
 @Injectable()
 export class OrderService {
@@ -177,13 +178,34 @@ export class OrderService {
         };
     }
     async getallOrderLog(accid, orderId) {
-        const activitylog = await this.activityLogRepository
+        const activitylogs = await this.activityLogRepository
             .createQueryBuilder('a')
-            .leftJoinAndSelect('a.logStatus', 's')
+            .innerJoin('a.logStatus', 's')
+            .select([
+                'a.log_id as logid',
+                'a.order_id as orderId',
+                'a.time as time',
+                'a.current_status as logStatusId',
+                's.alstt_name as status',
+            ])
             .where('a.order_id =:orderId', { orderId: orderId })
             .orderBy('a.logId', 'DESC')
-            .getMany();
-        return activitylog ? activitylog : 'error';
+            .getRawMany();
+        const order = activitylogs[1].orderid;
+        const orderdata = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoin('o.pickupInformation', 'pi')
+            .leftJoin('o.deliverInformation', 'di')
+            .leftJoin('pi.address', 'pia')
+            .leftJoin('di.address', 'dia')
+            .leftJoin('pia.ward', 'piw')
+            .leftJoin('dia.ward', 'diw')
+            .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
+            .select(['piww.warehouse_name AS pickupWarehouse', 'diww.warehouse_name AS deliverWarehouse'])
+            .where('o.order_id = :order_id', { order_id: order })
+            .getRawMany();
+        return activitylogs ? { rawdata: activitylogs, warehoue: orderdata } : 'error';
     }
 
     async getDetailOrder(orderId: number, accId: number): Promise<any> {
