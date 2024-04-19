@@ -49,8 +49,8 @@ export class ReportController {
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('admin/customer/customer-table')
-    async reportCutomerAdminForTable(@Query('pageNo') pageNo: number) {
-        return await this.reportService.reportCutomerAdminForTable(pageNo);
+    async reportCutomerAdminForTable(@Query('pageNo') pageNo: number, @Query('month') month: number) {
+        return await this.reportService.reportCutomerAdminForTable(pageNo, month);
     }
     //report order for admin
     @ApiBearerAuth('JWT-auth')

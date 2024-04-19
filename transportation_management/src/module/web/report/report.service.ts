@@ -151,7 +151,7 @@ export class ReportService {
         });
         return countByMonth;
     }
-    async reportCutomerAdminForTable(pageNo: number) {
+    async reportCutomerAdminForTable(pageNo: number, month: number) {
         const currentYear = new Date().getFullYear(); // Get the current year
         const dataQuery = await this.orderRepository
             .createQueryBuilder('o')
@@ -159,7 +159,8 @@ export class ReportService {
             .leftJoinAndSelect('c.address', 'a')
             .leftJoinAndSelect('a.district', 'd')
             .select(['a.district_id', 'd.district_name', 'COUNT(DISTINCT o.cus_id) as customer_count'])
-            .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .where('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :month', { month: month.toString() })
             .groupBy('a.district_id,d.district_name')
             .getRawMany();
         const district = await this.districtRepository.find();
