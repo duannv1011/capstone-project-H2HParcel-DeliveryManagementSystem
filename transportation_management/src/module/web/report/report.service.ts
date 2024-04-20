@@ -874,10 +874,10 @@ export class ReportService {
         });
         return dataGroup;
     }
-    async reportOrderManagerforTable(accId: number, pageNo: number) {
+    async reportOrderManagerforTable(accId: number, pageNo: number, month: number) {
         const date = new Date();
         const currentYear = date.getFullYear(); // Get the current year
-        const currentMonth = date.getMonth() + 1;
+        //const currentMonth = date.getMonth() + 1;
         const staff = await this.staffRepository.findOneBy({ accId });
         if (!staff) {
             return { status: 404, error: 'notfoud' };
@@ -909,7 +909,7 @@ export class ReportService {
                     }).orWhere('diw.warehouse_id = :warehouseId', { warehouseId: warehouseId });
                 }),
             )
-            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :currentMonth', { currentMonth: currentMonth.toString() })
+            .andWhere('EXTRACT(MONTH FROM o.date_update_at) = :currentMonth', { currentMonth: month.toString() })
             .andWhere('EXTRACT(YEAR FROM o.date_update_at) = :year', { year: currentYear.toString() })
             .getRawMany();
         const data: any[] = [];
@@ -1033,6 +1033,18 @@ export class ReportService {
                 totalDeliverOrder: count.deliver || 0,
             });
         }
+        // transit
+        const transitQuery = await this.transitRepository
+            .createQueryBuilder('t')
+            .leftJoinAndSelect('t.staff', 's')
+            .leftJoinAndSelect('s.warehouse', 'w')
+            .select(['s.staff_id as staffId', 'COUNT(s.staff_id) as totanTransit'])
+            .where('s.warehouse_id = :warehouseId', { warehouseId: warehouseId })
+            .andWhere('EXTRACT(MONTH FROM t.date_update_at) = :month', { month: month.toString() })
+            .andWhere('EXTRACT(YEAR FROM t.date_update_at) = :year', { year: currentYear.toString() })
+            .groupBy('s.staff_id')
+            .getRawMany();
+        //map staffwarehouse
         const staffs = await this.staffRepository
             .createQueryBuilder('s')
             .leftJoinAndSelect('s.warehouse', 'w')
@@ -1042,7 +1054,8 @@ export class ReportService {
             .getRawMany();
         const mergedStaffs = staffs.map((staff) => {
             const found = result.find(({ staffId }) => staffId === staff.staff_id);
-            console.log(found);
+            const found1 = transitQuery.find(({ staffId }) => staffId === staff.staffId);
+            console.log(found1);
             return {
                 staffId: staff.staff_id,
                 staffName: staff.s_fullname,
@@ -1051,6 +1064,7 @@ export class ReportService {
                 totalPickupOrder: found ? found.totalPickupOrder : 0,
                 totalDeliverOrder: found ? found.totalDeliverOrder : 0,
                 totalOrder: found ? found.totalPickupOrder + found.totalDeliverOrder : 0,
+                totalTransit: found1 ? Number(found1.totantransit) : 0,
             };
         });
         const sortedStaff = mergedStaffs.sort((a, b) => b.totalOrder - a.totalOrder);
@@ -1074,121 +1088,5 @@ export class ReportService {
             totalPage: totalpages,
             count: sortedStaff.length,
         };
-    }
-    async getShiperPayslip(staff_id: number) {
-        console.log(staff_id);
-        const shiper = await this.staffRepository.findOneBy({ staffId: staff_id });
-        if (!shiper) {
-            return { status: 404, error: 'Not Found' };
-        }
-        const payrule = await this.payRuleEntity.find();
-        const rule = payrule.reduce((acc, item) => {
-            acc[item.ruleId] = item.effort;
-            return acc;
-        }, {});
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1;
-        const shiperId = shiper.staffId;
-        const transits = await this.transitRepository.findBy({ staffId: shiperId });
-        const mutiplier = [];
-        for (const tran of transits) {
-            const mul = await this.checkMutipelPrice(tran.warehouseFrom, tran.warehouseTo);
-            if (mul) {
-                mutiplier.push(mul);
-            }
-        }
-        const idCounts = _.countBy(mutiplier);
-        let transitefort = 0;
-
-        for (const [key, value] of Object.entries(idCounts)) {
-            switch (key) {
-                case '1':
-                    transitefort += value * rule[6];
-                    break;
-                case '2':
-                    transitefort += value * rule[7];
-                    break;
-                case '3':
-                    transitefort += value * rule[8];
-                    break;
-                default:
-                    break;
-            }
-        }
-        const orders = await this.orderRepository
-            .createQueryBuilder('o')
-            .leftJoinAndSelect('o.pickupInformation', 'pi')
-            .leftJoinAndSelect('o.deliverInformation', 'di')
-            .where('o.orderStt = :stt', { stt: 9 })
-            .andWhere('extract(month from o.date_update_at) = :month', { month: currentMonth })
-            .andWhere(
-                new Brackets((qb) => {
-                    qb.where('o.pickupShipper = :puShipperId', {
-                        puShipperId: shiperId,
-                    }).orWhere('o.deliverShipper = :diShipperId', { diShipperId: shiperId });
-                }),
-            )
-            .getMany();
-        const pickupOrders = orders.filter((order) => order.pickupShipper === shiperId);
-        const deliverOrders = orders.filter((order) => order.deliverShipper === shiperId);
-        const pickupEffort = pickupOrders.reduce((acc, order) => {
-            switch (order.pkId) {
-                case 1:
-                    return acc + rule[2] * 0.4;
-                case 2:
-                    return acc + rule[3] * 0.4;
-                case 3:
-                    return acc + rule[4] * 0.4;
-                case 4:
-                    return acc + rule[5] * 0.4;
-                default:
-                    return acc;
-            }
-        }, 0);
-        const deliverEffort = deliverOrders.reduce((acc, order) => {
-            switch (order.pkId) {
-                case 1:
-                    return acc + rule[2] * 0.6;
-                case 2:
-                    return acc + rule[3] * 0.6;
-                case 3:
-                    return acc + rule[4] * 0.6;
-                case 4:
-                    return acc + rule[5] * 0.6;
-                default:
-                    return acc;
-            }
-        }, 0); // 60% for deliver
-        //transit
-        const totalEffort = pickupEffort + deliverEffort + transitefort;
-        return totalEffort * 2750;
-    }
-    async checkMutipelPrice(warehouseFrom: number, warehouseTo: number) {
-        const warehouseRule = await this.warehouseRuleRepository
-            .createQueryBuilder('w')
-            .where((qb) => {
-                qb.andWhere('(w.warehouse_id_1 = :warehouseId1 AND w.warehouse_id_2 = :warehouseId2)', {
-                    warehouseId1: warehouseFrom,
-                    warehouseId2: warehouseTo,
-                }).orWhere('(w.warehouse_id_1 = :warehouseId2 AND w.warehouse_id_2 = :warehouseId1)', {
-                    warehouseId1: warehouseFrom,
-                    warehouseId2: warehouseTo,
-                });
-            })
-            .getOne();
-        const distance = Number(
-            warehouseRule.distance.includes(',') ? warehouseRule.distance.replace(',', '.') : warehouseRule.distance,
-        );
-        const num = distance.toFixed();
-        if (distance === 0) {
-            return 1;
-        }
-        const priceMultiplier = await this.priceMutiPlierRepository
-            .createQueryBuilder('p')
-            .where('p.max_distance >= :num', { num })
-            .andWhere('p.min_distance < :num', { num })
-            .orderBy('p.minDistance', 'DESC')
-            .getOne();
-        return Number(priceMultiplier.id);
     }
 }

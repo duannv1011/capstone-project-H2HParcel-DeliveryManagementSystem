@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Put, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enum/roles.enum';
 import { RoleGuard } from 'src/guards/role.guard';
-import { updateStaffDto } from '../../admin/dto/staff-update.dto';
 import { ManagercrudService } from './managercrud.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UserLogin } from 'src/decorators/user_login.decorator';
@@ -17,7 +16,7 @@ export class ManagercrudController {
     @Roles(Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'get All Staffs except Admin in Warehouse' })
+    @ApiOperation({ summary: 'get All Staffs except Admin and manager in Warehouse' })
     @ApiResponse({ status: 200, description: 'get All Staffs successfully.' })
     async getAllStaff(@Query('pageNo') pageNo: string, @UserLogin() userLogin: UserLoginData): Promise<any> {
         return this.managercrudService.getAllStaff(Number(pageNo), Number(userLogin.accId));
@@ -34,15 +33,5 @@ export class ManagercrudController {
         @UserLogin() userLogin: UserLoginData,
     ): Promise<any> {
         return this.managercrudService.getAllStaffByRole(Number(pageNo), role_id, Number(userLogin.accId));
-    }
-
-    @Put('updateStaff')
-    @Roles(Role.MANAGER)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiBearerAuth('JWT-auth')
-    @ApiOperation({ summary: 'Update staff data in Warehouse' })
-    @ApiResponse({ status: 200, description: 'Update staff data successfully.' })
-    async updateStaff(@Body() data: updateStaffDto, @UserLogin() userLogin: UserLoginData): Promise<any> {
-        return await this.managercrudService.adminUpdateStaff(data, Number(userLogin.accId));
     }
 }

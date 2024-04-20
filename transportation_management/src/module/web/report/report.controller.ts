@@ -151,8 +151,12 @@ export class ReportController {
     @UseGuards(AuthGuard, RoleGuard)
     @ApiUnauthorizedResponse()
     @Get('manager/order/order-table')
-    async reportOrderManagerforTable(@UserLogin() user: UserLoginData, @Query('pageNo') pageNo: number) {
-        return await this.reportService.reportOrderManagerforTable(Number(user.accId), pageNo);
+    async reportOrderManagerforTable(
+        @UserLogin() user: UserLoginData,
+        @Query('pageNo') pageNo: number,
+        @Query('month') month: number,
+    ) {
+        return await this.reportService.reportOrderManagerforTable(Number(user.accId), pageNo, month);
     }
     //manager list all shiperr on warehouse
     @ApiBearerAuth('JWT-auth')

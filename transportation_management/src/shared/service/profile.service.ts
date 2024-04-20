@@ -96,37 +96,11 @@ export class ProfileService {
      * @param accId accId from user login is manager.
      * @return Promise<AccountEntity>
      */
-    async findOneProfileByAccId(accId: number): Promise<AccountEntity> {
-        // TODO: join shipper
-        try {
-            return await this.accountRepository
-                .createQueryBuilder('account')
-                .innerJoinAndSelect('account.staffs', 'staffs')
-                .innerJoinAndSelect('account.customers', 'customers')
-                .where({ accId: accId })
-                .getOne();
-        } catch (error) {
-            Logger.error(error);
-            throw new InternalServerErrorException();
-        }
-    }
-
     /**
      * Get all profiles by role.
      *
      * @return Promise<AccountEntity[]>
      */
-    async findAllProfile(): Promise<AccountEntity[]> {
-        // TODO: relation shipper
-        try {
-            return await this.accountRepository.find({
-                relations: ['customers', 'staffs'],
-            });
-        } catch (error) {
-            Logger.error(error);
-            throw new InternalServerErrorException();
-        }
-    }
 
     /**
      * Update staff profile.

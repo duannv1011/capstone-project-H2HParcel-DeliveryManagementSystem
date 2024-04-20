@@ -26,7 +26,6 @@ import { AddressBookModule } from './module/client/address_book/module/address_b
 import { AddressBookService } from './module/client/address_book/module/address_book.service';
 import { AddressBookController } from './module/client/address_book/module/address_book.controller';
 import { StaffModule } from './module/core/staff/staff.module';
-import { ManagerModule } from './module/core/manager/manager.module';
 import { StaffController } from './module/core/staff/staff.controller';
 import { ProfileService } from './shared/service/profile.service';
 import { StatusModule } from './module/core/status/module/status.module';
@@ -58,7 +57,6 @@ import { PaymentService } from './module/core/payment/payment.service';
         WarehourseModule,
         AddressBookModule,
         StaffModule,
-        ManagerModule,
         StatusModule,
         QrCodeModule,
         AdminModule,
