@@ -193,7 +193,6 @@ export class OrderService {
             .where('a.order_id =:orderId', { orderId: orderId })
             .orderBy('a.logId', 'DESC')
             .getRawMany();
-        const order = activitylogs[1].orderid;
         const orderdata = await this.orderRepository
             .createQueryBuilder('o')
             .leftJoin('o.pickupInformation', 'pi')
@@ -205,7 +204,7 @@ export class OrderService {
             .leftJoinAndSelect(WarehouseEntity, 'piww', 'piw.warehouse_id = piww.warehouse_id')
             .leftJoinAndSelect(WarehouseEntity, 'diww', 'diw.warehouse_id = diww.warehouse_id')
             .select(['piww.warehouse_name AS pickupWarehouse', 'diww.warehouse_name AS deliverWarehouse'])
-            .where('o.order_id = :order_id', { order_id: order })
+            .where('o.order_id = :order_id', { order_id: orderId })
             .getRawMany();
         return activitylogs ? { rawdata: activitylogs, warehouse: orderdata ? orderdata : '' } : 'error';
     }

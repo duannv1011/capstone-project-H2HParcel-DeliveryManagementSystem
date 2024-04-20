@@ -57,6 +57,9 @@ export class OrderController {
     @ApiOperation({ summary: 'get Order Detail Customer Orders' })
     @ApiResponse({ status: 200, description: 'get Order Detail Customer Orders  successfully.' })
     async getOrderDetail(@UserLogin() userLogin: UserLoginData, @Query('order_id') order_id: number) {
+        console.log(order_id);
+        order_id = order_id ? order_id : 0;
+        console.log(order_id);
         return this.orderService.getDetailOrder(order_id, userLogin.accId);
     }
     @Get('staff/warehoue/customers')
