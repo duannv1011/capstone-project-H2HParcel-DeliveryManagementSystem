@@ -49,6 +49,15 @@ export class AdminController {
     async getAllStaff(@Query('pageNo') pageNo: string): Promise<any> {
         return this.adminService.getAllStaff(Number(pageNo));
     }
+    @Get('admin/staff/detail')
+    @Roles(Role.ADMIN, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    @ApiOperation({ summary: 'get detail of Staff ' })
+    @ApiResponse({ status: 200, description: 'get  Staff successfully.' })
+    async getdDetailStaff(@Query('staffId') staffId: string): Promise<any> {
+        return this.adminService.getdDetailStaff(Number(staffId));
+    }
     @Get('admin/staffs/by-role')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)

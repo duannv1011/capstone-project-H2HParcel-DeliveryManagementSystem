@@ -421,6 +421,7 @@ export class OrderService {
                 'customerAdress.address_id AS addressId',
                 'customerAdress.district_id AS districtId',
                 'customerAdress.ward_id AS wardId',
+                'customerAdress.house as house',
                 'cac.city_name as cityName',
                 'cad.district_name as districtName',
                 'caw.ward_name as wardName',

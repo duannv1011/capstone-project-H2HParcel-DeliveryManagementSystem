@@ -48,6 +48,13 @@ export class CustomerController {
         const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
         return this.customerService.viewProfile(token);
     }
+    @Get('admin-manager/customer-detail')
+    @Roles(Role.MANAGER, Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiBearerAuth('JWT-auth')
+    async getdetailCustomer(@Query('customerId') customerId: number): Promise<any> {
+        return this.customerService.getdetailCustomer(customerId);
+    }
 
     @Put('updateProfile')
     @Roles(Role.CUSTOMER)

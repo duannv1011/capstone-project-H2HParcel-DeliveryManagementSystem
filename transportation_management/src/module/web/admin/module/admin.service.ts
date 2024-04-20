@@ -159,6 +159,45 @@ export class AdminService {
         }
         return false;
     }
+    async getdDetailStaff(staffId: number): Promise<any> {
+        const staff = await this.staffRepository
+            .createQueryBuilder('s')
+            .select([
+                's.staffId',
+                's.fullname',
+                's.email',
+                's.phone',
+                's.status',
+                `(CASE s.status 
+                WHEN 1 THEN 'Active' 
+                WHEN 2 THEN 'Suspended' 
+                WHEN 3 THEN 'Inactive' 
+                ELSE '' 
+              END) AS statusName`,
+                'role.role_id',
+                'role.role_name',
+                'warehouse.warehouseId',
+                'warehouse.warehouseName',
+                'role.role_id',
+                'role.role_name',
+                'city.city_id',
+                'city.city_name',
+                'district.district_id',
+                'district.district_name',
+                'ward.ward_id',
+                'ward.ward_name',
+            ])
+            .where('s.staff_id = :staffId', { staffId })
+            .leftJoin('s.warehouse', 'warehouse')
+            .leftJoin('s.account', 'account')
+            .leftJoin('account.role', 'role')
+            .leftJoin('s.address', 'address')
+            .leftJoin('address.city', 'city')
+            .leftJoin('address.district', 'district')
+            .leftJoin('address.ward', 'ward')
+            .getRawOne();
+        return staff ? staff : 'not found';
+    }
     async updateRoleStaff(staffId: number, roleId: number) {
         const staff = await this.staffRepository.findOneBy({ staffId: staffId });
         const acount = staff ? await this.accountRepository.findOneBy({ accId: staff.accId }) : null;

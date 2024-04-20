@@ -92,7 +92,41 @@ export class CustomerService {
         dataView.ward = customer.address.ward.wardName;
         return dataView;
     }
-
+    async getdetailCustomer(customerId: number) {
+        const customer = await this.customerRepository
+            .createQueryBuilder('c')
+            .select([
+                'c.cus_id as customerId',
+                'c.fullName',
+                'c.email',
+                'c.phone',
+                'c.status',
+                `(CASE c.status 
+                    WHEN 1 THEN 'Active' 
+                    WHEN 2 THEN 'Suspended' 
+                    WHEN 3 THEN 'Inactive' 
+                    ELSE '' 
+                  END) AS statusName`,
+                'role.role_id as roleId',
+                'role.role_name as roleName',
+                'address.house as house',
+                'city.city_id as cityId',
+                'district.district_id as districtDd',
+                'ward.ward_id as wardId',
+                'city.city_name as cityName',
+                'district.district_name as districtName',
+                'ward.ward_name as wardName',
+            ])
+            .leftJoin('c.address', 'address')
+            .leftJoin('c.account', 'account')
+            .leftJoin('account.role', 'role')
+            .leftJoin('address.city', 'city')
+            .leftJoin('address.district', 'district')
+            .leftJoin('address.ward', 'ward')
+            .where('c.accId = :customerId', { customerId: customerId })
+            .getRawMany();
+        return customer;
+    }
     async updateProfile(data: updateCusProfileDto, token: string) {
         const JwtPayload = decode(token) as JwtPayload;
         const getCustomerByAccId = await this.customerRepository.findOne({ where: { accId: JwtPayload.id } });
