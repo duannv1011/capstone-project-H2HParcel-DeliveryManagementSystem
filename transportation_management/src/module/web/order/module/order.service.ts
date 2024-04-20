@@ -411,8 +411,25 @@ export class OrderService {
                 'customer.status AS customerStatus',
                 'customer.phone AS customerPhone',
                 'COUNT(order.order_id) AS totalOrder',
+                'customer.status AS statusId',
+                `(CASE customer.status 
+                    WHEN 1 THEN 'Active' 
+                    WHEN 2 THEN 'Suspended' 
+                    WHEN 3 THEN 'Inactive' 
+                    ELSE '' 
+                  END) AS statusName`,
+                'customerAdress.address_id AS addressId',
+                'customerAdress.district_id AS districtId',
+                'customerAdress.ward_id AS wardId',
+                'cac.city_name as cityName',
+                'cad.district_name as districtName',
+                'caw.ward_name as wardName',
             ])
             .leftJoin('order.customer', 'customer')
+            .leftJoin('customer.address', 'customerAdress')
+            .leftJoin('customerAdress.city', 'cac')
+            .leftJoin('customerAdress.district', 'cad')
+            .leftJoin('customerAdress.ward', 'caw')
             .leftJoin('order.pickupInformation', 'pickupInformation')
             .leftJoin('order.deliverInformation', 'deliverInformation')
             .leftJoin('pickupInformation.address', 'pickupAddress')
@@ -432,8 +449,11 @@ export class OrderService {
             )
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
-            .groupBy('customer.cus_id, customer.fullname, customer.email, customer.phone')
+            .groupBy(
+                'customer.cus_id, customer.fullname, cad.district_name, caw.ward_name, cac.city_name, customer.email, customer.phone, customerAdress.address_id, customerAdress.district_id, customerAdress.ward_id',
+            )
             .getRawMany();
+
         const totalOrderInWarehouse = customerOrders.reduce((acc, curr) => acc + parseInt(curr.totalorder, 10), 0);
 
         const count = customerOrders.length;

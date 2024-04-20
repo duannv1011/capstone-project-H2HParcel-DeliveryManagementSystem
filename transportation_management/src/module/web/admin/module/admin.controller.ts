@@ -87,7 +87,7 @@ export class AdminController {
         return await this.adminService.changeManger(staffId, warehouseId);
     }
     @Post('admin/create-staff')
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.MANAGER)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'admin create staff' })

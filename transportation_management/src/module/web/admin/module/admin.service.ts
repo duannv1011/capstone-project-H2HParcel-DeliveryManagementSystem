@@ -83,10 +83,10 @@ export class AdminService {
             .leftJoin('account.role', 'role')
             .where('role.role_id != :roleId', { roleId: 5 })
             .orderBy('warehouse.warehouseId', 'ASC')
-            .addOrderBy('staff.staffId', 'ASC')
+            .addOrderBy('role.rolde_id', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
-            .getManyAndCount();
+            .getRawMany();
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };
