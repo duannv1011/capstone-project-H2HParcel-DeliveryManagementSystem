@@ -18,6 +18,7 @@ import { StaffEntity } from 'src/entities/staff.entity';
 import { ActivityLogEntity } from 'src/entities/activity-log.entity';
 import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity';
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
+import { WarehouseEntity } from 'src/entities/warehouse.entity';
 
 @Injectable()
 export class QrCodeService {
@@ -71,6 +72,7 @@ export class QrCodeService {
                 .leftJoinAndSelect('code.order', 'order')
                 .orderBy('code.order', 'DESC')
                 .addOrderBy('code.date_create_at', 'DESC')
+                .addOrderBy('code.code_id', 'DESC')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
                 .getManyAndCount();
@@ -233,12 +235,24 @@ export class QrCodeService {
                 orderStatus.sttId = order.orderStt + 1;
                 order.status = orderStatus;
                 const orderUpdate = await queryRunner.manager.save(order);
+                const ordordata = await this.orderRepository
+                    .createQueryBuilder('o')
+                    .leftJoin('o.deliverInformation', 'di')
+                    .leftJoin('di.address', 'dia')
+                    .leftJoin('dia.ward', 'diw')
+                    .leftJoinAndSelect(WarehouseEntity, 'warehouse', 'diw.warehouse_id = warehouse.warehouse_id')
+                    .select(['o.order_id', 'warehouse.warehouse_name'])
+                    .getRawMany();
                 //create ActivityLog
                 const activityLog = await this.ActivitylogOrder(order.orderId, orderUpdate.orderStt, accId);
                 await queryRunner.manager.save(activityLog);
                 await queryRunner.commitTransaction();
                 const stt = await this.orderStatusRepository.findOneBy({ sttId: orderStatus.sttId });
-                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${stt.sttName}` };
+                return {
+                    order: orderUpdate.hasId,
+                    msg: `Order updated successfully to:${stt.sttName}`,
+                    orderdata: { ordordata },
+                };
             } else if ([4, 7].includes(statusId) && staff.account.role.roleId === 2) {
                 //update order
                 orderStatus.sttId = order.orderStt + 1;

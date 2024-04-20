@@ -176,7 +176,10 @@ export class OrderService {
             totalpage,
         };
     }
-    async getallOrderLog(accid, orderId) {
+    async getallOrderLog(accid: number, orderId: number) {
+        if (!orderId) {
+            return { status: 404, msg: 'orderId not found!' };
+        }
         const activitylogs = await this.activityLogRepository
             .createQueryBuilder('a')
             .innerJoin('a.logStatus', 's')

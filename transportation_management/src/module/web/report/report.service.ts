@@ -1031,7 +1031,6 @@ export class ReportService {
                 warehouseName: value[0].warehouseName,
                 totalPickupOrder: count.pickup || 0,
                 totalDeliverOrder: count.deliver || 0,
-                //salary: (await this.getShiperPayslip(Number(key))) || 0,
             });
         }
         const staffs = await this.staffRepository
@@ -1052,7 +1051,6 @@ export class ReportService {
                 totalPickupOrder: found ? found.totalPickupOrder : 0,
                 totalDeliverOrder: found ? found.totalDeliverOrder : 0,
                 totalOrder: found ? found.totalPickupOrder + found.totalDeliverOrder : 0,
-                //salary: found ? found.salary : 0,
             };
         });
         const sortedStaff = mergedStaffs.sort((a, b) => b.totalOrder - a.totalOrder);

@@ -4,10 +4,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Response } from 'src/module/response/Response';
 import { Paging } from 'src/module/response/Paging';
 import { AccountEntity } from '../../../../entities/account.entity';
-import { Roles } from 'src/decorators/role.decorator';
-import { Role } from 'src/enum/roles.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { RoleGuard } from 'src/guards/role.guard';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { changePasswordDto } from '../dto/changePass_dto';
@@ -43,8 +40,7 @@ export class AccountController {
         return this.accountService.getAccountById(Number(id));
     }
     @Put('updatePaasword')
-    @Roles(Role.CUSTOMER)
-    @UseGuards(AuthGuard, RoleGuard)
+    @UseGuards(AuthGuard)
     @ApiBearerAuth('JWT-auth')
     @UsePipes(ValidationPipe)
     async updateCustomerPass(@Body() pass: changePasswordDto, @Req() request: Request) {
