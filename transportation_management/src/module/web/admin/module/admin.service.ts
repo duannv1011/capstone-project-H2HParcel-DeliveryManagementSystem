@@ -64,7 +64,7 @@ export class AdminService {
     async getAllStaff(pageNo: number): Promise<any> {
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
         //const [list, count] = await this.staffRepository.findAndCount();
-        const [list, count] = await this.staffRepository
+        const list = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
                 'staff.staffId',
@@ -72,21 +72,22 @@ export class AdminService {
                 'staff.email',
                 'staff.phone',
                 'staff.warehouse',
-                'staff.account',
+                'account.role_id',
                 'staff.status',
                 'warehouse.warehouseId',
                 'account.accId',
-                'role',
+                'role.role_name',
             ])
             .leftJoin('staff.warehouse', 'warehouse')
             .leftJoin('staff.account', 'account')
             .leftJoin('account.role', 'role')
+            .orderBy('staff.warehouse_id', 'ASC')
+            .addOrderBy('role.role_id', 'DESC')
             .where('role.role_id != :roleId', { roleId: 5 })
-            .orderBy('warehouse.warehouseId', 'ASC')
-            .addOrderBy('role.rolde_id', 'ASC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getRawMany();
+        const count = list.length;
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };
