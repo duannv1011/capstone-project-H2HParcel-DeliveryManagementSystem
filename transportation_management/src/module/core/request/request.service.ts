@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { RequestUpdateDto } from './dto/request.update.dto';
@@ -114,6 +114,7 @@ export class RequestService {
             .orWhere('ward.warehouse_id = :warehouseId', { warehouseId: staff.warehouseId })
             .orWhere('transit.warehouse_to = :warehouseTo', { warehouseTo: staff.warehouseId })
             .orWhere('transit.warehouse_from = :warehouseFrom', { warehouseFrom: staff.warehouseId })
+            .orderBy('record.recordId', 'DESC')
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -515,6 +516,20 @@ export class RequestService {
 
     async createTransitRequest(data: createTransitRequestDto, accId: number) {
         const staff = await this.staffRepository.findOneBy({ accId: accId });
+        const orders = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoin('o.deliverInformation', 'od')
+            .leftJoin('od.address', 'a')
+            .leftJoin('a.ward', 'w')
+            .select(['o.orderId', 'o.transitShipperId'])
+            .leftJoinAndSelect(WarehouseEntity, 'wh', 'w.warehouse_id = wh.warehouse_id')
+            .where('o.transit_shipper_id is  null')
+            .andWhere('o.order_stt = :orderStatus', { orderStatus: 4 })
+            .andWhere('wh.warehouse_id = :warehouseId', { warehouseId: data.warehouseTo })
+            .getMany();
+        if (!Array.isArray(orders) || orders.length === 0) {
+            return { status: 404, msg: 'no order match' };
+        }
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
@@ -533,10 +548,24 @@ export class RequestService {
             transit.staffId = data.transitShiper;
             transit.warehouseFrom = staff.warehouseId;
             transit.warehouseTo = data.warehouseTo;
-            await queryRunner.manager.save(transit);
+            const transitCreate = await queryRunner.manager.save(transit);
             const warehouse = await queryRunner.manager.findOneBy(WarehouseEntity, { warehouseId: data.warehouseTo });
+            //update all have orderstatus =4 and deliver_warehouse  = data.warehouseTo
+            //get all legal to insert
+
+            orders.map((order) => {
+                order.transitShipperId = transitCreate.staffId;
+            });
+            const updateOrder = orders ? await queryRunner.manager.save(orders) : 0;
+            if (updateOrder === 0) {
+                return { status: HttpStatus.CONFLICT, msg: 'update order data error' };
+            }
             await queryRunner.commitTransaction();
-            return `${staff.fullname} is assigned to transition to ${warehouse.warehouseName}`;
+            const shipper = await this.staffRepository.findOneBy({ staffId: data.transitShiper });
+            return {
+                status: HttpStatus.OK,
+                msg: `${shipper.fullname} is assigned to transition to ${warehouse.warehouseName}`,
+            };
         } catch (error) {
             Logger.log(error);
             await queryRunner.rollbackTransaction();

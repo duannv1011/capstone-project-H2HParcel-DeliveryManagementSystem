@@ -150,7 +150,7 @@ export class QrCodeService {
             return 'code value not found';
         }
         if (code.order) {
-            return 'code is asigned please asign new QR code';
+            return 'code is assigned please assign new QR code';
         }
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
@@ -173,7 +173,7 @@ export class QrCodeService {
             const activityLog = await this.ActivitylogOrder(order.orderId, orderStaus.sttId, accId);
             await queryRunner.manager.save(ActivityLogEntity, activityLog);
             await queryRunner.commitTransaction();
-            return `order: ${order.orderId} is asign to qr: ${code.codeValue}`;
+            return `order: ${order.orderId} is assign to qr: ${code.codeValue}`;
         } catch (error) {
             console.error('Error occurred:', error);
             await queryRunner.rollbackTransaction();
@@ -251,7 +251,10 @@ export class QrCodeService {
                     msg: `Order updated successfully to:${stt.sttName}`,
                     orderdata: { ordordata },
                 };
-            } else if ([4, 7].includes(statusId) && staff.account.role.roleId === 2) {
+            } else if (
+                ((statusId === 4 && staff.staffId === code.order.transitShipperId) || statusId === 7) &&
+                staff.account.role.roleId === 2
+            ) {
                 //update order
                 orderStatus.sttId = order.orderStt + 1;
                 order.status = orderStatus;
