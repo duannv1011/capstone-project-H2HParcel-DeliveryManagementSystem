@@ -70,7 +70,7 @@ export class QrCodeService {
             const [qrCodes, total] = await this.codeRepository
                 .createQueryBuilder('code')
                 .leftJoinAndSelect('code.order', 'order')
-                .addOrderBy('code.date_create_at', 'DESC')
+                .addOrderBy('code.codeId', 'ASC')
                 .addOrderBy('order.orderId', 'ASC', 'NULLS FIRST')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
