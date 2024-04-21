@@ -9,7 +9,7 @@ import { DATE_FORMAT, TIMEZONE } from '../../../shared/contants';
 import { QRCodeEntity } from '../../../entities/qrcode.entity';
 import { QrCodeListDto } from './dto/qr-code.list.dto';
 import { Builder } from 'builder-pattern';
-import { QrCode, QrCodeCreate, QrCodeDetailResponse, QrCodeResponse } from './reponse/qr-code.response';
+import { QrCode, QrCodeCreate, QrCodeDetailResponse } from './reponse/qr-code.response';
 import { Paging } from '../../response/Paging';
 import { AssignCodeDto } from './dto/assign-code.dto';
 import { OrderEntity } from '../../../entities/order.entity';
@@ -65,14 +65,13 @@ export class QrCodeService {
     /**
      * Find all qrcode.
      */
-    async findAllQrCode(pageNo: number): Promise<QrCodeResponse> {
+    async findAllQrCode(pageNo: number): Promise<any> {
         try {
             const [qrCodes, total] = await this.codeRepository
                 .createQueryBuilder('code')
                 .leftJoinAndSelect('code.order', 'order')
-                .orderBy('code.order', 'DESC')
                 .addOrderBy('code.date_create_at', 'DESC')
-                .addOrderBy('code.code_id', 'DESC')
+                .addOrderBy('order.orderId', 'ASC', 'NULLS FIRST')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
                 .getManyAndCount();
@@ -83,7 +82,6 @@ export class QrCodeService {
             });
 
             const paging: Paging = new Paging(pageNo, this.pageSize, total);
-
             return { qrCodes: qrCodeList, paging: paging };
         } catch (error) {
             Logger.log(error);
