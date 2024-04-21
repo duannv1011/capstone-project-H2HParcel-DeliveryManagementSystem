@@ -20,6 +20,7 @@ import { ActivityLogStatusEntity } from 'src/entities/activity-log-status.entity
 import { OrderStatusEntity } from 'src/entities/order-status.entity';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
 
+
 @Injectable()
 export class QrCodeService {
     constructor(
@@ -70,8 +71,9 @@ export class QrCodeService {
             const [qrCodes, total] = await this.codeRepository
                 .createQueryBuilder('code')
                 .leftJoinAndSelect('code.order', 'order')
-                .addOrderBy('code.codeId', 'ASC')
-                .addOrderBy('order.orderId', 'ASC', 'NULLS FIRST')
+                .orderBy('code.order', 'DESC')
+                .addOrderBy('code.date_create_at', 'DESC')
+                .addOrderBy('code.codeId', 'DESC')
                 .skip((pageNo - 1) * this.pageSize)
                 .take(this.pageSize)
                 .getManyAndCount();
