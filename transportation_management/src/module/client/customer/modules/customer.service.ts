@@ -123,7 +123,7 @@ export class CustomerService {
             .leftJoin('address.city', 'city')
             .leftJoin('address.district', 'district')
             .leftJoin('address.ward', 'ward')
-            .where('c.accId = :customerId', { customerId: customerId })
+            .where('c.cus_id = :customerId', { customerId: customerId })
             .getRawMany();
         return customer;
     }
