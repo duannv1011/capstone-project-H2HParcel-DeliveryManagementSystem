@@ -64,57 +64,36 @@ export class AdminService {
     async getAllStaff(pageNo: number): Promise<any> {
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
         //const [list, count] = await this.staffRepository.findAndCount();
-        const [list, count] = await this.staffRepository
+        const list = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
                 'staff.staffId',
                 'staff.fullname',
                 'staff.email',
                 'staff.phone',
-                'role.role_id',
+                'staff.warehouse',
+                'account.role_id',
                 'staff.status',
-                `(CASE staff.status 
-            WHEN 1 THEN 'Active' 
-            WHEN 2 THEN 'Suspended' 
-            WHEN 3 THEN 'Inactive' 
-            ELSE '' 
-          END)`,
-                'staff.warehouseId',
-                'warehouse.warehouse_name',
-                'staff.accId',
+                'warehouse.warehouseId',
+                'account.accId',
                 'role.role_name',
             ])
-            .leftJoinAndSelect('staff.warehouse', 'warehouse')
-            .leftJoinAndSelect('staff.account', 'account')
-            .leftJoinAndSelect('account.role', 'role')
-            .orderBy('staff.warehouseId', 'ASC')
-            .addOrderBy('role.roleId', 'DESC')
+            .leftJoin('staff.warehouse', 'warehouse')
+            .leftJoin('staff.account', 'account')
+            .leftJoin('account.role', 'role')
+            .orderBy('staff.warehouse_id', 'ASC')
+            .addOrderBy('role.role_id', 'DESC')
             .where('role.role_id != :roleId', { roleId: 5 })
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
-            .getManyAndCount();
-        const mappedData = list.map((item) => {
-            return {
-                staffId: item.staffId,
-                fullname: item.fullname,
-                email: item.email,
-                phone: item.phone,
-                roleId: item.account.role.roleId,
-                status: item.status,
-                statusName: item.statusName,
-                warehouseId: item.warehouseId,
-                warehouseName: item.warehouse.warehouseName,
-                accId: item.accId,
-                roleName: item.account.role.roleName,
-            };
-        });
-
+            .getRawMany();
+        const count = list.length;
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };
         }
         return {
-            mappedData,
+            list,
             count,
             pageNo,
             pageSize,
