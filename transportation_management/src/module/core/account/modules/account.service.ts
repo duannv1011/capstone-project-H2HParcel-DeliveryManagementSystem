@@ -86,7 +86,7 @@ export class AccountService {
             return new Response(404, 'notfound', null);
         }
         if (!checkPass) {
-            return new Response(HttpStatus.CONFLICT, 'old password is wrong', null);
+            return new Response(400, 'old password is wrong', null);
         }
 
         const newpass = await this.hashpassword(data.newpassword);
