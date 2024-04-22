@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { QrCodeCreateDto } from './dto/qr-code.create.dto';
@@ -208,7 +208,7 @@ export class QrCodeService {
     async scanQR(data: ScanQrDto, accId: number) {
         const staff = await this.staffRepository.findOneBy({ accId: accId });
         if (!staff) {
-            return 'staff not found';
+            return { status: HttpStatus.NOT_FOUND, msg: 'staff not found' };
         }
         const code = await this.codeRepository
             .createQueryBuilder('qr')
@@ -216,11 +216,11 @@ export class QrCodeService {
             .where('qr.code_value =:codeValue', { codeValue: data.qrCode })
             .getOne();
         if (!code || !code.order) {
-            return 'code not found or is not asigned any order';
+            return { status: HttpStatus.NOT_FOUND, msg: 'code not found or is not asigned any order' };
         }
         const statusId = Number(code.order.orderStt);
         if (7 < statusId || statusId < 3) {
-            return 'can not Scan this Order';
+            return { status: HttpStatus.CONFLICT, msg: 'can not Scan this Order' };
         }
         const order = await this.orderRepository.findOneBy({ orderId: code.order.orderId });
         const queryRunner = this.dataSource.createQueryRunner();
@@ -247,6 +247,7 @@ export class QrCodeService {
                 await queryRunner.commitTransaction();
                 const stt = await this.orderStatusRepository.findOneBy({ sttId: orderStatus.sttId });
                 return {
+                    status: HttpStatus.OK,
                     order: orderUpdate.hasId,
                     msg: `Order updated successfully to:${stt.sttName}`,
                     orderdata: { ordordata },
@@ -264,9 +265,13 @@ export class QrCodeService {
                 await queryRunner.manager.save(activityLog);
                 await queryRunner.commitTransaction();
                 const stt = await this.orderStatusRepository.findOneBy({ sttId: orderStatus.sttId });
-                return { order: orderUpdate.hasId, msg: `Order updated successfully to:${stt.sttName}` };
+                return {
+                    status: HttpStatus.OK,
+                    order: orderUpdate.hasId,
+                    msg: `Order updated successfully to:${stt.sttName}`,
+                };
             } else {
-                return 'can not Scan this Order';
+                return { status: HttpStatus.CONFLICT, msg: 'can not Scan this Order' };
             }
         } catch (error) {
             await queryRunner.rollbackTransaction();
