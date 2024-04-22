@@ -100,7 +100,8 @@ export class OrderController {
         return this.orderService.customeCancelOrder(data, userLogin.accId);
     }
     @Post('customer-order/calculate-order-price')
-    @UseGuards(AuthGuard)
+    @Roles(Role.CUSTOMER)
+    @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'send request to cancel Order for Customer Orders' })
     @ApiResponse({ status: 200, description: 'create new Order for Customer  successfully.' })
