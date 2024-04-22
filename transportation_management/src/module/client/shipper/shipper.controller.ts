@@ -49,14 +49,14 @@ export class ShipperController {
     // @ApiQuery({ name: 'seachValue', required: false, type: String })
     @ApiQuery({ name: 'orderStatus', required: false, type: Number })
     async getAllorderSearch(
-        @Query('pageNo') pageNo: number,
+        //@Query('pageNo') pageNo: number,
         @UserLogin() uselogin: UserLoginData,
         // @Query('seachValue') seachValue: string,
         @Query('orderStatus') orderStatus: number,
     ): Promise<any> {
         // seachValue = seachValue ? seachValue : '';
         orderStatus = orderStatus ? orderStatus : 0;
-        return await this.shipperService.getAllorderSearch(pageNo, Number(uselogin.accId), orderStatus);
+        return await this.shipperService.getAllorderSearch(Number(uselogin.accId), orderStatus);
     }
 
     @Get('shippers')

@@ -240,11 +240,11 @@ export class ShipperService {
         const paging = new Paging(pageNo, pageSize, count);
         return { response, paging };
     }
-    async getAllorderSearch(pageNo: number, accId, orderStatus: number): Promise<any> {
+    async getAllorderSearch(accId, orderStatus: number): Promise<any> {
         orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
         // searchValue = searchValue ? searchValue.trim().toUpperCase() : '';
         // console.log(searchValue);
-        const pageSize = Number(process.env.PAGE_SIZE);
+        //const pageSize = Number(process.env.PAGE_SIZE);
         const shipper = await this.staffEntity.findOneBy({ accId: accId });
         const shipperId = Number(shipper.staffId);
         const query = await this.orderRepository
@@ -269,23 +269,36 @@ export class ShipperService {
                         shipperId: shipperId,
                     }).orWhere('o.deliverShipper = :shipperId', { shipperId: shipperId });
                 }),
-            )
-            // .andWhere(
-            //     new Brackets((qb) => {
-            //         qb.where('UPPER(ps.fullname) LIKE :pfullname', { pfullname: `%${searchValue}%` })
-            //             .orWhere('UPPER(ds.fullname) LIKE :dfullname', {
-            //                 dfullname: `%${searchValue}%`,
-            //             })
-            //             .orWhere('UPPER(pi.name) LIKE :pifullname', { pifullname: `%${searchValue}%` })
-            //             .orWhere('UPPER(pi.phone) LIKE :piphone', { piphone: `%${searchValue}%` })
-            //             .orWhere('UPPER(di.name) LIKE :pifullname', { pifullname: `%${searchValue}%` })
-            //             .orWhere('UPPER(di.phone) LIKE :piphone', { piphone: `%${searchValue}%` });
-            //     }),
-            // )
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize);
-        if (orderStatus !== 0) {
-            query.andWhere('o.order_stt = :orderStatus', { orderStatus: orderStatus });
+            );
+        // .andWhere(
+        //     new Brackets((qb) => {
+        //         qb.where('UPPER(ps.fullname) LIKE :pfullname', { pfullname: `%${searchValue}%` })
+        //             .orWhere('UPPER(ds.fullname) LIKE :dfullname', {
+        //                 dfullname: `%${searchValue}%`,
+        //             })
+        //             .orWhere('UPPER(pi.name) LIKE :pifullname', { pifullname: `%${searchValue}%` })
+        //             .orWhere('UPPER(pi.phone) LIKE :piphone', { piphone: `%${searchValue}%` })
+        //             .orWhere('UPPER(di.name) LIKE :pifullname', { pifullname: `%${searchValue}%` })
+        //             .orWhere('UPPER(di.phone) LIKE :piphone', { piphone: `%${searchValue}%` });
+        //     }),
+        // )
+        // .skip((pageNo - 1) * pageSize)
+        // .take(pageSize);
+        switch (Number(orderStatus)) {
+            case 2:
+                query.andWhere('order.order_stt BETWEEN :start AND :end', { start: 1, end: 2 });
+                break;
+
+            case 3:
+                query.andWhere('order.order_stt BETWEEN :start AND :end', { start: 3, end: 8 });
+                break;
+
+            case 4:
+                query.andWhere('order.order_stt = :orderStatus', { orderStatus: 9 });
+                break;
+
+            default:
+                break;
         }
         query.orderBy('o.orderId', 'DESC');
         // if (this.getOrderDirection() === 'ASC') {
@@ -295,7 +308,7 @@ export class ShipperService {
         //     query.orderBy('o.orderId', 'DESC');
         //     this.setOrderDirection('ASC');
         // }
-        const [orders, count] = await query.getManyAndCount();
+        const orders = await query.getMany();
         const response = orders.map((o) => ({
             orderId: o.orderId,
             status: o.status.sttName,
@@ -316,8 +329,7 @@ export class ShipperService {
             payment: o.payment ? o.payment : '',
         }));
 
-        const paging = new Paging(pageNo, pageSize, count);
-        return { response, paging };
+        return { response };
     }
 
     async shiperUpdateprice(order_id: number, price: number) {

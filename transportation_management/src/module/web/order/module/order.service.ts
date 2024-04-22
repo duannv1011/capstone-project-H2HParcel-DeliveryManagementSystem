@@ -200,8 +200,21 @@ export class OrderService {
             .where('o.cus_id = :cusId', { cusId: cusId })
             .orderBy('o.orderId', 'DESC');
 
-        if (orderStatus !== 0) {
-            queryBuilder.andWhere('o.order_stt = :orderStatus', { orderStatus: orderStatus });
+        switch (Number(orderStatus)) {
+            case 2:
+                queryBuilder.andWhere('order.order_stt BETWEEN :start AND :end', { start: 1, end: 2 });
+                break;
+
+            case 3:
+                queryBuilder.andWhere('order.order_stt BETWEEN :start AND :end', { start: 3, end: 8 });
+                break;
+
+            case 4:
+                queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: 9 });
+                break;
+
+            default:
+                break;
         }
         const list = await queryBuilder.getMany();
         const orders = list.map((item) => ({

@@ -200,16 +200,21 @@ export class OrderViewService {
                             }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
                         }),
                     );
-                console.log(orderStatus);
-                if (orderStatus === 2) {
-                    console.log(orderStatus);
-                    queryBuilder.andWhere('order.order_stt BETWEEN :start AND :end', { start: 1, end: 2 });
-                }
-                if (orderStatus === 3) {
-                    queryBuilder.andWhere('order.order_stt BETWEEN :start AND :end', { start: 3, end: 8 });
-                }
-                if (orderStatus === 4) {
-                    queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: 9 });
+                switch (Number(orderStatus)) {
+                    case 2:
+                        queryBuilder.andWhere('order.order_stt BETWEEN :start AND :end', { start: 1, end: 2 });
+                        break;
+
+                    case 3:
+                        queryBuilder.andWhere('order.order_stt BETWEEN :start AND :end', { start: 3, end: 8 });
+                        break;
+
+                    case 4:
+                        queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: 9 });
+                        break;
+
+                    default:
+                        break;
                 }
                 queryBuilder.orderBy('order.date_create_at', 'DESC');
 
