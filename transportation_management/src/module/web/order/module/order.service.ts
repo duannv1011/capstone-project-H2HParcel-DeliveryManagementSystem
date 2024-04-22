@@ -176,6 +176,57 @@ export class OrderService {
             totalpage,
         };
     }
+    async getAllOrdersSeacrhNoPaging(accId: number, orderStatus: number): Promise<any> {
+        orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
+        const customer = await this.customerRepository.findOne({ where: { accId: accId } });
+        const cusId = customer ? customer.cusId : 0;
+        //const orders = await this.orderRepository.findOne({ where: { cusId: cusId } });
+        const queryBuilder = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('o.pickupShipperStaff', 'ps')
+            .leftJoinAndSelect('o.deliverShipperStaff', 'ds')
+            .leftJoinAndSelect('o.status', 'os')
+            .leftJoinAndSelect('o.packageType', 'op')
+            .leftJoinAndSelect('pi.address', 'pa')
+            .leftJoinAndSelect('pa.city', 'pc')
+            .leftJoinAndSelect('pa.district', 'pdi')
+            .leftJoinAndSelect('pa.ward', 'pw')
+            .leftJoinAndSelect('di.address', 'da')
+            .leftJoinAndSelect('da.city', 'dc')
+            .leftJoinAndSelect('da.district', 'ddi')
+            .leftJoinAndSelect('da.ward', 'dw')
+            .where('o.cus_id = :cusId', { cusId: cusId })
+            .orderBy('o.orderId', 'DESC');
+
+        if (orderStatus !== 0) {
+            queryBuilder.andWhere('o.order_stt = :orderStatus', { orderStatus: orderStatus });
+        }
+        const list = await queryBuilder.getMany();
+        const orders = list.map((item) => ({
+            orderId: item.orderId,
+            pickUpInforId: item.pickupInformation.inforId,
+            pickName: item.pickupInformation.name,
+            pickPhone: item.pickupInformation.phone,
+            pickupAddress: `${item.pickupInformation.address.house}, ${item.pickupInformation.address.ward.wardName}${item.pickupInformation.address.district.districtName}, ${item.pickupInformation.address.city.cityName}`,
+            pickShiper: item.pickupShipperStaff ? item.pickupShipperStaff.fullname : null,
+            deliverInfor: item.deliverInformation.inforId,
+            deliverName: item.deliverInformation.name,
+            deliverPhone: item.deliverInformation.phone,
+            deliverAddress: `${item.deliverInformation.address.house}, ${item.deliverInformation.address.ward.wardName}, ${item.deliverInformation.address.district.districtName}, ${item.deliverInformation.address.city.cityName}`,
+            deliverShiper: item.deliverShipperStaff ? item.deliverShipperStaff.fullname : null,
+            status: item.status.sttName,
+            packeType: item.packageType.pkName,
+            price: item.estimatedPrice,
+            paymenMethod: item.paymentMethod ? item.paymentMethod : 1,
+            payment: item.payment && item.paymentMethod === 2 ? item.payment : 'cash',
+        }));
+
+        return {
+            orders,
+        };
+    }
     async getallOrderLog(accid: number, orderId: number) {
         if (!orderId) {
             return { status: 404, msg: 'orderId not found!' };

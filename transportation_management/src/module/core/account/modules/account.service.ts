@@ -74,17 +74,21 @@ export class AccountService {
             throw new HttpException(error, HttpStatus.CONFLICT);
         }
     }
-
+    async checkPassword(oldpassword: string, account: AccountEntity): Promise<boolean> {
+        const checkPass = bcrypt.compare(oldpassword, account.password);
+        return checkPass;
+    }
     async updateCustomerPass(data: changePasswordDto, token: string): Promise<any> {
         const JwtPayload = decode(token) as JwtPayload;
         const account = await this.accountRepository.findOne({ where: { accId: JwtPayload.id } });
-        const checkPass = bcrypt.compare(data.oldpassword, account.password);
+        const checkPass = await this.checkPassword(data.oldpassword, account);
         if (!account) {
             return new Response(404, 'notfound', null);
         }
         if (!checkPass) {
             return new Response(400, 'old password is wrong', null);
         }
+
         const newpass = await this.hashpassword(data.newpassword);
         const update = await this.accountRepository
             .createQueryBuilder()

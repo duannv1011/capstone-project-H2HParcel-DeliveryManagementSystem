@@ -97,6 +97,24 @@ export class StaffController {
         return new Response(200, 'true', result.orders, result.paging, 1);
     }
     @ApiBearerAuth('JWT-auth')
+    @ApiOkResponse({ description: 'View all order  by warehouse of staff and filter by Status' })
+    @ApiOperation({ summary: 'View all order for mobile by warehouse of staff filter' })
+    @Roles(Role.STAFF, Role.ADMIN, Role.MANAGER)
+    @UseGuards(AuthGuard, RoleGuard)
+    @ApiUnauthorizedResponse()
+    @ApiQuery({ name: 'orderStatus', required: false, type: Number })
+    @Get('order/mobild/staff/all-filters/status')
+    async findAllByWarehouseFiltersByStatusFormmobile(
+        @UserLogin() userLogin: UserLoginData,
+        @Query('orderStatus') orderStatus: number,
+    ) {
+        if (!orderStatus && orderStatus !== 0) {
+            orderStatus = 0;
+        }
+        return await this.orderService.findAllByWarehouseFiltersByStatusFormmobile(userLogin, orderStatus);
+    }
+
+    @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'View all order by warehouse of staff and filter by Status' })
     @ApiOperation({ summary: 'View all order by warehouse of staff filter' })
     @Roles(Role.STAFF, Role.ADMIN, Role.MANAGER)

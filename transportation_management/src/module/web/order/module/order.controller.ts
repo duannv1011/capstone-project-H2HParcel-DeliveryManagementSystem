@@ -35,11 +35,12 @@ export class OrderController {
     @ApiQuery({ name: 'orderStatus', required: false, type: Number })
     async getAllOrdersSeacrh(
         @UserLogin() userLogin: UserLoginData,
-        @Query('pageNo') pageNo: number,
+        //@Query('pageNo') pageNo: number,
         @Query('orderStatus') orderStatus: number,
     ) {
         orderStatus = orderStatus ? orderStatus : 0;
-        return this.orderService.getAllOrdersSeacrh(userLogin.accId, pageNo, orderStatus);
+        //return this.orderService.getAllOrdersSeacrh(userLogin.accId, pageNo, orderStatus);
+        return this.orderService.getAllOrdersSeacrhNoPaging(userLogin.accId, orderStatus);
     }
     @Get('customer-order/order/activitylog')
     @Roles(Role.CUSTOMER)
