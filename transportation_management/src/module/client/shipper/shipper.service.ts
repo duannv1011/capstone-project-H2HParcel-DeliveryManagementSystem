@@ -286,15 +286,15 @@ export class ShipperService {
         // .take(pageSize);
         switch (Number(orderStatus)) {
             case 2:
-                query.andWhere('order.order_stt BETWEEN :start AND :end', { start: 1, end: 2 });
+                query.andWhere('o.order_stt BETWEEN :start AND :end', { start: 1, end: 2 });
                 break;
 
             case 3:
-                query.andWhere('order.order_stt BETWEEN :start AND :end', { start: 3, end: 8 });
+                query.andWhere('o.order_stt BETWEEN :start AND :end', { start: 3, end: 8 });
                 break;
 
             case 4:
-                query.andWhere('order.order_stt = :orderStatus', { orderStatus: 9 });
+                query.andWhere('o.order_stt = :orderStatus', { orderStatus: 9 });
                 break;
 
             default:
@@ -311,6 +311,7 @@ export class ShipperService {
         const orders = await query.getMany();
         const response = orders.map((o) => ({
             orderId: o.orderId,
+            statusID: o.status.sttId,
             status: o.status.sttName,
             senderName: o.pickupInformation.name,
             pickupPhoneNumber: o.pickupInformation.phone,
