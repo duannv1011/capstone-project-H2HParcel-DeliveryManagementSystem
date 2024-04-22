@@ -64,36 +64,57 @@ export class AdminService {
     async getAllStaff(pageNo: number): Promise<any> {
         const pageSize = Number(this.configService.get<string>('PAGE_SIZE'));
         //const [list, count] = await this.staffRepository.findAndCount();
-        const list = await this.staffRepository
+        const [list, count] = await this.staffRepository
             .createQueryBuilder('staff')
             .select([
                 'staff.staffId',
                 'staff.fullname',
                 'staff.email',
                 'staff.phone',
-                'staff.warehouse',
-                'account.role_id',
+                'role.role_id',
                 'staff.status',
-                'warehouse.warehouseId',
-                'account.accId',
+                `(CASE staff.status 
+            WHEN 1 THEN 'Active' 
+            WHEN 2 THEN 'Suspended' 
+            WHEN 3 THEN 'Inactive' 
+            ELSE '' 
+          END)`,
+                'staff.warehouseId',
+                'warehouse.warehouse_name',
+                'staff.accId',
                 'role.role_name',
             ])
-            .leftJoin('staff.warehouse', 'warehouse')
-            .leftJoin('staff.account', 'account')
-            .leftJoin('account.role', 'role')
-            .orderBy('staff.warehouse_id', 'ASC')
-            .addOrderBy('role.role_id', 'DESC')
+            .leftJoinAndSelect('staff.warehouse', 'warehouse')
+            .leftJoinAndSelect('staff.account', 'account')
+            .leftJoinAndSelect('account.role', 'role')
+            .orderBy('staff.warehouseId', 'ASC')
+            .addOrderBy('role.roleId', 'DESC')
             .where('role.role_id != :roleId', { roleId: 5 })
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
-            .getRawMany();
-        const count = list.length;
+            .getManyAndCount();
+        const mappedData = list.map((item) => {
+            return {
+                staffId: item.staffId,
+                fullname: item.fullname,
+                email: item.email,
+                phone: item.phone,
+                roleId: item.account.role.roleId,
+                status: item.status,
+                statusName: item.statusName,
+                warehouseId: item.warehouseId,
+                warehouseName: item.warehouse.warehouseName,
+                accId: item.accId,
+                roleName: item.account.role.roleName,
+            };
+        });
+
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };
         }
         return {
-            list,
+            mappedData,
             count,
             pageNo,
             pageSize,

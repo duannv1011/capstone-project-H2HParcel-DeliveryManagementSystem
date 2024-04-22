@@ -513,18 +513,19 @@ export class OrderService {
                     }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
                 }),
             )
-            .skip((pageNo - 1) * pageSize)
-            .take(pageSize)
             .groupBy(
                 'customer.cus_id, customer.fullname, cad.district_name, caw.ward_name, cac.city_name, customer.email, customer.phone, customerAdress.address_id, customerAdress.district_id, customerAdress.ward_id',
             )
             .getRawMany();
+        const startIndex = (pageNo - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const page = customerOrders.slice(startIndex, endIndex);
 
         const totalOrderInWarehouse = customerOrders.reduce((acc, curr) => acc + parseInt(curr.totalorder, 10), 0);
 
         const count = customerOrders.length;
         const pageing = new Paging(pageNo, pageSize, count);
-        return { data: customerOrders, pageing: pageing, totalOrderInWarehouse: totalOrderInWarehouse };
+        return { data: page, pageing: pageing, totalOrderInWarehouse: totalOrderInWarehouse };
     }
 
     async customeCancelOrder(data: CustomerCancelOrder, accId: number) {
