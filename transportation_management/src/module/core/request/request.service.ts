@@ -168,6 +168,10 @@ export class RequestService {
             .leftJoinAndSelect('request.order', 'order')
             .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
             .leftJoinAndSelect('request.deliverInformation', 'requestdeli')
+            .leftJoinAndSelect('requestdeli.address', 'daddress')
+            .leftJoinAndSelect('daddress.city', 'dcity')
+            .leftJoinAndSelect('daddress.district', 'ddistrict')
+            .leftJoinAndSelect('daddress.ward', 'dward')
             .leftJoinAndSelect('pickupInformation.address', 'address')
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
@@ -189,6 +193,7 @@ export class RequestService {
         }
         queryBuilder.orderBy('record.recordId', 'DESC');
         const [lists, count] = await queryBuilder.getManyAndCount();
+        // return lists;
         const response = lists.map((item) => ({
             recordId: item.recordId ? item.recordId : '',
             requestTypeId: item.requestTypeTable ? item.requestTypeTable.requestTypeId : '',
