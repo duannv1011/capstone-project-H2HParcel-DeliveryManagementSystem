@@ -108,16 +108,14 @@ export class AdminService {
                 roleName: item.account.role.roleName,
             };
         });
-        const startIndex = (pageNo - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        const pagging = mappedData.slice(startIndex, endIndex);
+
 
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };
         }
         return {
-            pagging,
+            mappedData,
             count,
             pageNo,
             pageSize,
