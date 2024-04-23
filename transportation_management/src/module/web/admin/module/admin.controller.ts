@@ -93,6 +93,7 @@ export class AdminController {
     @ApiOperation({ summary: 'Update staff to new manager of warehouse' })
     @ApiResponse({ status: 200, description: 'Update staff to manager  successfully.' })
     async changeManger(@Query('staffId') staffId: number, @Query('warehouseId') warehouseId: number): Promise<any> {
+        console.log(staffId + 'and ' + warehouseId);
         return await this.adminService.changeManger(staffId, warehouseId);
     }
     @Post('admin/create-staff')
