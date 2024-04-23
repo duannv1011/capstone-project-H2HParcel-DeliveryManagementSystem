@@ -109,7 +109,6 @@ export class AdminService {
             };
         });
 
-
         const totalpage = Math.ceil(count % pageSize === 0 ? count / pageSize : Math.floor(count / pageSize) + 1);
         if (!count || totalpage < pageNo) {
             return { status: 404, msg: 'not found!' };

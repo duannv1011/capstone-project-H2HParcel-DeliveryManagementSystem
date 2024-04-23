@@ -1051,6 +1051,7 @@ export class ReportService {
             .leftJoinAndSelect(AccountEntity, 'acc', 'acc.acc_id = s.acc_id')
             .select(['s.staff_id', 's.fullname', 'w.warehouse_id', 'w.warehouse_name', 'acc.role_id'])
             .where('acc.role_id = :roleId', { roleId: 2 })
+            .andWhere('s.warehouse_id = :warehouseId', { warehouseId: warehouseId })
             .getRawMany();
         const mergedStaffs = staffs.map((staff) => {
             const found = result.find(({ staffId }) => staffId === staff.staff_id);
