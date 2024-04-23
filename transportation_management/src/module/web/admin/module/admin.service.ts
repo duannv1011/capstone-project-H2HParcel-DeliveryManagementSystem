@@ -201,6 +201,7 @@ export class AdminService {
                 'warehouse.warehouseName',
                 'role.role_id',
                 'role.role_name',
+                'address.house',
                 'city.city_id',
                 'city.city_name',
                 'district.district_id',

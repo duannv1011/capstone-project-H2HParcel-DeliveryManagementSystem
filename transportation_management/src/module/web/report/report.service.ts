@@ -1056,7 +1056,6 @@ export class ReportService {
         const mergedStaffs = staffs.map((staff) => {
             const found = result.find(({ staffId }) => staffId === staff.staff_id);
             const found1 = transitQuery.find(({ staffId }) => staffId === staff.staffId);
-            console.log(found1);
             return {
                 staffId: staff.staff_id,
                 staffName: staff.s_fullname,
