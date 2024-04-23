@@ -3,15 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, DataSource, Repository } from 'typeorm';
 import { RequestUpdateDto } from './dto/request.update.dto';
 import { Paging } from '../../response/Paging';
-import { RequestRecord, RequestRecordResponse } from './response/request-record.response';
+import { RequestRecord } from './response/request-record.response';
 import { Builder } from 'builder-pattern';
 import { RequestRecordEntity } from '../../../entities/request-record.entity';
 import { StaffEntity } from '../../../entities/staff.entity';
 import { UserLoginData } from '../authentication/dto/user_login_data';
 import { RequestEntity } from '../../../entities/request.entity';
-import { RequestTypeEntity } from '../../../entities/request-type.entity';
 import { RequestStatusEntity } from '../../../entities/request-status.entity';
-import { InformationEntity } from '../../../entities/information.entity';
 import { RequestStatus } from '../../../enum/request-status.enum';
 import { StaffUpdateRequestStastus } from './dto/staff-reslove-order-update';
 import { createTransitRequestDto } from './dto/staff-create-transit.dto';
@@ -42,56 +40,6 @@ export class RequestService {
     /**
      * Find all request.
      */
-    async findRequestByOrder(pageNo: number): Promise<RequestRecordResponse> {
-        try {
-            const [requestRecords, total] = await this.requestRecordRepository
-                .createQueryBuilder()
-                .select('requestRecord')
-                .from(RequestRecordEntity, 'requestRecord')
-                .leftJoinAndMapOne(
-                    'requestRecord.request',
-                    RequestEntity,
-                    'request',
-                    'requestRecord.referId = request.requestId',
-                )
-                .leftJoinAndMapOne(
-                    'request.deliverInformation',
-                    InformationEntity,
-                    'deliverInformation',
-                    'request.deliverInfor = deliverInformation.inforId',
-                )
-                .leftJoinAndMapOne(
-                    'requestRecord.requestType',
-                    RequestTypeEntity,
-                    'requestType',
-                    'requestRecord.requestType = requestType.rtId',
-                )
-                .leftJoinAndMapOne(
-                    'requestRecord.requestStatus',
-                    RequestStatusEntity,
-                    'requestStatus',
-                    'requestRecord.requestStt = requestStatus.rqsId',
-                )
-                .andWhere('requestStatus.rqsId IN (:...requestStatusIn)', {
-                    requestStatusIn: [RequestStatus.PROCESSING, RequestStatus.APPROVED],
-                })
-                .skip((pageNo - 1) * this.pageSize)
-                .take(this.pageSize)
-                .getManyAndCount();
-
-            const requestRecordList = [];
-            requestRecords.forEach((element) => {
-                requestRecordList.push(this.toRequestRecord(element));
-            });
-
-            const paging: Paging = new Paging(pageNo, this.pageSize, total);
-
-            return { records: requestRecordList, paging: paging };
-        } catch (error) {
-            Logger.log(error);
-            throw new InternalServerErrorException();
-        }
-    }
     async getAllReqeustByWarehouseId(pageNo: number, accId: number) {
         const pageSize = Number(process.env.PAGE_SIZE);
         const staff = await this.staffRepository.findOneBy({ accId: accId });
@@ -107,14 +55,21 @@ export class RequestService {
             .leftJoinAndSelect('request.order', 'order')
             .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
             .leftJoinAndSelect('request.deliverInformation', 'requestdeli')
-            .leftJoinAndSelect('requestdeli.address', 'address')
+            .leftJoinAndSelect('requestdeli.address', 'daddress')
+            .leftJoinAndSelect('daddress.city', 'dcity')
+            .leftJoinAndSelect('daddress.district', 'ddistrict')
+            .leftJoinAndSelect('daddress.ward', 'dward')
+            .leftJoinAndSelect('pickupInformation.address', 'address')
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
-            .orWhere('ward.warehouse_id = :warehouseId', { warehouseId: staff.warehouseId })
-            .orWhere('transit.warehouse_to = :warehouseTo', { warehouseTo: staff.warehouseId })
-            .orWhere('transit.warehouse_from = :warehouseFrom', { warehouseFrom: staff.warehouseId })
-            .orderBy('record.recordId', 'DESC')
+            .where(
+                new Brackets((db) => {
+                    db.where('ward.warehouse_id = :warehouseId', { warehouseId: staff.warehouseId })
+                        .orWhere('transit.warehouse_to = :warehouseTo', { warehouseTo: staff.warehouseId })
+                        .orWhere('transit.warehouse_from = :warehouseFrom', { warehouseFrom: staff.warehouseId });
+                }),
+            )
             .skip((pageNo - 1) * pageSize)
             .take(pageSize)
             .getManyAndCount();
@@ -138,13 +93,19 @@ export class RequestService {
             requestdata: item.requests
                 ? {
                       orderId: item.requests ? item.requests.orderId : '',
-                      inforId: item.requests.deliverInformation.inforId,
-                      name: item.requests.deliverInformation.name,
-                      phone: item.requests.deliverInformation.phone,
-                      house: item.requests.deliverInformation.address.house,
-                      city: item.requests.deliverInformation.address.city.cityName,
-                      district: item.requests.deliverInformation.address.district.districtName,
-                      ward: item.requests.deliverInformation.address.ward.wardName,
+                      inforId: item.requests.deliverInformation ? item.requests.deliverInformation.inforId : '',
+                      name: item.requests.deliverInformation ? item.requests.deliverInformation.name : '',
+                      phone: item.requests.deliverInformation ? item.requests.deliverInformation.phone : '',
+                      house: item.requests.deliverInformation ? item.requests.deliverInformation.address.house : '',
+                      city: item.requests.deliverInformation
+                          ? item.requests.deliverInformation.address.city.cityName
+                          : '',
+                      district: item.requests.deliverInformation
+                          ? item.requests.deliverInformation.address.district.districtName
+                          : '',
+                      ward: item.requests.deliverInformation
+                          ? item.requests.deliverInformation.address.ward.wardName
+                          : '',
                   }
                 : '',
             note: item.note,

@@ -37,19 +37,6 @@ import { createTransitRequestDto } from './dto/staff-create-transit.dto';
 @Controller('request')
 export class RequestController {
     constructor(private readonly requestService: RequestService) {}
-
-    @ApiBearerAuth('JWT-auth')
-    @ApiOkResponse({ description: 'View all request of deliver order, request type in 1,2' })
-    @ApiOperation({ summary: 'View all request of deliver order, request type in 1,2' })
-    @Roles(Role.STAFF, Role.MANAGER)
-    @UseGuards(AuthGuard, RoleGuard)
-    @ApiUnauthorizedResponse()
-    @Get('all')
-    async findRequestByOrder(@Query('pageNo', ParseIntPipe) pageNo: number): Promise<Response> {
-        const request = await this.requestService.findRequestByOrder(pageNo);
-
-        return new Response(200, 'true', request.records, request.paging, 1);
-    }
     @ApiBearerAuth('JWT-auth')
     @ApiOkResponse({ description: 'get all request of warehouse successfully' })
     @ApiOperation({ summary: 'get all request of warehouse ' })
