@@ -168,7 +168,7 @@ export class RequestService {
             .leftJoinAndSelect('request.order', 'order')
             .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
             .leftJoinAndSelect('request.deliverInformation', 'requestdeli')
-            .leftJoinAndSelect('requestdeli.address', 'address')
+            .leftJoinAndSelect('pickupInformation.address', 'address')
             .leftJoinAndSelect('address.city', 'city')
             .leftJoinAndSelect('address.district', 'district')
             .leftJoinAndSelect('address.ward', 'ward')
