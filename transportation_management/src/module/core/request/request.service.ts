@@ -425,6 +425,7 @@ export class RequestService {
                     //update order
                     const information = reqest.deliverInformation;
                     order.deliverInformation = information;
+                    order.estimatedPrice = reqest.new_price;
                     //
                     await queryRunner.manager.save(order);
                     // update RequestStatus to aporve
