@@ -1,42 +1,3 @@
---inser into table Role
-INSERT INTO "Role" ("role_name") VALUES
-  ('customer'),--mobile
-  ('shipper'),--mobile
-  ('staff'),--web,mobile
-  ('manager'),--web,mobile
-  ('admin');--web
---insert into table "Account"
-INSERT INTO "Account" ("username", "password", "role_id") VALUES
-  ('admin', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 5), 
-  ('duannv2', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2),
-  ('duannv3', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 3), 
-  ('duannv4', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 4),
-  ('duannv5', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
-  ('duannv6', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 1), 
-  ('duannv7', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
-  ('duannv8', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1), 
-  ('duannv9', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 1),
-  ('duannv10', '$2a$10$WVzSvVUeTqz2JGK0PnhLo.lzvxFkCq5zEtLdG4jpz8/o.X897CH.m', 2);
---inser into table Customer
-
-INSERT INTO "Customer" ("fullname", "email", "phone", "default_address", "status", "acc_id","address_id") VALUES
-  ('Duan Nguyen', 'duannv5@example.com', '123456789', NULL, 1, 5,1),
-  ('Duan Nguyen', 'duannv6@example.com', '123456789', NULL, 1, 6,2),
-  ('Duan Nguyen', 'duannv7@example.com', '123456789', NULL, 1, 7,3),
-  ('Duan Nguyen', 'duannv8@example.com', '123456789', NULL, 1, 8,4),
-  ('Duan Nguyen', 'duannv9@example.com', '123456789', NULL, 1, 9,5);
-
--- Insert into "Staff"
-INSERT INTO "Staff" ("fullname", "email", "phone", "warehouse_id", "acc_id") VALUES
-  ('Admin', 'admin@example.com', '123456789', 1, 1), 
-  ('Duan Nguyen2', 'duannv2@example.com', '123456789', 2, 2),
-  ('Duan Nguyen3', 'duannv3@example.com', '123456789', 3, 3),
-  ('Duan Nguyen4', 'duannv4@example.com', '123456789', 4, 4),
-  ('Duan Nguyen10', 'duannv10@example.com', '123456789', 5, 10);
--- Insert data into "City" table
---inser into table City
-INSERT INTO "City" ( "city_name") VALUES
-(1, 'HÀ NỘI')
 
 --inser into table District
 INSERT INTO "District" (city_id, district_name)
@@ -255,38 +216,38 @@ VALUES
 (1, 12, 155, 'La Khê'),
 (1, 12, 153, 'Dương Nội');
 -- insert into table warehouse
-INSERT INTO "Warehouse" (address_id, warehouse_name, "isActive" )
+INSERT INTO "Warehouse" ("address_id", "warehouse_name")
 VALUES
-(1, 'SUPER ADMIN', true),
-(1, 'Hoàn Kiếm', true),
-(2, 'Đống Đa 1', true),
-(3, 'Đống Đa 2',true),
-(4, 'Ba Đình 1', true),
-(5, 'Ba Đình 2', true),
-(6, 'Hai Bà Trưng 1', true),
-(7, 'Hai Bà Trưng 2', true),
-(8, 'Hoàng Mai 1', true),
-(9, 'Hoàng Mai 2', true),
-(10, 'Hoàng Mai 3', true),
-(11, 'Thanh Xuân 1', true),
-(12, 'Thanh Xuân 2', true),
-(13, 'Long Biên 1',true),
-(14, 'Long Biên 2',true),
-(15, 'Long Biên 3', true),
-(16, 'Nam Từ Liêm 1', true),
-(17, 'Nam Từ Liêm 2', true),
-(18, 'Nam Từ Liêm 3', true),
-(19, 'Bắc Từ Liêm 1', true),
-(20, 'Bắc Từ Liêm 2', true),
-(21, 'Bắc Từ Liêm 3', true),
-(22, 'Tây Hồ 1', true),
-(23, 'Tây Hồ 2', true),
-(24, 'Tây Hồ 3',true),
-(25, 'Cầu Giấy 1', true),
-(26, 'Cầu Giấy 2', true),
-(27, 'Hà Đông 1', true),
-(28, 'Hà Đông 2', true),
-(29, 'Hà Đông 3', true);
+(1, 'SUPER ADMIN'),
+(1, 'Hoàn Kiếm'),
+(2, 'Đống Đa 1'),
+(3, 'Đống Đa 2'),
+(4, 'Ba Đình 1'),
+(5, 'Ba Đình 2'),
+(6, 'Hai Bà Trưng 1'),
+(7, 'Hai Bà Trưng 2'),
+(8, 'Hoàng Mai 1'),
+(9, 'Hoàng Mai 2'),
+(10, 'Hoàng Mai 3'),
+(11, 'Thanh Xuân 1'),
+(12, 'Thanh Xuân 2'),
+(13, 'Long Biên 1'),
+(14, 'Long Biên 2'),
+(15, 'Long Biên 3'),
+(16, 'Nam Từ Liêm 1'),
+(17, 'Nam Từ Liêm 2'),
+(18, 'Nam Từ Liêm 3'),
+(19, 'Bắc Từ Liêm 1'),
+(20, 'Bắc Từ Liêm 2'),
+(21, 'Bắc Từ Liêm 3'),
+(22, 'Tây Hồ 1'),
+(23, 'Tây Hồ 2'),
+(24, 'Tây Hồ 3'),
+(25, 'Cầu Giấy 1'),
+(26, 'Cầu Giấy 2'),
+(27, 'Hà Đông 1'),
+(28, 'Hà Đông 2'),
+(29, 'Hà Đông 3');
 
 --insert into table "WarehouseRule" 
 INSERT INTO "WarehouseRule" ("warehouse_id_1", "warehouse_id_2", "distance")
@@ -782,3 +743,1687 @@ VALUES
   (25, 'transit 0-5'),
   (50, 'transit 5-12'),
   (75, 'transit 12-50');
+
+--inser into table Role
+INSERT INTO "Role" ("role_name") VALUES
+  ('customer'),--mobile
+  ('shipper'),--mobile
+  ('staff'),--web,mobile
+  ('manager'),--web,mobile
+  ('admin');--web
+
+--insert into table "Account"
+//admin 
+INSERT INTO "Account" ("username", "password", "role_id") VALUES
+  ('admin', '$2a$10$uLiZraIbxcRihv9ru61M1uuWxyvWkdAe8OGx6wn.AhCgaLmMZhO3G', 5);
+//
+INSERT INTO "Account" ("username", "password", "role_id") VALUES
+-- Warehouse  hoan kiem
+--3shipper
+('hkshipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hkshipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hkshipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hkstaff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hkstaff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hkstaff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hkcustomer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hkcustomer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hkcustomer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hkcustomer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hkcustomer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  dong da 1
+--3shipper
+('dd1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('dd1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('dd1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('dd1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('dd1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('dd1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('dd1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  dong da 2
+--3shipper
+('dd2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('dd2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('dd2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('dd2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('dd2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('dd2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('dd2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('dd2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+
+-- Warehouse  ba dinh 1
+--3shipper
+('bd1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('bd1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('bd1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('bd1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('bd1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('bd1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('bd1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+
+-- Warehouse ba dinh 2
+--3shipper
+('bd2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('bd2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('bd2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('bd2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('bd2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('bd2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('bd2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('bd2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+
+-- Warehouse hai ba trung 1
+--3shipper
+('hbt1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hbt1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hbt1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hbt1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hbt1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hbt1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hbt1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+
+
+-- Warehouse hai ba trung 2
+--3shipper
+('hbt2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hbt2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hbt2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hbt2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hbt2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hbt2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hbt2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hbt2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse hai hoang mai 1
+--3shipper
+('hm1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hm1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hm1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hm1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hm1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hm1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hm1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse hai hoang mai 2
+--3shipper
+('hm2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hm2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hm2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hm2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hm2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hm2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hm2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse hai hoang mai 3
+--3shipper
+('hm3shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hm3shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hm3shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hm3staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hm3staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hm3staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hm3customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm3customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm3customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm3customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hm3customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  thanh xuan 1
+--3shipper
+('tx1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('tx1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('tx1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('tx1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('tx1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('tx1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('tx1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  thanh xuan 2
+--3shipper
+('tx2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('tx2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('tx2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('tx2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('tx2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('tx2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('tx2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('tx2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  long bien
+--3shipper
+('lb1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('lb1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('lb1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('lb1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('lb1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('lb1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('lb1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  long bien 2
+--3shipper
+('lb2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('lb2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('lb2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('lb2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('lb2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('lb2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('lb2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  long bien 3
+--3shipper
+('lb3shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('lb3shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('lb3shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('lb3staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('lb3staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('lb3staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('lb3customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb3customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb3customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb3customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('lb3customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  nam tu liem 1
+--3shipper
+('ntl1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('ntl1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('ntl1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('ntl1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('ntl1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('ntl1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('ntl1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  nam tu liem 2
+--3shipper
+('ntl2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('ntl2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('ntl2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('ntl2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('ntl2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('ntl2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('ntl2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  nam tu liem 3
+--3shipper
+('ntl3shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('ntl3shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('ntl3shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('ntl3staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('ntl3staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('ntl3staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('ntl3customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl3customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl3customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl3customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('ntl3customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  bac tu liem 1
+--3shipper
+('btl1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('btl1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('btl1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('btl1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('btl1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('btl1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('btl1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  bac tu liem 2
+--3shipper
+('btl2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('btl2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('btl2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('btl2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('btl2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('btl2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('btl2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  bac tu liem 3
+--3shipper
+('btl3shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('btl3shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('btl3shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('btl3staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('btl3staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('btl3staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('btl3customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl3customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl3customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl3customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('btl3customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  tay ho 1
+--3shipper
+('th1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('th1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('th1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('th1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('th1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('th1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('th1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  tay ho2
+--3shipper
+('th2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('th2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('th2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('th2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('th2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('th2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('th2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  tay ho 3
+--3shipper
+('th3shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('th3shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('th3shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('th3staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('th3staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('th3staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('th3customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th3customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th3customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th3customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('th3customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  cau giay
+--3shipper
+('cg1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('cg1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('cg1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('cg1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('cg1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('cg1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('cg1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  cau giay 2
+--3shipper
+('cg2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('cg2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('cg2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('cg2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('cg2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('cg2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('cg2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('cg2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  ha dong 1
+--3shipper
+('hd1shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hd1shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hd1shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hd1staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hd1staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hd1staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hd1customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd1customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd1customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd1customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd1customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  ha dong 2
+--3shipper
+('hd2shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hd2shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hd2shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hd2staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hd2staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hd2staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hd2customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd2customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd2customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd2customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd2customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- Warehouse  ha dong 3
+--3shipper
+('hd3shipper1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hd3shipper2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+('hd3shipper3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 2),
+--2staff
+('hd3staff3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+('hd3staff2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 3),
+--1manager
+('hd3staff1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 4),
+--5customer
+('hd3customer1', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd3customer2', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd3customer3', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd3customer4', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+('hd3customer5', '$2a$10$WEfhyoI3ASM/B/cgYMnBE./OSSXb9XrMaIU.pLcsS2mbUWrEhceNe', 1),
+
+-- insert into address 290 record
+INSERT INTO "Address" (city_id, district_id, ward_id, house)
+VALUES
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội'),
+(1, 1, 1, 'Chương Dương'),
+(1, 2, 19, 'Cát Linh'),
+(1, 2, 34, 'Thổ Quan'),
+(1, 3, 47, 'Ngọc Khánh'),
+(1, 3, 52, 'Trúc Bạch'),
+(1, 4, 62, 'Minh Khai'),
+(1, 4, 69, 'Thanh Nhàn'),
+(1, 5, 74, 'Giáp Bát'),
+(1, 5, 80, 'Thanh Trì'),
+(1, 5, 85, 'Yên Sở'),
+(1, 6, 89, 'Khương Trung'),
+(1, 6, 92, 'Phương Liệt'),
+(1, 7, 103, 'Ngọc Lâm'),
+(1, 7, 107, 'Sài Đồng'),
+(1, 7, 108, 'Thạch Bàn'),
+(1, 8, 114, 'Phú Đô'),
+(1, 8, 116, 'Trung Văn'),
+(1, 8, 119, 'Phương Canh'),
+(1, 9, 122, 'Cổ Nhuế 2'),
+(1, 9, 128, 'Tây Tựu'),
+(1, 9, 132, 'Xuân Đỉnh'),
+(1, 10, 137, 'Quảng An'),
+(1, 10, 141, 'Yên Phụ'),
+(1, 10, 140, 'Xuân La'),
+(1, 11, 147, 'Quan Hoa'),
+(1, 11, 149, 'Yên Hòa'),
+(1, 12, 164, 'Vạn Phúc'),
+(1, 12, 155, 'La Khê'),
+(1, 12, 153, 'Dương Nội');
+--insert into information
+INSERT INTO "Information" ("name", "phone", "address_id") VALUES
+('Name1', '1234567890', 30),
+('Name2', '1234567891', 31),
+('Name3', '1234567892', 32),
+('Name4', '1234567893', 33),
+('Name5', '1234567894', 34),
+('Name6', '1234567895', 35),
+('Name7', '1234567896', 36),
+('Name8', '1234567897', 37),
+('Name9', '1234567898', 38),
+('Name10', '1234567899', 39),
+('Name11', '1234567800', 40),
+('Name12', '1234567801', 41),
+('Name13', '1234567802', 42),
+('Name14', '1234567803', 43),
+('Name15', '1234567804', 44),
+('Name16', '1234567805', 45),
+('Name17', '1234567806', 46),
+('Name18', '1234567807', 47),
+('Name19', '1234567808', 48),
+('Name20', '1234567809', 49),
+('Name21', '1234567810', 50),
+('Name22', '1234567811', 51),
+('Name23', '1234567812', 52),
+('Name24', '1234567813', 53),
+('Name25', '1234567814', 54),
+('Name26', '1234567815', 55),
+('Name27', '1234567816', 56),
+('Name28', '1234567817', 57),
+('Name29', '1234567818', 58),
+('Name30', '1234567819', 59),
+('Name31', '1234567820', 60),
+('Name32', '1234567821', 61),
+('Name33', '1234567822', 62),
+('Name34', '1234567823', 63),
+('Name35', '1234567824', 64),
+('Name36', '1234567825', 65),
+('Name37', '1234567826', 66),
+('Name38', '1234567827', 67),
+('Name39', '1234567828', 68),
+('Name40', '1234567829', 69),
+('Name41', '1234567830', 70),
+('Name42', '1234567831', 71),
+('Name43', '1234567832', 72),
+('Name44', '1234567833', 73),
+('Name45', '1234567834', 74),
+('Name46', '1234567835', 75),
+('Name47', '1234567836', 76),
+('Name48', '1234567837', 77),
+('Name49', '1234567838', 78),
+('Name50', '1234567839', 79),
+('Name51', '1234567840', 80),
+('Name52', '1234567841', 81),
+('Name53', '1234567842', 82),
+('Name54', '1234567843', 83),
+('Name55', '1234567844', 84),
+('Name56', '1234567845', 85),
+('Name57', '1234567846', 86),
+('Name58', '1234567847', 87),
+('Name59', '1234567848', 88),
+('Name60', '1234567849', 89),
+('Name61', '1234567850', 90),
+('Name62', '1234567851', 91),
+('Name63', '1234567852', 92),
+('Name64', '1234567853', 93),
+('Name65', '1234567854', 94),
+('Name66', '1234567855', 95),
+('Name67', '1234567856', 96),
+('Name68', '1234567857', 97),
+('Name69', '1234567858', 98),
+('Name70', '1234567859', 99),
+('Name71', '1234567860', 100),
+('Name72', '1234567861', 101),
+('Name73', '1234567862', 102),
+('Name74', '1234567863', 103),
+('Name75', '1234567864', 104),
+('Name76', '1234567865', 105),
+('Name77', '1234567866', 106),
+('Name78', '1234567867', 107),
+('Name79', '1234567868', 108),
+('Name80', '1234567869', 109),
+('Name81', '1234567870', 110),
+('Name82', '1234567871', 111),
+('Name83', '1234567872', 112),
+('Name84', '1234567873', 113),
+('Name85', '1234567874', 114),
+('Name86', '1234567875', 115),
+('Name87', '1234567876', 116),
+('Name88', '1234567877', 117),
+('Name89', '1234567878', 118),
+('Name90', '1234567879', 119),
+('Name91', '1234567880', 120),
+('Name92', '1234567881', 121),
+('Name93', '1234567882', 122),
+('Name94', '1234567883', 123),
+('Name95', '1234567884', 124),
+('Name96', '1234567885', 125),
+('Name97', '1234567886', 126),
+('Name98', '1234567887', 127),
+('Name99', '1234567888', 128),
+('Name100', '1234567889', 129),
+('Name101', '1234567890', 130),
+('Name102', '1234567891', 131),
+('Name103', '1234567892', 132),
+('Name104', '1234567893', 133),
+('Name105', '1234567894', 134),
+('Name106', '1234567895', 135),
+('Name107', '1234567896', 136),
+('Name108', '1234567897', 137),
+('Name109', '1234567898', 138),
+('Name110', '1234567899', 139),
+('Name111', '1234567900', 140),
+('Name112', '1234567901', 141),
+('Name113', '1234567902', 142),
+('Name114', '1234567903', 143),
+('Name115', '1234567904', 144),
+('Name116', '1234567905', 145),
+('Name117', '1234567906', 146),
+('Name118', '1234567907', 147),
+('Name119', '1234567908', 148),
+('Name120', '1234567909', 149),
+('Name121', '1234567910', 150),
+('Name122', '1234567911', 151),
+('Name123', '1234567912', 152),
+('Name124', '1234567913', 153),
+('Name125', '1234567914', 154),
+('Name126', '1234567915', 155),
+('Name127', '1234567916', 156),
+('Name128', '1234567917', 157),
+('Name129', '1234567918', 158),
+('Name130', '1234567919', 159),
+('Name131', '1234567920', 160),
+('Name132', '1234567921', 161),
+('Name133', '1234567922', 162),
+('Name134', '1234567923', 163),
+('Name135', '1234567924', 164),
+('Name136', '1234567925', 165),
+('Name137', '1234567926', 166),
+('Name138', '1234567927', 167),
+('Name139', '1234567928', 168),
+('Name140', '1234567929', 169),
+('Name141', '1234567930', 170),
+('Name142', '1234567931', 171),
+('Name143', '1234567932', 172),
+('Name144', '1234567933', 173),
+('Name145', '1234567934', 174),
+('Name146', '1234567935', 175),
+('Name147', '1234567936', 176),
+('Name148', '1234567937', 177),
+('Name149', '1234567938', 178),
+('Name150', '1234567939', 179);
+UPDATE "Information" 
+SET "address_id" = CASE 
+                        WHEN "infor_id" BETWEEN 1 AND 175 THEN "infor_id" + 213 
+                        ELSE "address_id" 
+                   END 
+WHERE "infor_id" BETWEEN 2 AND 175;
+-- insert in AddressBook
+INSERT INTO "AddressBook" ("cus_id", "infor_id") VALUES
+(1, 30),
+(2, 31),
+(3, 32),
+(4, 33),
+(5, 34),
+(6, 35),
+(7, 36),
+(8, 37),
+(9, 38),
+(10, 39),
+(11, 40),
+(12, 41),
+(13, 42),
+(14, 43),
+(15, 44),
+(16, 45),
+(17, 46),
+(18, 47),
+(19, 48),
+(20, 49),
+(21, 50),
+(22, 51),
+(23, 52),
+(24, 53),
+(25, 54),
+(26, 55),
+(27, 56),
+(28, 57),
+(29, 58),
+(30, 59),
+(31, 60),
+(32, 61),
+(33, 62),
+(34, 63),
+(35, 64),
+(36, 65),
+(37, 66),
+(38, 67),
+(39, 68),
+(40, 69),
+(41, 70),
+(42, 71),
+(43, 72),
+(44, 73),
+(45, 74),
+(46, 75),
+(47, 76),
+(48, 77),
+(49, 78),
+(50, 79),
+(51, 80),
+(52, 81),
+(53, 82),
+(54, 83),
+(55, 84),
+(56, 85),
+(57, 86),
+(58, 87),
+(59, 88),
+(60, 89),
+(61, 90),
+(62, 91),
+(63, 92),
+(64, 93),
+(65, 94),
+(66, 95),
+(67, 96),
+(68, 97),
+(69, 98),
+(70, 99),
+(71, 100),
+(72, 101),
+(73, 102),
+(74, 103),
+(75, 104),
+(76, 105),
+(77, 106),
+(78, 107),
+(79, 108),
+(80, 109),
+(81, 110),
+(82, 111),
+(83, 112),
+(84, 113),
+(85, 114),
+(86, 115),
+(87, 116),
+(88, 117),
+(89, 118),
+(90, 119),
+(91, 120),
+(92, 121),
+(93, 122),
+(94, 123),
+(95, 124),
+(96, 125),
+(97, 126),
+(98, 127),
+(99, 128),
+(100, 129),
+(101, 130),
+(102, 131),
+(103, 132),
+(104, 133),
+(105, 134),
+(106, 135),
+(107, 136),
+(108, 137),
+(109, 138),
+(110, 139),
+(111, 140),
+(112, 141),
+(113, 142),
+(114, 143),
+(115, 144),
+(116, 145),
+(117, 146),
+(118, 147),
+(119, 148),
+(120, 149),
+(121, 150),
+(122, 151),
+(123, 152),
+(124, 153),
+(125, 154),
+(126, 155),
+(127, 156),
+(128, 157),
+(129, 158),
+(130, 159),
+(131, 160),
+(132, 161),
+(133, 162),
+(134, 163),
+(135, 164),
+(136, 165),
+(137, 166),
+(138, 167),
+(139, 168),
+(140, 169),
+(141, 170),
+(142, 171),
+(143, 172),
+(144, 173),
+(145, 174),
+(146, 175),
+(147, 176),
+(148, 177),
+(149, 178),
+(150, 179);
+UPDATE "AddressBook" 
+SET "infor_id" = CASE 
+                        WHEN "book_id" BETWEEN 1 AND 145 THEN "book_id" 
+                        ELSE "book_id" 
+                   END 
+WHERE "book_id" BETWEEN 1 AND 175;
+-- insert customer
+INSERT INTO "Customer" ("fullname", "email", "phone", "default_book", "status", "acc_id", "address_id") 
+VALUES
+
+('Duan Nguyen', 'duannv1@example.com', '123456789', NULL, 1, 7, 1),
+('Duan Nguyen', 'duannv2@example.com', '123456789', NULL, 1, 8, 2),
+('Duan Nguyen', 'duannv3@example.com', '123456789', NULL, 1, 9, 3),
+('Duan Nguyen', 'duannv4@example.com', '123456789', NULL, 1, 10, 4),
+('Duan Nguyen', 'duannv5@example.com', '123456789', NULL, 1, 11, 5),
+--
+('Duan Nguyen', 'duannv6@example.com', '123456789', NULL, 1, 18, 6),
+('Duan Nguyen', 'duannv7@example.com', '123456789', NULL, 1, 19, 7),
+('Duan Nguyen', 'duannv8@example.com', '123456789', NULL, 1, 20, 8),
+('Duan Nguyen', 'duannv9@example.com', '123456789', NULL, 1, 21, 9),
+('Duan Nguyen', 'duannv10@example.com', '123456789', NULL, 1, 22, 10),
+
+('Duan Nguyen', 'duannv11@example.com', '123456789', NULL, 1, 29, 11),
+('Duan Nguyen', 'duannv12@example.com', '123456789', NULL, 1, 30, 12),
+('Duan Nguyen', 'duannv13@example.com', '123456789', NULL, 1, 31, 13),
+('Duan Nguyen', 'duannv14@example.com', '123456789', NULL, 1, 32, 14),
+('Duan Nguyen', 'duannv15@example.com', '123456789', NULL, 1, 33, 15),
+
+('Duan Nguyen', 'duannv16@example.com', '123456789', NULL, 1, 40, 16),
+('Duan Nguyen', 'duannv17@example.com', '123456789', NULL, 1, 41, 17),
+('Duan Nguyen', 'duannv18@example.com', '123456789', NULL, 1, 42, 18),
+('Duan Nguyen', 'duannv19@example.com', '123456789', NULL, 1, 43, 19),
+('Duan Nguyen', 'duannv20@example.com', '123456789', NULL, 1, 44, 20),
+
+('Duan Nguyen', 'duannv21@example.com', '123456789', NULL, 1, 51, 21),
+('Duan Nguyen', 'duannv22@example.com', '123456789', NULL, 1, 52, 22),
+('Duan Nguyen', 'duannv23@example.com', '123456789', NULL, 1, 53, 23),
+('Duan Nguyen', 'duannv24@example.com', '123456789', NULL, 1, 54, 24),
+('Duan Nguyen', 'duannv25@example.com', '123456789', NULL, 1, 55, 25),
+
+('Duan Nguyen', 'duannv26@example.com', '123456789', NULL, 1, 62, 26),
+('Duan Nguyen', 'duannv27@example.com', '123456789', NULL, 1, 63, 27),
+('Duan Nguyen', 'duannv28@example.com', '123456789', NULL, 1, 64, 28),
+('Duan Nguyen', 'duannv29@example.com', '123456789', NULL, 1, 65, 29),
+('Duan Nguyen', 'duannv30@example.com', '123456789', NULL, 1, 66, 30),
+
+('Duan Nguyen', 'duannv31@example.com', '123456789', NULL, 1, 73, 31),
+('Duan Nguyen', 'duannv32@example.com', '123456789', NULL, 1, 74, 32),
+('Duan Nguyen', 'duannv33@example.com', '123456789', NULL, 1, 75, 33),
+('Duan Nguyen', 'duannv34@example.com', '123456789', NULL, 1, 76, 34),
+('Duan Nguyen', 'duannv35@example.com', '123456789', NULL, 1, 77, 35),
+
+('Duan Nguyen', 'duannv36@example.com', '123456789', NULL, 1, 84, 36),
+('Duan Nguyen', 'duannv37@example.com', '123456789', NULL, 1, 85, 37),
+('Duan Nguyen', 'duannv38@example.com', '123456789', NULL, 1, 86, 38),
+('Duan Nguyen', 'duannv39@example.com', '123456789', NULL, 1, 87, 39),
+('Duan Nguyen', 'duannv40@example.com', '123456789', NULL, 1, 88, 40),
+
+('Duan Nguyen', 'duannv41@example.com', '123456789', NULL, 1, 95, 41),
+('Duan Nguyen', 'duannv42@example.com', '123456789', NULL, 1, 96, 42),
+('Duan Nguyen', 'duannv43@example.com', '123456789', NULL, 1, 97, 43),
+('Duan Nguyen', 'duannv44@example.com', '123456789', NULL, 1, 98, 44),
+('Duan Nguyen', 'duannv45@example.com', '123456789', NULL, 1, 99, 45),
+
+('Duan Nguyen', 'duannv46@example.com', '123456789', NULL, 1, 106, 46),
+('Duan Nguyen', 'duannv47@example.com', '123456789', NULL, 1, 107, 47),
+('Duan Nguyen', 'duannv48@example.com', '123456789', NULL, 1, 108, 48),
+('Duan Nguyen', 'duannv49@example.com', '123456789', NULL, 1, 109, 49),
+('Duan Nguyen', 'duannv50@example.com', '123456789', NULL, 1, 110, 50),
+
+('Duan Nguyen', 'duannv51@example.com', '123456789', NULL, 1, 117, 51),
+('Duan Nguyen', 'duannv52@example.com', '123456789', NULL, 1, 118, 52),
+('Duan Nguyen', 'duannv53@example.com', '123456789', NULL, 1, 119, 53),
+('Duan Nguyen', 'duannv54@example.com', '123456789', NULL, 1, 120, 54),
+('Duan Nguyen', 'duannv55@example.com', '123456789', NULL, 1, 121, 55),
+
+('Duan Nguyen', 'duannv56@example.com', '123456789', NULL, 1, 128, 56),
+('Duan Nguyen', 'duannv57@example.com', '123456789', NULL, 1, 129, 57),
+('Duan Nguyen', 'duannv58@example.com', '123456789', NULL, 1, 130, 58),
+('Duan Nguyen', 'duannv59@example.com', '123456789', NULL, 1, 131, 59),
+('Duan Nguyen', 'duannv60@example.com', '123456789', NULL, 1, 132, 60),
+
+('Duan Nguyen', 'duannv61@example.com', '123456789', NULL, 1, 139, 61),
+('Duan Nguyen', 'duannv62@example.com', '123456789', NULL, 1, 140, 62),
+('Duan Nguyen', 'duannv63@example.com', '123456789', NULL, 1, 141, 63),
+('Duan Nguyen', 'duannv64@example.com', '123456789', NULL, 1, 142, 64),
+('Duan Nguyen', 'duannv65@example.com', '123456789', NULL, 1, 143, 65),
+
+('Duan Nguyen', 'duannv66@example.com', '123456789', NULL, 1, 150, 66),
+('Duan Nguyen', 'duannv67@example.com', '123456789', NULL, 1, 151, 67),
+('Duan Nguyen', 'duannv68@example.com', '123456789', NULL, 1, 152, 68),
+('Duan Nguyen', 'duannv69@example.com', '123456789', NULL, 1, 153, 69),
+('Duan Nguyen', 'duannv70@example.com', '123456789', NULL, 1, 154, 70),
+
+('Duan Nguyen', 'duannv71@example.com', '123456789', NULL, 1, 161, 71),
+('Duan Nguyen', 'duannv72@example.com', '123456789', NULL, 1, 162, 72),
+('Duan Nguyen', 'duannv73@example.com', '123456789', NULL, 1, 163, 73),
+('Duan Nguyen', 'duannv74@example.com', '123456789', NULL, 1, 164, 74),
+('Duan Nguyen', 'duannv75@example.com', '123456789', NULL, 1, 165, 75),
+
+('Duan Nguyen', 'duannv76@example.com', '123456789', NULL, 1, 172, 76),
+('Duan Nguyen', 'duannv77@example.com', '123456789', NULL, 1, 173, 77),
+('Duan Nguyen', 'duannv78@example.com', '123456789', NULL, 1, 174, 78),
+('Duan Nguyen', 'duannv79@example.com', '123456789', NULL, 1, 175, 79),
+('Duan Nguyen', 'duannv80@example.com', '123456789', NULL, 1, 176, 80),
+
+('Duan Nguyen', 'duannv81@example.com', '123456789', NULL, 1, 183, 81),
+('Duan Nguyen', 'duannv82@example.com', '123456789', NULL, 1, 184, 82),
+('Duan Nguyen', 'duannv83@example.com', '123456789', NULL, 1, 185, 83),
+('Duan Nguyen', 'duannv84@example.com', '123456789', NULL, 1, 186, 84),
+('Duan Nguyen', 'duannv85@example.com', '123456789', NULL, 1, 187, 85),
+
+('Duan Nguyen', 'duannv86@example.com', '123456789', NULL, 1, 194, 86),
+('Duan Nguyen', 'duannv87@example.com', '123456789', NULL, 1, 195, 87),
+('Duan Nguyen', 'duannv88@example.com', '123456789', NULL, 1, 196, 88),
+('Duan Nguyen', 'duannv89@example.com', '123456789', NULL, 1, 197, 89),
+('Duan Nguyen', 'duannv90@example.com', '123456789', NULL, 1, 198, 90),
+
+('Duan Nguyen', 'duannv91@example.com', '123456789', NULL, 1, 205, 91),
+('Duan Nguyen', 'duannv92@example.com', '123456789', NULL, 1, 206, 92),
+('Duan Nguyen', 'duannv93@example.com', '123456789', NULL, 1, 207, 93),
+('Duan Nguyen', 'duannv94@example.com', '123456789', NULL, 1, 208, 94),
+('Duan Nguyen', 'duannv95@example.com', '123456789', NULL, 1, 209, 95),
+
+('Duan Nguyen', 'duannv96@example.com', '123456789', NULL, 1, 216, 96),
+('Duan Nguyen', 'duannv97@example.com', '123456789', NULL, 1, 217, 97),
+('Duan Nguyen', 'duannv98@example.com', '123456789', NULL, 1, 218, 98),
+('Duan Nguyen', 'duannv99@example.com', '123456789', NULL, 1, 219, 99),
+('Duan Nguyen', 'duannv100@example.com', '123456789', NULL, 1, 220, 100),
+
+('Duan Nguyen', 'duannv101@example.com', '123456789', NULL, 1, 227, 101),
+('Duan Nguyen', 'duannv102@example.com', '123456789', NULL, 1, 228, 102),
+('Duan Nguyen', 'duannv103@example.com', '123456789', NULL, 1, 229, 103),
+('Duan Nguyen', 'duannv104@example.com', '123456789', NULL, 1, 230, 104),
+('Duan Nguyen', 'duannv105@example.com', '123456789', NULL, 1, 231, 105),
+
+('Duan Nguyen', 'duannv106@example.com', '123456789', NULL, 1, 238, 106),
+('Duan Nguyen', 'duannv107@example.com', '123456789', NULL, 1, 239, 107),
+('Duan Nguyen', 'duannv108@example.com', '123456789', NULL, 1, 240, 108),
+('Duan Nguyen', 'duannv109@example.com', '123456789', NULL, 1, 241, 109),
+('Duan Nguyen', 'duannv110@example.com', '123456789', NULL, 1, 242, 110),
+
+('Duan Nguyen', 'duannv111@example.com', '123456789', NULL, 1, 249, 111),
+('Duan Nguyen', 'duannv112@example.com', '123456789', NULL, 1, 250, 112),
+('Duan Nguyen', 'duannv113@example.com', '123456789', NULL, 1, 251, 113),
+('Duan Nguyen', 'duannv114@example.com', '123456789', NULL, 1, 252, 114),
+('Duan Nguyen', 'duannv115@example.com', '123456789', NULL, 1, 253, 115),
+
+('Duan Nguyen', 'duannv116@example.com', '123456789', NULL, 1, 260, 116),
+('Duan Nguyen', 'duannv117@example.com', '123456789', NULL, 1, 261, 117),
+('Duan Nguyen', 'duannv118@example.com', '123456789', NULL, 1, 262, 118),
+('Duan Nguyen', 'duannv119@example.com', '123456789', NULL, 1, 263, 119),
+('Duan Nguyen', 'duannv120@example.com', '123456789', NULL, 1, 264, 120),
+
+('Duan Nguyen', 'duannv121@example.com', '123456789', NULL, 1, 271, 121),
+('Duan Nguyen', 'duannv122@example.com', '123456789', NULL, 1, 272, 122),
+('Duan Nguyen', 'duannv123@example.com', '123456789', NULL, 1, 273, 123),
+('Duan Nguyen', 'duannv124@example.com', '123456789', NULL, 1, 274, 124),
+('Duan Nguyen', 'duannv125@example.com', '123456789', NULL, 1, 275, 125),
+
+('Duan Nguyen', 'duannv126@example.com', '123456789', NULL, 1, 282, 126),
+('Duan Nguyen', 'duannv127@example.com', '123456789', NULL, 1, 283, 127),
+('Duan Nguyen', 'duannv128@example.com', '123456789', NULL, 1, 284, 128),
+('Duan Nguyen', 'duannv129@example.com', '123456789', NULL, 1, 285, 129),
+('Duan Nguyen', 'duannv130@example.com', '123456789', NULL, 1, 286, 130),
+
+('Duan Nguyen', 'duannv131@example.com', '123456789', NULL, 1, 293, 131),
+('Duan Nguyen', 'duannv132@example.com', '123456789', NULL, 1, 294, 132),
+('Duan Nguyen', 'duannv133@example.com', '123456789', NULL, 1, 295, 133),
+('Duan Nguyen', 'duannv134@example.com', '123456789', NULL, 1, 296, 134),
+('Duan Nguyen', 'duannv135@example.com', '123456789', NULL, 1, 297, 135),
+
+('Duan Nguyen', 'duannv136@example.com', '123456789', NULL, 1, 304, 136),
+('Duan Nguyen', 'duannv137@example.com', '123456789', NULL, 1, 305, 137),
+('Duan Nguyen', 'duannv138@example.com', '123456789', NULL, 1, 306, 138),
+('Duan Nguyen', 'duannv139@example.com', '123456789', NULL, 1, 307, 139),
+('Duan Nguyen', 'duannv140@example.com', '123456789', NULL, 1, 308, 140),
+
+('Duan Nguyen', 'duannv141@example.com', '123456789', NULL, 1, 315, 141),
+('Duan Nguyen', 'duannv142@example.com', '123456789', NULL, 1, 316, 142),
+('Duan Nguyen', 'duannv143@example.com', '123456789', NULL, 1, 317, 143),
+('Duan Nguyen', 'duannv144@example.com', '123456789', NULL, 1, 318, 144),
+('Duan Nguyen', 'duannv145@example.com', '123456789', NULL, 1, 319, 145),
+UPDATE "Customer" 
+SET "address_id" = CASE 
+                        WHEN "cus_id" BETWEEN 1 AND 175 THEN "cus_id" + 213 
+                        ELSE "address_id" 
+                   END 
+WHERE "cus_id" BETWEEN 1 AND 175;
+----
+UPDATE "Customer" 
+SET "acc_id" = CASE 
+                        WHEN "cus_id" BETWEEN 1 AND 175 THEN "acc_id" + 1 
+                        ELSE "acc_id" 
+                   END 
+WHERE "cus_id" BETWEEN 1 AND 175;
+
+---
+UPDATE "Customer" 
+SET "default_book" = CASE 
+                        WHEN "cus_id" BETWEEN 1 AND 145 THEN "cus_id" 
+                        ELSE "default_book" 
+                   END 
+WHERE "cus_id" BETWEEN 1 AND 145;
+--staff
+
+INSERT INTO "Staff" ("fullname", "email", "phone", "warehouse_id", "acc_id") 
+VALUES
+-- Admin warehouse 1
+('Admin', 'admin@example.com', '123456789', 1, 1),
+
+-- Warehouse 2
+('Duan Nguyen', 'duannv2@example.com', '123456789', 2, 2),
+('Duan Nguyen', 'duannv3@example.com', '123456789', 2, 3),
+('Duan Nguyen', 'duannv4@example.com', '123456789', 2, 4),
+('Duan Nguyen', 'duannv10@example.com', '123456789', 2, 5),
+('Duan Nguyen', 'duannv16@example.com', '123456789', 2, 6),
+('Duan Nguyen', 'duannv22@example.com', '123456789', 2, 7),
+
+-- Warehouse 3
+('Duan Nguyen', 'duannv34@example.com', '123456789', 3, 13),
+('Duan Nguyen', 'duannv46@example.com', '123456789', 3, 14),
+('Duan Nguyen', 'duannv58@example.com', '123456789', 3, 15),
+('Duan Nguyen', 'duannv70@example.com', '123456789', 3, 16),
+('Duan Nguyen', 'duannv82@example.com', '123456789', 3, 17),
+('Duan Nguyen', 'duannv94@example.com', '123456789', 3, 18),
+
+-- Warehouse 4
+('Duan Nguyen', 'duannv106@example.com', '123456789', 4, 24),
+('Duan Nguyen', 'duannv118@example.com', '123456789', 4, 25),
+('Duan Nguyen', 'duannv130@example.com', '123456789', 4, 26),
+('Duan Nguyen', 'duannv142@example.com', '123456789', 4, 27),
+('Duan Nguyen', 'duannv154@example.com', '123456789', 4, 28),
+('Duan Nguyen', 'duannv166@example.com', '123456789', 4, 29),
+
+-- Warehouse 5
+('Duan Nguyen', 'duannv178@example.com', '123456789', 5, 35),
+('Duan Nguyen', 'duannv190@example.com', '123456789', 5, 36),
+('Duan Nguyen', 'duannv202@example.com', '123456789', 5, 37),
+('Duan Nguyen', 'duannv214@example.com', '123456789', 5, 38),
+('Duan Nguyen', 'duannv226@example.com', '123456789', 5, 39),
+('Duan Nguyen', 'duannv238@example.com', '123456789', 5, 40),
+
+-- Warehouse 6
+('Duan Nguyen', 'duannv250@example.com', '123456789', 6, 46),
+('Duan Nguyen', 'duannv262@example.com', '123456789', 6, 47),
+('Duan Nguyen', 'duannv274@example.com', '123456789', 6, 48),
+('Duan Nguyen', 'duannv286@example.com', '123456789', 6, 49),
+('Duan Nguyen', 'duannv298@example.com', '123456789', 6, 50),
+('Duan Nguyen', 'duannv310@example.com', '123456789', 6, 51),
+
+-- Warehouse 7
+('Duan Nguyen', 'duannv322@example.com', '123456789', 7, 57),
+('Duan Nguyen', 'duannv334@example.com', '123456789', 7, 58),
+('Duan Nguyen', 'duannv346@example.com', '123456789', 7, 59),
+('Duan Nguyen', 'duannv358@example.com', '123456789', 7, 60),
+('Duan Nguyen', 'duannv370@example.com', '123456789', 7, 61),
+('Duan Nguyen', 'duannv382@example.com', '123456789', 7, 62),
+
+-- Warehouse 8
+('Duan Nguyen', 'duannv394@example.com', '123456789', 8, 68),
+('Duan Nguyen', 'duannv406@example.com', '123456789', 8, 69),
+('Duan Nguyen', 'duannv418@example.com', '123456789', 8, 70),
+('Duan Nguyen', 'duannv430@example.com', '123456789', 8, 71),
+('Duan Nguyen', 'duannv442@example.com', '123456789', 8, 72),
+('Duan Nguyen', 'duannv454@example.com', '123456789', 8, 73),
+
+-- Warehouse 9
+('Duan Nguyen', 'duannv466@example.com', '123456789', 9, 79),
+('Duan Nguyen', 'duannv478@example.com', '123456789', 9, 80),
+('Duan Nguyen', 'duannv490@example.com', '123456789', 9, 81),
+('Duan Nguyen', 'duannv502@example.com', '123456789', 9, 82),
+('Duan Nguyen', 'duannv514@example.com', '123456789', 9, 83),
+('Duan Nguyen', 'duannv526@example.com', '123456789', 9, 84),
+
+-- Warehouse 10
+('Duan Nguyen', 'duannv538@example.com', '123456789', 10, 90),
+('Duan Nguyen', 'duannv550@example.com', '123456789', 10, 91),
+('Duan Nguyen', 'duannv562@example.com', '123456789', 10, 92),
+('Duan Nguyen', 'duannv574@example.com', '123456789', 10, 93),
+('Duan Nguyen', 'duannv586@example.com', '123456789', 10, 94),
+('Duan Nguyen', 'duannv598@example.com', '123456789', 10, 95),
+
+-- Warehouse 11
+('Duan Nguyen', 'duannv610@example.com', '123456789', 11, 101),
+('Duan Nguyen', 'duannv622@example.com', '123456789', 11, 102),
+('Duan Nguyen', 'duannv634@example.com', '123456789', 11, 103),
+('Duan Nguyen', 'duannv646@example.com', '123456789', 11, 104),
+('Duan Nguyen', 'duannv658@example.com', '123456789', 11, 105),
+('Duan Nguyen', 'duannv670@example.com', '123456789', 11, 106),
+
+-- Warehouse 12
+('Duan Nguyen', 'duannv682@example.com', '123456789', 12, 112),
+('Duan Nguyen', 'duannv694@example.com', '123456789', 12, 113),
+('Duan Nguyen', 'duannv706@example.com', '123456789', 12, 114),
+('Duan Nguyen', 'duannv718@example.com', '123456789', 12, 115),
+('Duan Nguyen', 'duannv730@example.com', '123456789', 12, 116),
+('Duan Nguyen', 'duannv742@example.com', '123456789', 12, 117),
+
+-- Warehouse 13
+('Duan Nguyen', 'duannv754@example.com', '123456789', 13, 123),
+('Duan Nguyen', 'duannv766@example.com', '123456789', 13, 124),
+('Duan Nguyen', 'duannv778@example.com', '123456789', 13, 125),
+('Duan Nguyen', 'duannv790@example.com', '123456789', 13, 126),
+('Duan Nguyen', 'duannv802@example.com', '123456789', 13, 127),
+('Duan Nguyen', 'duannv814@example.com', '123456789', 13, 128),
+
+-- Warehouse 14
+('Duan Nguyen', 'duannv826@example.com', '123456789', 14, 134),
+('Duan Nguyen', 'duannv838@example.com', '123456789', 14, 135),
+('Duan Nguyen', 'duannv850@example.com', '123456789', 14, 136),
+('Duan Nguyen', 'duannv862@example.com', '123456789', 14, 137),
+('Duan Nguyen', 'duannv874@example.com', '123456789', 14, 138),
+('Duan Nguyen', 'duannv886@example.com', '123456789', 14, 139),
+
+-- Warehouse 15
+('Duan Nguyen', 'duannv898@example.com', '123456789', 15, 145),
+('Duan Nguyen', 'duannv910@example.com', '123456789', 15, 146),
+('Duan Nguyen', 'duannv922@example.com', '123456789', 15, 147),
+('Duan Nguyen', 'duannv934@example.com', '123456789', 15, 148),
+('Duan Nguyen', 'duannv946@example.com', '123456789', 15, 149),
+('Duan Nguyen', 'duannv958@example.com', '123456789', 15, 150),
+
+-- Warehouse 16
+('Duan Nguyen', 'duannv970@example.com', '123456789', 16, 156),
+('Duan Nguyen', 'duannv982@example.com', '123456789', 16, 157),
+('Duan Nguyen', 'duannv994@example.com', '123456789', 16, 158),
+('Duan Nguyen', 'duannv1006@example.com', '123456789', 16, 159),
+('Duan Nguyen', 'duannv1018@example.com', '123456789', 16, 160),
+('Duan Nguyen', 'duannv1030@example.com', '123456789', 16, 161),
+
+-- Warehouse 17
+('Duan Nguyen', 'duannv1042@example.com', '123456789', 17, 167),
+('Duan Nguyen', 'duannv1054@example.com', '123456789', 17, 168),
+('Duan Nguyen', 'duannv1066@example.com', '123456789', 17, 169),
+('Duan Nguyen', 'duannv1078@example.com', '123456789', 17, 170),
+('Duan Nguyen', 'duannv1090@example.com', '123456789', 17, 171),
+('Duan Nguyen', 'duannv1102@example.com', '123456789', 17, 172),
+
+-- Warehouse 18
+('Duan Nguyen', 'duannv1114@example.com', '123456789', 18, 178),
+('Duan Nguyen', 'duannv1126@example.com', '123456789', 18, 179),
+('Duan Nguyen', 'duannv1138@example.com', '123456789', 18, 180),
+('Duan Nguyen', 'duannv1150@example.com', '123456789', 18, 181),
+('Duan Nguyen', 'duannv1162@example.com', '123456789', 18, 182),
+('Duan Nguyen', 'duannv1174@example.com', '123456789', 18, 183),
+
+-- Warehouse 19
+('Duan Nguyen', 'duannv1186@example.com', '123456789', 19, 189),
+('Duan Nguyen', 'duannv1198@example.com', '123456789', 19, 190),
+('Duan Nguyen', 'duannv1210@example.com', '123456789', 19, 191),
+('Duan Nguyen', 'duannv1222@example.com', '123456789', 19, 192),
+('Duan Nguyen', 'duannv1234@example.com', '123456789', 19, 193),
+('Duan Nguyen', 'duannv1246@example.com', '123456789', 19, 194),
+
+-- Warehouse 20
+('Duan Nguyen', 'duannv1258@example.com', '123456789', 20, 200),
+('Duan Nguyen', 'duannv1270@example.com', '123456789', 20, 201),
+('Duan Nguyen', 'duannv1282@example.com', '123456789', 20, 202),
+('Duan Nguyen', 'duannv1294@example.com', '123456789', 20, 203),
+('Duan Nguyen', 'duannv1306@example.com', '123456789', 20, 204),
+('Duan Nguyen', 'duannv1318@example.com', '123456789', 20, 205),
+
+-- Warehouse 21
+('Duan Nguyen', 'duannv1330@example.com', '123456789', 21, 211),
+('Duan Nguyen', 'duannv1342@example.com', '123456789', 21, 212),
+('Duan Nguyen', 'duannv1354@example.com', '123456789', 21, 213),
+('Duan Nguyen', 'duannv1366@example.com', '123456789', 21, 214),
+('Duan Nguyen', 'duannv1378@example.com', '123456789', 21, 215),
+('Duan Nguyen', 'duannv1390@example.com', '123456789', 21, 216),
+
+-- Warehouse 22
+('Duan Nguyen', 'duannv1402@example.com', '123456789', 22, 222),
+('Duan Nguyen', 'duannv1414@example.com', '123456789', 22, 223),
+('Duan Nguyen', 'duannv1426@example.com', '123456789', 22, 224),
+('Duan Nguyen', 'duannv1438@example.com', '123456789', 22, 225),
+('Duan Nguyen', 'duannv1450@example.com', '123456789', 22, 226),
+('Duan Nguyen', 'duannv1462@example.com', '123456789', 22, 227),
+
+-- Warehouse 23
+('Duan Nguyen', 'duannv1474@example.com', '123456789', 23, 233),
+('Duan Nguyen', 'duannv1486@example.com', '123456789', 23, 234),
+('Duan Nguyen', 'duannv1498@example.com', '123456789', 23, 235),
+('Duan Nguyen', 'duannv1510@example.com', '123456789', 23, 236),
+('Duan Nguyen', 'duannv1522@example.com', '123456789', 23, 237),
+('Duan Nguyen', 'duannv1534@example.com', '123456789', 23, 238),
+
+-- Warehouse 24
+('Duan Nguyen', 'duannv1546@example.com', '123456789', 24, 244),
+('Duan Nguyen', 'duannv1558@example.com', '123456789', 24, 245),
+('Duan Nguyen', 'duannv1570@example.com', '123456789', 24, 246),
+('Duan Nguyen', 'duannv1582@example.com', '123456789', 24, 247),
+('Duan Nguyen', 'duannv1594@example.com', '123456789', 24, 248),
+('Duan Nguyen', 'duannv1606@example.com', '123456789', 24, 249),
+
+-- Warehouse 25
+('Duan Nguyen', 'duannv1618@example.com', '123456789', 25, 255),
+('Duan Nguyen', 'duannv1630@example.com', '123456789', 25, 256),
+('Duan Nguyen', 'duannv1642@example.com', '123456789', 25, 257),
+('Duan Nguyen', 'duannv1654@example.com', '123456789', 25, 258),
+('Duan Nguyen', 'duannv1666@example.com', '123456789', 25, 259),
+('Duan Nguyen', 'duannv1678@example.com', '123456789', 25, 260),
+
+-- Warehouse 26
+('Duan Nguyen', 'duannv1690@example.com', '123456789', 26, 266),
+('Duan Nguyen', 'duannv1702@example.com', '123456789', 26, 267),
+('Duan Nguyen', 'duannv1714@example.com', '123456789', 26, 268),
+('Duan Nguyen', 'duannv1726@example.com', '123456789', 26, 269),
+('Duan Nguyen', 'duannv1738@example.com', '123456789', 26, 270),
+('Duan Nguyen', 'duannv11738@example.com', '123456789', 26, 271),
+
+-- Warehouse 27
+('Duan Nguyen', 'duannv1750@example.com', '123456789', 27, 277),
+('Duan Nguyen', 'duannv1762@example.com', '123456789', 27, 278),
+('Duan Nguyen', 'duannv1774@example.com', '123456789', 27, 279),
+('Duan Nguyen', 'duannv1786@example.com', '123456789', 27, 280),
+('Duan Nguyen', 'duannv1798@example.com', '123456789', 27, 281),
+('Duan Nguyen', 'duannv17918@example.com', '123456789', 27, 282),
+
+
+-- Warehouse 28
+('Duan Nguyen', 'duannv1810@example.com', '123456789', 28, 288),
+('Duan Nguyen', 'duannv1822@example.com', '123456789', 28, 289),
+('Duan Nguyen', 'duannv1834@example.com', '123456789', 28, 290),
+('Duan Nguyen', 'duannv1846@example.com', '123456789', 28, 291),
+('Duan Nguyen', 'duannv1858@example.com', '123456789', 28, 292),
+('Duan Nguyen', 'duannv18581@example.com', '123456789', 28, 293),
+
+
+-- Warehouse 29
+('Duan Nguyen', 'duannv1870@example.com', '123456789', 29, 299),
+('Duan Nguyen', 'duannv1882@example.com', '123456789', 29, 300),
+('Duan Nguyen', 'duannv1894@example.com', '123456789', 29, 301),
+('Duan Nguyen', 'duannv1906@example.com', '123456789', 29, 302),
+('Duan Nguyen', 'duannv11918@example.com', '123456789', 29, 303),
+('Duan Nguyen', 'duannv19118@example.com', '123456789', 29, 304),
+
+
+-- Warehouse 30
+('Duan Nguyen', 'duannv1930@example.com', '123456789', 30, 310),
+('Duan Nguyen', 'duannv1942@example.com', '123456789', 30, 311),
+('Duan Nguyen', 'duannv1954@example.com', '123456789', 30, 312),
+('Duan Nguyen', 'duannv1966@example.com', '123456789', 30, 313),
+('Duan Nguyen', 'duannv19616@example.com', '123456789', 30, 314),
+('Duan Nguyen', 'duannv1978@example.com', '123456789', 30, 315);
+
+UPDATE "Staff" 
+SET "address_id" = CASE 
+                        WHEN "staff_id" BETWEEN 2 AND 175 THEN "staff_id" + 38 
+                        ELSE "address_id" 
+                   END 
+WHERE "staff_id" BETWEEN 2 AND 175;

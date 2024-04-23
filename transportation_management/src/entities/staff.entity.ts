@@ -18,7 +18,7 @@ export class StaffEntity {
     @Column()
     phone: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: 1 })
     status: number;
 
     @Column({ name: 'warehouse_id' })
