@@ -16,6 +16,7 @@ import { PriceMultiplierEntity } from 'src/entities/price-mutiplier.entity';
 import { UpdateMutiplier } from '../dto/admin-mutiplier-update.dto';
 import { UpdatePriceAndMutiplier } from '../dto/admin-update-price-mutiplier.dto';
 import { WarehouseEntity } from 'src/entities/warehouse.entity';
+import { ChangeManagerDto } from '../dto/admin-update-manager.dto';
 
 @Injectable()
 export class AdminService {
@@ -220,19 +221,79 @@ export class AdminService {
             .getRawOne();
         return staff ? staff : 'not found';
     }
-    async updateRoleStaff(staffId: number, roleId: number) {
-        const staff = await this.staffRepository.findOneBy({ staffId: staffId });
-        const acount = staff ? await this.accountRepository.findOneBy({ accId: staff.accId }) : null;
-        if ([2, 3].includes(roleId)) {
-            if (acount) {
-                const role = new RoleEntity();
-                role.roleId = roleId;
-                acount.role = role;
-                acount.roleId = roleId;
-            }
+    async updateRoleStaff(data: ChangeManagerDto) {
+        const staff = await this.staffRepository.findOne({
+            where: {
+                staffId: data.staffId,
+            },
+        });
+        if (!staff || staff.staffId === 1) {
+            return { status: 404, msg: 'not found!' };
         }
-        const update = await this.accountRepository.save(acount);
-        return update ? { status: 'success' } : { status: 'error' };
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            const curentManager = await this.staffRepository
+                .createQueryBuilder('s')
+                .leftJoinAndSelect('s.account', 'a')
+                .where('a.role_id = :roleId', { roleId: 4 })
+                .andWhere('s.warehouse_id = :warehouseId', { warehouseId: data.warehouseId })
+                .getOne();
+            if (!curentManager) {
+                //update Account role to manager
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(AccountEntity)
+                    .set({ roleId: 4 })
+                    .where('acc_id = :accId', { accId: staff.accId })
+                    .execute()
+                    .catch((error) => {
+                        console.error('Error updating address:', error);
+                        throw error;
+                    });
+            } else {
+                //update current manager role to staff
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(AccountEntity)
+                    .set({ roleId: 3 })
+                    .where('acc_id = :accId', { accId: curentManager.accId })
+                    .execute()
+                    .catch((error) => {
+                        console.error('Error updating address:', error);
+                        throw error;
+                    });
+                //update new staff role to manager
+                await queryRunner.manager
+                    .createQueryBuilder()
+                    .update(AccountEntity)
+                    .set({ roleId: 4 })
+                    .where('acc_id = :accId', { accId: staff.accId })
+                    .execute()
+                    .catch((error) => {
+                        console.error('Error updating address:', error);
+                        throw error;
+                    });
+            }
+
+            //update staff
+            staff.warehouseId = data.warehouseId;
+            const warehouse = new WarehouseEntity();
+            warehouse.warehouseId = data.warehouseId;
+            staff.warehouse = warehouse;
+            await queryRunner.manager.save(staff);
+            await queryRunner.commitTransaction();
+            return {
+                status: 200,
+                msg: 'update success',
+            };
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            return error;
+        } finally {
+            await queryRunner.release();
+        }
     }
     async adminUpdateStaff(data: updateStaffDto): Promise<any> {
         const staff = await this.staffRepository.findOne({

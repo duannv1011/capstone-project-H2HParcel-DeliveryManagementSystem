@@ -11,6 +11,7 @@ import { updateStaffDto } from '../dto/staff-update.dto';
 import { UpdatePakageType } from '../dto/admin-package-type-update.dto';
 import { UpdateMutiplier } from '../dto/admin-mutiplier-update.dto';
 import { UpdatePriceAndMutiplier } from '../dto/admin-update-price-mutiplier.dto';
+import { ChangeManagerDto } from '../dto/admin-update-manager.dto';
 
 @Controller('admin')
 @ApiTags('SUPER ADMIN')
@@ -77,14 +78,14 @@ export class AdminController {
     async updateStaff(@Body() data: updateStaffDto): Promise<any> {
         return await this.adminService.adminUpdateStaff(data);
     }
-    @Put('admin/staff/role-update')
+    @Post('admin/staff/role-update')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
     @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'Update staff role' })
     @ApiResponse({ status: 200, description: 'Update staff role data successfully.' })
-    async updateRoleStaff(@Query('staffId') staffId: number, @Query('roleId') roleId: number): Promise<any> {
-        return await this.adminService.updateRoleStaff(staffId, roleId);
+    async updateRoleStaff(@Body() data: ChangeManagerDto): Promise<any> {
+        return await this.adminService.updateRoleStaff(data);
     }
     @Post('admin/staff/change-manager')
     @Roles(Role.ADMIN)
