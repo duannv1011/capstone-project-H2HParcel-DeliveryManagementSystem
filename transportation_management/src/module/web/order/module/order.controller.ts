@@ -117,4 +117,11 @@ export class OrderController {
     async asignShipperToOrder(@Body() data: asignShipperDto, @UserLogin() user: UserLoginData) {
         return this.orderService.asignShipperToOrder(data, Number(user.accId));
     }
+    //////////////////////
+    @Get('order/order-warehouse')
+    @ApiOperation({ summary: 'get order warehouse success' })
+    @ApiResponse({ status: 200, description: 'get success' })
+    async getWarehouseOfOrder(@Query('orderId') orderId: number) {
+        return this.orderService.getWarehouseOfOrder(orderId);
+    }
 }

@@ -713,4 +713,24 @@ export class OrderService {
         activityLog.time = new Date();
         return activityLog;
     }
+    async getWarehouseOfOrder(orderId: number) {
+        const order = await this.orderRepository
+            .createQueryBuilder('o')
+            .leftJoinAndSelect('o.pickupInformation', 'pi')
+            .leftJoinAndSelect('o.deliverInformation', 'di')
+            .leftJoinAndSelect('pi.address', 'pa')
+            .leftJoinAndSelect('pa.city', 'pc')
+            .leftJoinAndSelect('pa.district', 'pdi')
+            .leftJoinAndSelect('pa.ward', 'pw')
+            .leftJoinAndSelect('di.address', 'da')
+            .leftJoinAndSelect('da.city', 'dc')
+            .leftJoinAndSelect('da.district', 'ddi')
+            .leftJoinAndSelect('da.ward', 'dw')
+            .leftJoinAndSelect(WarehouseEntity, 'piw', 'pw.warehouse_id = piw.warehouse_id')
+            .leftJoinAndSelect(WarehouseEntity, 'dliw', 'dw.warehouse_id = dliw.warehouse_id')
+            .select(['piw.warehouse_name AS pickupWarehouse', 'dliw.warehouse_name AS DeliverWarehouse'])
+            .where('o.order_id = :orderId', { orderId: orderId })
+            .getRawMany();
+        return order;
+    }
 }
