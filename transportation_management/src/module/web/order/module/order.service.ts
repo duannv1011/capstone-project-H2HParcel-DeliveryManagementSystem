@@ -567,7 +567,7 @@ export class OrderService {
                     // update request record
                     await this.requesRecodtRepository.update(checkHaveRequest.recordId, {
                         requestType: 2,
-                        requestStt: 1,
+                        requestStt: 2,
                     });
                 } else {
                     //create RequestRecord
@@ -593,7 +593,7 @@ export class OrderService {
                 await queryRunner.commitTransaction();
                 return { status: 200, msg: ' Cancel successfully' };
             }
-            ////if status =1 va =2
+            ////if status !=1 va !=2
             if (checkHaveRequest && checkHaveRequest.requestType === 1 && order.orderStt > 2) {
                 //update request record to cacancel
                 await this.requesRecodtRepository.update(checkHaveRequest.recordId, { requestType: 2, requestStt: 1 });
