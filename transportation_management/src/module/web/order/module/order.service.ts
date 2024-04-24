@@ -555,6 +555,7 @@ export class OrderService {
                     error: 'this order is processing cancel or was cancel!Canot re Cancel again this order',
                 };
             }
+            //if status =1 va =2
             if (order.orderStt === 1 || order.orderStt === 2) {
                 // update order to cancel
                 const orderStatus = new OrderStatusEntity();
@@ -573,7 +574,7 @@ export class OrderService {
                     const requestRecord = new RequestRecordEntity();
                     requestRecord.recordId = 0;
                     requestRecord.requestType = 2;
-                    requestRecord.requestStt = 1;
+                    requestRecord.requestStt = 2;
                     requestRecord.note = data.note;
                     const requestRecordInsertreult = await queryRunner.manager.save(RequestRecordEntity, requestRecord);
                     //create Request
@@ -592,7 +593,8 @@ export class OrderService {
                 await queryRunner.commitTransaction();
                 return { status: 200, msg: ' Cancel successfully' };
             }
-            if (checkHaveRequest && checkHaveRequest.requestType === 1) {
+            ////if status =1 va =2
+            if (checkHaveRequest && checkHaveRequest.requestType === 1 && order.orderStt > 2) {
                 //update request record to cacancel
                 await this.requesRecodtRepository.update(checkHaveRequest.recordId, { requestType: 2, requestStt: 1 });
             } else if (!checkHaveRequest) {
