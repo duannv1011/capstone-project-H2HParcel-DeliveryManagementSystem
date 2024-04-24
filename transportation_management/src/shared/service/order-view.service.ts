@@ -291,6 +291,7 @@ export class OrderViewService {
             throw new Error('An error occurred while fetching orders.');
         }
     }
+
     async findAllByWarehouseFilters(
         pageNo: number,
         userLogin: UserLoginData,
@@ -373,6 +374,11 @@ export class OrderViewService {
             console.error('Error in findAllByWarehouseFilters:', error);
             throw new Error('An error occurred while fetching orders.');
         }
+    }
+    async hasAccentedChar(char) {
+        const accentedCharsRegex = /[àáảãạăắằẳẵặâấầẩẫậđèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵ]/;
+        const hasAccent = accentedCharsRegex.test(char);
+        return hasAccent;
     }
     async findAllByWarehouseFiltersUnsigned(
         pageNo: number,

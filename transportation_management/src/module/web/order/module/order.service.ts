@@ -562,7 +562,7 @@ export class OrderService {
                 order.status = orderStatus;
                 order.estimatedPrice = 0;
                 await queryRunner.manager.save(order);
-                if (!checkHaveRequest) {
+                if (checkHaveRequest && checkHaveRequest.requestType === 1) {
                     // update request record
                     await this.requesRecodtRepository.update(checkHaveRequest.recordId, {
                         requestType: 2,
