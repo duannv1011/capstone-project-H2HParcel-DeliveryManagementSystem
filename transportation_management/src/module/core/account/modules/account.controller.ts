@@ -54,19 +54,21 @@ export class AccountController {
                 .createQueryBuilder('w')
                 .where((qb) => {
                     qb.andWhere('(w.warehouse_id_1 = :warehouseId1 AND w.warehouse_id_2 = :warehouseId2)', {
-                        warehouseId1: warehouse1,
-                        warehouseId2: warehouse2,
+                        warehouseId1: Number(warehouse1),
+                        warehouseId2: Number(warehouse2),
                     }).orWhere('(w.warehouse_id_1 = :warehouseId2 AND w.warehouse_id_2 = :warehouseId1)', {
-                        warehouseId1: warehouse1,
-                        warehouseId2: warehouse2,
+                        warehouseId1: Number(warehouse2),
+                        warehouseId2: Number(warehouse1),
                     });
                 })
                 .getOne();
+            console.log(warehouseRule);
             const distance = Number(
                 warehouseRule.distance.includes(',')
                     ? warehouseRule.distance.replace(',', '.')
                     : warehouseRule.distance,
             );
+            console.log(distance);
             return distance;
         } catch (error) {}
     }
