@@ -153,7 +153,7 @@ export class StaffController {
         if (!seachValue && orderStatus === null) {
             seachValue = '';
         }
-        return await this.orderService.findAllByWarehouseFilters(pageNo, userLogin, seachValue, orderStatus);
+        return await this.orderService.findAllByWarehouseFiltersUnsigned(pageNo, userLogin, seachValue, orderStatus);
     }
 
     @ApiBearerAuth('JWT-auth')

@@ -8,6 +8,7 @@ import { UserLoginData } from '../../module/core/authentication/dto/user_login_d
 import { Paging } from '../../module/response/Paging';
 import { OrderStatus } from '../../enum/order-status.enum';
 import { Builder } from 'builder-pattern';
+import * as removeAccents from 'remove-accents';
 
 @Injectable()
 export class OrderViewService {
@@ -349,6 +350,89 @@ export class OrderViewService {
                                         pifullname: likeParam,
                                     })
                                     .orWhere('LOWER(deliverInformation.phone) ILIKE :piphone', {
+                                        piphone: likeParam,
+                                    });
+                            });
+                        }),
+                    );
+                }
+
+                if (orderStatus !== 0) {
+                    queryBuilder.andWhere('order.order_stt = :orderStatus', { orderStatus: orderStatus });
+                }
+                queryBuilder.orderBy('order.date_create_at', 'DESC');
+                const [orders, total] = await queryBuilder.getManyAndCount();
+                const orderList = orders.map((element) => this.toOrder(element));
+                const paging: Paging = new Paging(pageNo, this.pageSize, total);
+
+                return { orders: orderList, paging: paging };
+            }
+
+            return { orders: [], paging: null };
+        } catch (error) {
+            console.error('Error in findAllByWarehouseFilters:', error);
+            throw new Error('An error occurred while fetching orders.');
+        }
+    }
+    async findAllByWarehouseFiltersUnsigned(
+        pageNo: number,
+        userLogin: UserLoginData,
+        searchValue: string,
+        orderStatus: number,
+    ): Promise<OrderResponse> {
+        try {
+            orderStatus = orderStatus <= 10 && orderStatus >= 1 ? orderStatus : 0;
+            searchValue = searchValue ? searchValue.toLowerCase() : '';
+            const warehouseId = (await this.getStaff(userLogin)).warehouseId;
+            if (warehouseId) {
+                const searchWords = searchValue.split(' ').filter(Boolean);
+                const queryBuilder = await this.orderRepository
+                    .createQueryBuilder('order')
+                    .innerJoinAndSelect('order.status', 'orderStatus')
+                    .leftJoinAndSelect('order.customer', 'customer')
+                    .leftJoinAndSelect('order.pickupInformation', 'pickupInformation')
+                    .leftJoinAndSelect('order.deliverInformation', 'deliverInformation')
+                    .leftJoinAndSelect('order.pickupShipperStaff', 'pickupShipperStaff')
+                    .leftJoinAndSelect('order.deliverShipperStaff', 'deliverShipperStaff')
+                    .leftJoinAndSelect('order.packageType', 'packageType')
+                    .leftJoinAndSelect('pickupInformation.address', 'pickupAddress')
+                    .leftJoinAndSelect('pickupAddress.city', 'pickupCity')
+                    .leftJoinAndSelect('pickupAddress.district', 'pickupDistrict')
+                    .leftJoinAndSelect('pickupAddress.ward', 'pickupWard')
+                    .leftJoinAndSelect('deliverInformation.address', 'deliverAddress')
+                    .leftJoinAndSelect('deliverAddress.city', 'deliverCity')
+                    .leftJoinAndSelect('deliverAddress.district', 'deliverDistrict')
+                    .leftJoinAndSelect('deliverAddress.ward', 'deliverWard')
+                    .where(
+                        new Brackets((qb) => {
+                            qb.where('pickupWard.warehouse_id = :warehouseId', {
+                                warehouseId: warehouseId,
+                            }).orWhere('deliverWard.warehouse_id = :warehouseId', { warehouseId: warehouseId });
+                        }),
+                    )
+                    .skip((pageNo - 1) * this.pageSize)
+                    .take(this.pageSize);
+                if (searchWords.length > 0) {
+                    queryBuilder.andWhere(
+                        new Brackets((qb) => {
+                            searchWords.forEach((word) => {
+                                const likeParam = `%${removeAccents(word)}%`;
+                                qb.where('LOWER(unaccent(pickupShipperStaff.fullname)) ILIKE :pfullname', {
+                                    pfullname: likeParam,
+                                })
+                                    .orWhere('LOWER(unaccent(deliverShipperStaff.fullname)) ILIKE :dfullname', {
+                                        dfullname: likeParam,
+                                    })
+                                    .orWhere('LOWER(unaccent(pickupInformation.name)) ILIKE :pifullname', {
+                                        pifullname: likeParam,
+                                    })
+                                    .orWhere('LOWER(unaccent(pickupInformation.phone)) ILIKE :piphone', {
+                                        piphone: likeParam,
+                                    })
+                                    .orWhere('LOWER(unaccent(deliverInformation.name)) ILIKE :pifullname', {
+                                        pifullname: likeParam,
+                                    })
+                                    .orWhere('LOWER(unaccent(deliverInformation.phone)) ILIKE :piphone', {
                                         piphone: likeParam,
                                     });
                             });
