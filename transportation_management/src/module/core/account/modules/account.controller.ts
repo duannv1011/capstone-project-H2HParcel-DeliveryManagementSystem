@@ -50,10 +50,24 @@ export class AccountController {
     @Get('getdistance')
     async getDistance(@Query('warehouse1') warehouse1: number, @Query('warehouse2') warehouse2: number) {
         try {
-            const distance = await this.warehouseRuletRepository.findOne({
-                where: { warehouseId1: warehouse1, warehouseId2: warehouse2 },
-            });
-            return Number(distance.distance.includes(',') ? distance.distance.replace(',', '.') : distance.distance);
+            const warehouseRule = await this.warehouseRuletRepository
+                .createQueryBuilder('w')
+                .where((qb) => {
+                    qb.andWhere('(w.warehouse_id_1 = :warehouseId1 AND w.warehouse_id_2 = :warehouseId2)', {
+                        warehouseId1: warehouse1,
+                        warehouseId2: warehouse2,
+                    }).orWhere('(w.warehouse_id_1 = :warehouseId2 AND w.warehouse_id_2 = :warehouseId1)', {
+                        warehouseId1: warehouse1,
+                        warehouseId2: warehouse2,
+                    });
+                })
+                .getOne();
+            const distance = Number(
+                warehouseRule.distance.includes(',')
+                    ? warehouseRule.distance.replace(',', '.')
+                    : warehouseRule.distance,
+            );
+            return distance;
         } catch (error) {}
     }
 }

@@ -659,7 +659,7 @@ export class OrderService {
     }
 
     async checkMutipelPrice(distance: number) {
-        const num = distance.toFixed();
+        const num = distance >= 1 ? distance.toFixed() : 1;
         const priceMultiplier = await this.priceMutiPlierRepository
             .createQueryBuilder('p')
             .where('p.max_distance >= :num', { num })
