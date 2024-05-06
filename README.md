@@ -1,5 +1,10 @@
 # Backend
-
+Capstone -project: Hand2Hand - Parcel Delivery Management System
+Summary: We are building a delivery system for individuals and small and micro businesses that provides personalized service and innovative technology to meet their specific needs in the freight market.
+Technology: PostgreSQL, Nest JS framework, Docker, Swagger API, VS Code
+Team size: 5
+Responsibilities:
+My responsibilities include designing the database schema, as well as developing, writing, and testing APIs to ensure functionality before integration with the frontend.
 
 
 ## Getting started
